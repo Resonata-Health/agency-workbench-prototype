@@ -1,0 +1,14 @@
+# dependencies (CI reinstalls these)
+/node_modules
+
+# build output (CI rebuilds this)
+/.next
+/out
+
+# local tooling / OS junk
+/.claude
+.DS_Store
+*.log
+
+# env files
+.env*
