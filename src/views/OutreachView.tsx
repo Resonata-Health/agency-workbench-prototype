@@ -7,6 +7,7 @@ import { WorkbenchTabs } from '@/components/WorkbenchTabs'
 import { findOffer, setupFieldsFor, type SponsorName } from '@/data/mockCareOffers'
 import { setOfferStatus } from '@/data/offerStatusOverrides'
 import { CONTAINER } from '@/components/container'
+import { usePermissions } from '@/app/providers'
 import {
   seedDrafts,
   blankDrafts,
@@ -33,6 +34,8 @@ type DialogKind =
   | { kind: 'submit' }
   | { kind: 'replaceTemplate'; artifact: Artifact; template: string }
   | { kind: 'saveTemplate' }
+  | { kind: 'approve' }
+  | { kind: 'requestChanges' }
   | null
 
 export default function OutreachView() {
@@ -59,7 +62,12 @@ export default function OutreachView() {
   const [dialog, setDialog] = useState<DialogKind>(null)
   const [busy, setBusy] = useState(false)
 
-  const readOnly = false
+  const { can } = usePermissions()
+  const canEdit            = can('edit_outreach')
+  const canSubmit          = can('submit_outreach')
+  const canApprove         = can('approve_outreach')
+  const canRequestChanges  = can('request_outreach_changes')
+  const readOnly = !canEdit
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Debounced autosave simulation
@@ -125,6 +133,27 @@ export default function OutreachView() {
     }, 1100)
   }
 
+  const onApprove = () => {
+    setBusy(true)
+    setTimeout(() => {
+      setOfferStatus(offer.id, 'active')
+      setBusy(false)
+      setDialog(null)
+      router.push('/mlr')
+    }, 900)
+  }
+
+  const onRequestChanges = () => {
+    setBusy(true)
+    setTimeout(() => {
+      // Mock: in production this opens a comment thread; offer status moves back to inDesign.
+      setOfferStatus(offer.id, 'inDesign')
+      setBusy(false)
+      setDialog(null)
+      router.push('/mlr')
+    }, 900)
+  }
+
   const drugName = meta.drugName
   const savedLabel = savedAt
     ? 'Saved · just now'
@@ -153,8 +182,10 @@ export default function OutreachView() {
         <div className="flex flex-col h-full">
           {/* Switcher + autosave indicator */}
           <div className="flex items-center justify-between mb-2">
-            <Segmented active={active} onChange={setView} disabled={readOnly} />
-            <span className="text-[12px] text-charcoal-11">{savedLabel}</span>
+            <Segmented active={active} onChange={setView} disabled={false} />
+            <span className="text-[12px] text-charcoal-11">
+              {readOnly ? 'Read-only · view permission only' : savedLabel}
+            </span>
           </div>
           {artifactHint[active] && (
             <p className="text-[12px] text-charcoal-12 mb-3">{artifactHint[active]}</p>
@@ -210,21 +241,47 @@ export default function OutreachView() {
       {/* Footer */}
       <div className="fixed bottom-0 left-0 right-0 bg-charcoal-white border-t border-charcoal-4 py-3">
         <div className={`${CONTAINER} flex justify-end items-center gap-2.5`}>
-          <button
-            type="button"
-            disabled={readOnly}
-            onClick={() => setDialog({ kind: 'discard' })}
-            className="px-4 py-2 rounded-md border border-charcoal-5 text-[13px] text-charcoal-15 hover:bg-charcoal-1 disabled:opacity-50"
-          >
-            Discard
-          </button>
-          <button
-            type="button"
-            onClick={() => setDialog({ kind: 'submit' })}
-            className="px-5 py-2 rounded-md bg-green-12 hover:bg-green-13 text-charcoal-white text-[13px] font-medium"
-          >
-            Submit for Sponsor Approval →
-          </button>
+          {canEdit && (
+            <button
+              type="button"
+              onClick={() => setDialog({ kind: 'discard' })}
+              className="px-4 py-2 rounded-md border border-charcoal-5 text-[13px] text-charcoal-15 hover:bg-charcoal-1"
+            >
+              Discard
+            </button>
+          )}
+          {canSubmit && (
+            <button
+              type="button"
+              onClick={() => setDialog({ kind: 'submit' })}
+              className="px-5 py-2 rounded-md bg-green-12 hover:bg-green-13 text-charcoal-white text-[13px] font-medium"
+            >
+              Submit for Sponsor Approval →
+            </button>
+          )}
+          {canRequestChanges && (
+            <button
+              type="button"
+              onClick={() => setDialog({ kind: 'requestChanges' })}
+              className="px-4 py-2 rounded-md border border-red-7 text-[13px] text-red-13 hover:bg-red-1"
+            >
+              Request changes
+            </button>
+          )}
+          {canApprove && (
+            <button
+              type="button"
+              onClick={() => setDialog({ kind: 'approve' })}
+              className="px-5 py-2 rounded-md bg-green-12 hover:bg-green-13 text-charcoal-white text-[13px] font-medium"
+            >
+              Approve ✓
+            </button>
+          )}
+          {!canEdit && !canSubmit && !canApprove && !canRequestChanges && (
+            <span className="text-[12px] text-charcoal-12">
+              No actions available for your role on this screen.
+            </span>
+          )}
         </div>
       </div>
 
@@ -275,6 +332,27 @@ export default function OutreachView() {
           confirmLabel="Got it"
           onConfirm={() => setDialog(null)}
           onCancel={() => setDialog(null)}
+        />
+      )}
+      {dialog?.kind === 'approve' && (
+        <ConfirmDialog
+          title="Approve outreach for go-live?"
+          body="This marks the offer Active and clears Form 2253. The agency can begin sending. This action is logged for audit."
+          confirmLabel="Yes, approve"
+          busy={busy}
+          onConfirm={onApprove}
+          onCancel={() => (busy ? null : setDialog(null))}
+        />
+      )}
+      {dialog?.kind === 'requestChanges' && (
+        <ConfirmDialog
+          title="Request changes from the agency?"
+          body="The offer returns to In Design and the agency is notified. In production this would surface a comment thread; this prototype just changes the status."
+          confirmLabel="Request changes"
+          destructive
+          busy={busy}
+          onConfirm={onRequestChanges}
+          onCancel={() => (busy ? null : setDialog(null))}
         />
       )}
     </div>

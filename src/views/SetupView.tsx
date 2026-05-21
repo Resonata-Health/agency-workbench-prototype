@@ -8,12 +8,18 @@ import { StatusBadge } from '@/components/StatusBadge'
 import { CONTAINER } from '@/components/container'
 import { getOfferStatus } from '@/data/offerStatusOverrides'
 import { findOffer, setupFieldsFor, type SponsorName } from '@/data/mockCareOffers'
+import { usePermissions } from '@/app/providers'
 
 export default function SetupView() {
   const router = useRouter()
   const params = useSearchParams()
   const offer = useMemo(() => findOffer(params.get('offer')), [params])
   const fields = useMemo(() => setupFieldsFor(offer), [offer])
+  const { can } = usePermissions()
+
+  const canEditDisplayTitle = can('edit_setup_display_title')
+  const canEditEndDate      = can('edit_setup_end_date')
+  const canEditClinical     = can('edit_setup_clinical')
 
   const [sponsor, setSponsor] = useState<SponsorName>(offer.sponsor as SponsorName)
   const [displayTitle, setDisplayTitle] = useState(fields.displayTitle)
@@ -32,6 +38,12 @@ export default function SetupView() {
             <StatusBadge status={getOfferStatus(offer.id) ?? offer.status} />
           </div>
 
+          {canEditClinical && (
+            <div className="bg-blue-1 border border-blue-3 text-blue-14 text-[12px] rounded-md px-3 py-2 mb-4">
+              You have <span className="font-mono text-[11px]">edit_setup_clinical</span> — the edit UI for clinical fields (Official Title, Brief Summary, Offer Type, Geographic Availability, Activation Date) is being designed and will appear here.
+            </div>
+          )}
+
           {/* Card */}
           <div className="bg-charcoal-white rounded-lg shadow-card p-6 flex flex-col gap-8">
             {/* Summary */}
@@ -42,7 +54,7 @@ export default function SetupView() {
               <ReadonlyRow label="Sponsor" value={fields.sponsor} />
               <ReadonlyRow label="Official Title" value={fields.officialTitle} />
 
-              {/* Display Title — the one editable field */}
+              {/* Display Title — gated by edit_setup_display_title */}
               <FieldRow
                 label={
                   <>
@@ -51,12 +63,16 @@ export default function SetupView() {
                   </>
                 }
               >
-                <input
-                  type="text"
-                  value={displayTitle}
-                  onChange={e => setDisplayTitle(e.target.value)}
-                  className="w-full bg-charcoal-white border border-charcoal-6 rounded-md px-[11px] py-[7px] text-[13px] text-charcoal-18 focus:outline-none focus:border-blue-10"
-                />
+                {canEditDisplayTitle ? (
+                  <input
+                    type="text"
+                    value={displayTitle}
+                    onChange={e => setDisplayTitle(e.target.value)}
+                    className="w-full bg-charcoal-white border border-charcoal-6 rounded-md px-[11px] py-[7px] text-[13px] text-charcoal-18 focus:outline-none focus:border-blue-10"
+                  />
+                ) : (
+                  <ReadonlyBox value={displayTitle} />
+                )}
               </FieldRow>
 
               <FieldRow label="Brief Summary">
@@ -94,12 +110,18 @@ export default function SetupView() {
                 <div className="flex gap-4 flex-1">
                   <div className="w-[200px] text-[12px] text-charcoal-12 pt-[8px]">End Date</div>
                   <div className="flex-1">
-                    <input
-                      type="date"
-                      value={endDate}
-                      onChange={e => setEndDate(e.target.value)}
-                      className="w-full max-w-[352px] bg-charcoal-white border border-charcoal-6 rounded-md px-[11px] py-[7px] text-[13px] text-charcoal-18 focus:outline-none focus:border-blue-10"
-                    />
+                    {canEditEndDate ? (
+                      <input
+                        type="date"
+                        value={endDate}
+                        onChange={e => setEndDate(e.target.value)}
+                        className="w-full max-w-[352px] bg-charcoal-white border border-charcoal-6 rounded-md px-[11px] py-[7px] text-[13px] text-charcoal-18 focus:outline-none focus:border-blue-10"
+                      />
+                    ) : (
+                      <div className="max-w-[352px]">
+                        <ReadonlyBox value={endDate || '—'} />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

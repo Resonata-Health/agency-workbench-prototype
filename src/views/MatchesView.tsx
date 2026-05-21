@@ -7,6 +7,7 @@ import { WorkbenchTabs } from '@/components/WorkbenchTabs'
 import { KpiCard } from '@/components/KpiCard'
 import { findOffer, setupFieldsFor, type SponsorName } from '@/data/mockCareOffers'
 import { CONTAINER } from '@/components/container'
+import { usePermissions } from '@/app/providers'
 
 type MatchType = 'Full Match' | 'Partial Match'
 type Tone = 'blue' | 'green' | 'violet' | 'default'
@@ -67,6 +68,9 @@ export default function MatchesView() {
   const params = useSearchParams()
   const offer = useMemo(() => findOffer(params.get('offer')), [params])
   const fields = useMemo(() => setupFieldsFor(offer), [offer])
+  const { can } = usePermissions()
+  const canSelect       = can('select_matches')
+  const canViewOutreach = can('view_outreach')
 
   const [sponsor, setSponsor] = useState<SponsorName>(offer.sponsor as SponsorName)
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -146,7 +150,9 @@ export default function MatchesView() {
                       checked={allSelected}
                       ref={el => { if (el) el.indeterminate = someSelected }}
                       onChange={toggleAll}
-                      className="size-4 rounded-[2.5px] border border-charcoal-12 accent-blue-10 cursor-pointer"
+                      disabled={!canSelect}
+                      title={canSelect ? undefined : 'Your role cannot select patients'}
+                      className="size-4 rounded-[2.5px] border border-charcoal-12 accent-blue-10 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                     />
                   </th>
                   <Th>Patient ID</Th>
@@ -166,6 +172,7 @@ export default function MatchesView() {
                     group={group}
                     selected={selected}
                     onToggle={toggle}
+                    canSelect={canSelect}
                   />
                 ))}
               </tbody>
@@ -189,26 +196,30 @@ export default function MatchesView() {
               </tbody>
             </table>
 
-            <div className="bg-blue-1 rounded-md p-3 text-center text-[13px] text-blue-14">
-              To contact patients, go to the{' '}
-              <button
-                onClick={() => router.push(outreachHref)}
-                className="font-semibold text-blue-12 hover:underline"
-              >
-                Outreach tab
-              </button>
-            </div>
+            {canViewOutreach && (
+              <div className="bg-blue-1 rounded-md p-3 text-center text-[13px] text-blue-14">
+                To contact patients, go to the{' '}
+                <button
+                  onClick={() => router.push(outreachHref)}
+                  className="font-semibold text-blue-12 hover:underline"
+                >
+                  Outreach tab
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Footer CTA */}
-          <div className="flex justify-end">
-            <button
-              onClick={() => router.push(outreachHref)}
-              className="bg-green-12 hover:bg-green-13 text-charcoal-white text-[13px] font-medium rounded-md px-6 py-[10px]"
-            >
-              Next Outreach
-            </button>
-          </div>
+          {canViewOutreach && (
+            <div className="flex justify-end">
+              <button
+                onClick={() => router.push(outreachHref)}
+                className="bg-green-12 hover:bg-green-13 text-charcoal-white text-[13px] font-medium rounded-md px-6 py-[10px]"
+              >
+                Next Outreach
+              </button>
+            </div>
+          )}
         </div>
       </main>
     </div>
@@ -226,11 +237,13 @@ function Th({ children, className = '' }: { children?: React.ReactNode; classNam
 function GroupRows({
   group,
   selected,
-  onToggle
+  onToggle,
+  canSelect
 }: {
   group: MatchGroup
   selected: Set<string>
   onToggle: (id: string) => void
+  canSelect: boolean
 }) {
   return (
     <>
@@ -248,7 +261,9 @@ function GroupRows({
                 type="checkbox"
                 checked={selected.has(p.id)}
                 onChange={() => onToggle(p.id)}
-                className="size-4 rounded-[2.5px] border border-charcoal-12 accent-blue-10 cursor-pointer"
+                disabled={!canSelect}
+                title={canSelect ? undefined : 'Your role cannot select patients'}
+                className="size-4 rounded-[2.5px] border border-charcoal-12 accent-blue-10 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
               />
             </td>
             <td className="px-3 py-3 text-[12px] text-charcoal-15">{p.id}</td>
