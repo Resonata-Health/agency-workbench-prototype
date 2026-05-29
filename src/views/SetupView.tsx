@@ -127,15 +127,23 @@ export default function SetupView() {
               </div>
             </section>
 
-            {/* Footer — single CTA */}
-            <div className="flex justify-end pt-6">
-              <button
-                onClick={() => router.push(`/matches?offer=${offer.id}`)}
-                className="bg-green-12 hover:bg-green-13 text-charcoal-white text-[13px] font-medium rounded-md px-6 py-[10px]"
-              >
-                Next Matches
-              </button>
-            </div>
+            {/* Footer — single CTA. Draft offers skip Matches and go straight to Outreach. */}
+            {(() => {
+              const currentStatus = getOfferStatus(offer.id) ?? offer.status
+              const isDraft = currentStatus === 'inDesign'
+              const href  = isDraft ? `/outreach?offer=${offer.id}` : `/matches?offer=${offer.id}`
+              const label = isDraft ? 'Next Outreach' : 'Next Matches'
+              return (
+                <div className="flex justify-end pt-6">
+                  <button
+                    onClick={() => router.push(href)}
+                    className="bg-green-12 hover:bg-green-13 text-charcoal-white text-[13px] font-medium rounded-md px-6 py-[10px]"
+                  >
+                    {label}
+                  </button>
+                </div>
+              )
+            })()}
           </div>
         </div>
       </main>
