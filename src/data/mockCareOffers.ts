@@ -1,4 +1,4 @@
-export type OfferStatus = 'active' | 'inMlrReview' | 'inDesign' | 'inactive' | 'deactivated'
+export type OfferStatus = 'active' | 'inMlrReview' | 'inDesign' | 'inactive' | 'deactivated' | 'rejectedByMlr'
 
 export interface CareOffer {
   id: string
