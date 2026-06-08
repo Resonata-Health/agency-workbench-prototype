@@ -33,17 +33,23 @@ export const ROLES: Role[] = [
 ]
 
 export const CAPABILITIES: Capability[] = [
-  { id: 'view_setup',                label: 'View Setup',               group: 'Setup' },
+  { id: 'view_setup',                label: 'View care option details', group: 'Setup' },
   { id: 'edit_setup_clinical',       label: 'Edit clinical fields',     group: 'Setup',    description: 'Official title, brief summary, offer type, geographies, activation date' },
   { id: 'edit_setup_display_title',  label: 'Edit display title',       group: 'Setup' },
   { id: 'edit_setup_end_date',       label: 'Edit end date',            group: 'Setup' },
-  { id: 'view_matches',              label: 'View Matches',             group: 'Matches' },
+  { id: 'manage_interventions',      label: 'Manage interventions',     group: 'Setup',    description: 'Spec only — surface not built yet' },
+  { id: 'view_eligibility_matrix',   label: 'View eligibility matrix',  group: 'Setup',    description: 'Spec only — surface not built yet' },
+  { id: 'view_sites',                label: 'View sites',               group: 'Setup',    description: 'Spec only — surface not built yet' },
+  { id: 'activate_care_option',      label: 'Activate care option',     group: 'Setup',    description: 'Spec only — surface not built yet' },
+  { id: 'view_matches',              label: 'View and select patients', group: 'Matches' },
   { id: 'select_matches',            label: 'Select patients',          group: 'Matches' },
-  { id: 'view_outreach',             label: 'View Outreach',            group: 'Outreach' },
+  { id: 'see_patient_details',       label: 'See patient details',      group: 'Matches',  description: 'Spec only — surface not built yet' },
+  { id: 'message_patients',          label: 'Message patient(s)',       group: 'Matches',  description: 'Spec only — surface not built yet' },
+  { id: 'view_outreach',             label: 'View outreach',            group: 'Outreach' },
   { id: 'edit_outreach',             label: 'Edit outreach content',    group: 'Outreach' },
   { id: 'submit_outreach',           label: 'Submit for MLR review',    group: 'Outreach' },
   { id: 'approve_outreach',          label: 'Approve outreach',         group: 'Outreach' },
-  { id: 'request_outreach_changes',  label: 'Request changes',          group: 'Outreach' },
+  { id: 'reject_outreach',           label: 'Reject outreach',          group: 'Outreach',  description: 'MLR records a Reason; offer moves to Rejected by MLR' },
   { id: 'manage_permissions',        label: 'Manage permissions',       group: 'Admin' }
 ]
 
@@ -52,26 +58,30 @@ export type Matrix = Record<string, Record<string, boolean>>
 export const DEFAULT_MATRIX: Matrix = {
   sponsor_admin: {
     view_setup: true,  edit_setup_clinical: true,  edit_setup_display_title: true,  edit_setup_end_date: true,
-    view_matches: true, select_matches: true,
-    view_outreach: true, edit_outreach: true, submit_outreach: true, approve_outreach: true, request_outreach_changes: true,
+    manage_interventions: true, view_eligibility_matrix: true, view_sites: true, activate_care_option: true,
+    view_matches: true, select_matches: true, see_patient_details: false, message_patients: true,
+    view_outreach: true, edit_outreach: true, submit_outreach: true, approve_outreach: true, reject_outreach: true,
     manage_permissions: true
   },
   sponsor_std: {
     view_setup: true,  edit_setup_clinical: true,  edit_setup_display_title: true,  edit_setup_end_date: true,
-    view_matches: true, select_matches: true,
-    view_outreach: true, edit_outreach: true, submit_outreach: true, approve_outreach: false, request_outreach_changes: false,
+    manage_interventions: true, view_eligibility_matrix: true, view_sites: true, activate_care_option: false,
+    view_matches: true, select_matches: true, see_patient_details: false, message_patients: true,
+    view_outreach: true, edit_outreach: true, submit_outreach: true, approve_outreach: false, reject_outreach: false,
     manage_permissions: false
   },
   mlr: {
     view_setup: true,  edit_setup_clinical: false, edit_setup_display_title: false, edit_setup_end_date: false,
-    view_matches: true, select_matches: false,
-    view_outreach: true, edit_outreach: false, submit_outreach: false, approve_outreach: true, request_outreach_changes: true,
+    manage_interventions: false, view_eligibility_matrix: true, view_sites: true, activate_care_option: false,
+    view_matches: false, select_matches: false, see_patient_details: false, message_patients: false,
+    view_outreach: true, edit_outreach: false, submit_outreach: false, approve_outreach: true, reject_outreach: true,
     manage_permissions: false
   },
   agency: {
     view_setup: true,  edit_setup_clinical: false, edit_setup_display_title: true,  edit_setup_end_date: true,
-    view_matches: true, select_matches: true,
-    view_outreach: true, edit_outreach: true, submit_outreach: true, approve_outreach: false, request_outreach_changes: false,
+    manage_interventions: false, view_eligibility_matrix: true, view_sites: true, activate_care_option: false,
+    view_matches: true, select_matches: true, see_patient_details: false, message_patients: false,
+    view_outreach: true, edit_outreach: true, submit_outreach: true, approve_outreach: false, reject_outreach: false,
     manage_permissions: false
   }
 }

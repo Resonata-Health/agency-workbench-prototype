@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { CONTAINER } from '@/components/container'
 import { findOffer } from '@/data/mockCareOffers'
 import { getOfferStatus } from '@/data/offerStatusOverrides'
+import { usePermissions } from '@/app/providers'
 
 type Tab = 'Setup' | 'Matches' | 'Outreach'
 
@@ -18,13 +19,17 @@ export function WorkbenchTabs({ active }: { active: Tab }) {
   const params = useSearchParams()
   const offerId = params.get('offer')
   const qs = offerId ? `?offer=${offerId}` : ''
+  const { can } = usePermissions()
 
-  // Draft offers have no matched patients yet — hide the Matches tab.
+  // Hide Matches when the offer is Draft (no patients yet) OR when the persona can't see patients.
   const offer = findOffer(offerId)
   const status = getOfferStatus(offer.id) ?? offer.status
-  const visibleTabs = status === 'inDesign'
-    ? TABS.filter(t => t.label !== 'Matches')
-    : TABS
+  const visibleTabs = TABS.filter(t => {
+    if (t.label !== 'Matches') return true
+    if (status === 'inDesign') return false
+    if (!can('view_matches')) return false
+    return true
+  })
 
   return (
     <div className="bg-charcoal-white border-b border-charcoal-4 w-full">

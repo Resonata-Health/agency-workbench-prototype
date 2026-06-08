@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { TopNav } from '@/components/TopNav'
 import { WorkbenchTabs } from '@/components/WorkbenchTabs'
 import { findOffer, setupFieldsFor, type SponsorName } from '@/data/mockCareOffers'
-import { setOfferStatus } from '@/data/offerStatusOverrides'
+import { getOfferStatus, setOfferStatus } from '@/data/offerStatusOverrides'
+import { addRejectionMessage, getRejectionMessages } from '@/data/rejectionMessages'
 import { CONTAINER } from '@/components/container'
 import { usePermissions } from '@/app/providers'
 import {
@@ -28,6 +29,8 @@ import { DetailsEditor } from '@/components/outreach/DetailsEditor'
 import { PhonePreview } from '@/components/outreach/PhonePreview'
 import { SelectedPatientsPullTab } from '@/components/outreach/SelectedPatientsPullTab'
 import { ConfirmDialog } from '@/components/outreach/ConfirmDialog'
+import { RejectDialog } from '@/components/outreach/RejectDialog'
+import { MessagesDialog } from '@/components/outreach/MessagesDialog'
 
 type DialogKind =
   | { kind: 'discard' }
@@ -35,7 +38,8 @@ type DialogKind =
   | { kind: 'replaceTemplate'; artifact: Artifact; template: string }
   | { kind: 'saveTemplate' }
   | { kind: 'approve' }
-  | { kind: 'requestChanges' }
+  | { kind: 'reject' }
+  | { kind: 'viewMessages' }
   | null
 
 export default function OutreachView() {
@@ -63,12 +67,18 @@ export default function OutreachView() {
   const [busy, setBusy] = useState(false)
 
   const { can } = usePermissions()
-  const canEdit            = can('edit_outreach')
-  const canSubmit          = can('submit_outreach')
-  const canApprove         = can('approve_outreach')
-  const canRequestChanges  = can('request_outreach_changes')
+  const canEdit    = can('edit_outreach')
+  const canSubmit  = can('submit_outreach')
+  const canApprove = can('approve_outreach')
+  const canReject  = can('reject_outreach')
   const readOnly = !canEdit
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Live offer status (drives Approve/Reject visibility and the rejected-banner).
+  const currentStatus = getOfferStatus(offer.id) ?? offer.status
+  const inMlrReview   = currentStatus === 'inMlrReview'
+  const wasRejected   = currentStatus === 'rejectedByMlr'
+  const messages = getRejectionMessages(offer.id)
 
   // Debounced autosave simulation
   useEffect(() => {
@@ -143,11 +153,11 @@ export default function OutreachView() {
     }, 900)
   }
 
-  const onRequestChanges = () => {
+  const onReject = (reason: string) => {
     setBusy(true)
     setTimeout(() => {
-      // Mock: in production this opens a comment thread; offer status moves back to inDesign.
-      setOfferStatus(offer.id, 'inDesign')
+      addRejectionMessage(offer.id, reason)
+      setOfferStatus(offer.id, 'rejectedByMlr')
       setBusy(false)
       setDialog(null)
       router.push('/mlr')
@@ -180,6 +190,34 @@ export default function OutreachView() {
 
       <main className={`flex-1 ${CONTAINER} pt-4 pb-[72px]`}>
         <div className="flex flex-col h-full">
+          {wasRejected && (
+            <div className="mb-3 rounded-md border border-red-5 bg-red-1 px-4 py-3 flex items-center justify-between gap-3">
+              <div className="flex items-start gap-2">
+                <span className="text-red-13 text-[14px] leading-none mt-0.5">⚠</span>
+                <div>
+                  <div className="text-[13px] font-semibold text-red-14">
+                    This outreach was rejected by MLR
+                  </div>
+                  <div className="text-[12px] text-charcoal-14 mt-0.5">
+                    Review the feedback, revise the content, and resubmit when ready.
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDialog({ kind: 'viewMessages' })}
+                className="shrink-0 px-3 py-1.5 rounded-md border border-red-7 text-[12px] font-medium text-red-13 hover:bg-red-2"
+              >
+                View MLR feedback
+                {messages.length > 0 && (
+                  <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-red-10 text-charcoal-white text-[10px] font-semibold">
+                    {messages.length}
+                  </span>
+                )}
+              </button>
+            </div>
+          )}
+
           {/* Switcher + autosave indicator */}
           <div className="flex items-center justify-between mb-2">
             <Segmented active={active} onChange={setView} disabled={false} />
@@ -259,16 +297,16 @@ export default function OutreachView() {
               Submit for Sponsor Approval →
             </button>
           )}
-          {canRequestChanges && (
+          {canReject && inMlrReview && (
             <button
               type="button"
-              onClick={() => setDialog({ kind: 'requestChanges' })}
+              onClick={() => setDialog({ kind: 'reject' })}
               className="px-4 py-2 rounded-md border border-red-7 text-[13px] text-red-13 hover:bg-red-1"
             >
-              Request changes
+              Reject
             </button>
           )}
-          {canApprove && (
+          {canApprove && inMlrReview && (
             <button
               type="button"
               onClick={() => setDialog({ kind: 'approve' })}
@@ -277,9 +315,11 @@ export default function OutreachView() {
               Approve ✓
             </button>
           )}
-          {!canEdit && !canSubmit && !canApprove && !canRequestChanges && (
+          {!canEdit && !canSubmit && !(canApprove && inMlrReview) && !(canReject && inMlrReview) && (
             <span className="text-[12px] text-charcoal-12">
-              No actions available for your role on this screen.
+              {wasRejected
+                ? 'This was rejected. Resubmission rights are with the agency.'
+                : 'No actions available for your role on this screen.'}
             </span>
           )}
         </div>
@@ -336,23 +376,25 @@ export default function OutreachView() {
       )}
       {dialog?.kind === 'approve' && (
         <ConfirmDialog
-          title="Approve outreach for go-live?"
-          body="This marks the offer Active and clears Form 2253. The agency can begin sending. This action is logged for audit."
+          title="Approve this content"
+          body="By approving this content, you are acknowledging that you have reviewed the content, Form 2253 has been submitted and patient outreach can begin."
           confirmLabel="Yes, approve"
           busy={busy}
           onConfirm={onApprove}
           onCancel={() => (busy ? null : setDialog(null))}
         />
       )}
-      {dialog?.kind === 'requestChanges' && (
-        <ConfirmDialog
-          title="Request changes from the agency?"
-          body="The offer returns to In Design and the agency is notified. In production this would surface a comment thread; this prototype just changes the status."
-          confirmLabel="Request changes"
-          destructive
+      {dialog?.kind === 'reject' && (
+        <RejectDialog
           busy={busy}
-          onConfirm={onRequestChanges}
+          onConfirm={onReject}
           onCancel={() => (busy ? null : setDialog(null))}
+        />
+      )}
+      {dialog?.kind === 'viewMessages' && (
+        <MessagesDialog
+          messages={messages}
+          onClose={() => setDialog(null)}
         />
       )}
     </div>

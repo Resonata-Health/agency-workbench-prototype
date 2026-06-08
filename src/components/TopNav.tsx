@@ -27,7 +27,9 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
   const [personaOpen, setPersonaOpen] = useState(false)
   const { persona, setPersona, can } = usePermissions()
 
-  const showSponsorSwitcher = persona === 'agency'
+  // Sponsor switcher is for users who navigate across sponsors (agency operators,
+  // MLR reviewers). The Sponsor persona IS the sponsor — no need to switch.
+  const showSponsorSwitcher = persona === 'agency' || persona === 'mlr'
   const showAdminLink = can('manage_permissions')
 
   const handlePersonaPick = (p: Persona) => {

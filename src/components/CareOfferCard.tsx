@@ -3,18 +3,25 @@ import { useRouter } from 'next/navigation'
 import type { CareOffer } from '@/data/mockCareOffers'
 import { StatusBadge } from '@/components/StatusBadge'
 
-export function CareOfferCard({ offer }: { offer: CareOffer }) {
+export function CareOfferCard({
+  offer,
+  linkTo = 'setup'
+}: {
+  offer: CareOffer
+  linkTo?: 'setup' | 'outreach'
+}) {
   const router = useRouter()
 
   const accentColor =
-    offer.status === 'active'      ? 'border-l-green-10'   :
-    offer.status === 'inMlrReview' ? 'border-l-gold-10'    :
-    offer.status === 'inDesign'    ? 'border-l-charcoal-7' :
-    offer.status === 'inactive'    ? 'border-l-charcoal-7' :
-                                     'border-l-charcoal-18'
+    offer.status === 'active'        ? 'border-l-green-10'   :
+    offer.status === 'inMlrReview'   ? 'border-l-gold-10'    :
+    offer.status === 'inDesign'      ? 'border-l-charcoal-7' :
+    offer.status === 'inactive'      ? 'border-l-charcoal-7' :
+    offer.status === 'rejectedByMlr' ? 'border-l-red-10'     :
+                                       'border-l-charcoal-18'
 
   const handleOpen = () => {
-    router.push(`/setup?offer=${offer.id}`)
+    router.push(`/${linkTo}?offer=${offer.id}`)
   }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLElement>) => {
