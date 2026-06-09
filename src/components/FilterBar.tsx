@@ -3,27 +3,25 @@ interface Props {
   onStatusChange: (v: string) => void
 }
 
+const OPTIONS = ['All', 'Active', 'In MLR Review', 'In Design', 'Inactive', 'Deactivated']
+
 export function FilterBar({ statusFilter, onStatusChange }: Props) {
   return (
-    <div className="flex items-center mb-4">
-      <Select label="Status" value={statusFilter} onChange={onStatusChange} options={['All', 'Active', 'In MLR Review', 'In Design', 'Inactive', 'Deactivated']} />
+    <div className="flex items-center gap-2 text-[12px] text-charcoal-12 flex-wrap mb-4">
+      <span>Show:</span>
+      {OPTIONS.map(f => (
+        <button
+          key={f}
+          onClick={() => onStatusChange(f)}
+          className={`px-3 py-1 rounded-full border text-[12px] ${
+            f === statusFilter
+              ? 'border-blue-10 text-blue-12 bg-blue-1 font-medium'
+              : 'border-charcoal-5 text-charcoal-14 hover:bg-charcoal-1'
+          }`}
+        >
+          {f}
+        </button>
+      ))}
     </div>
-  )
-}
-
-function Select({
-  label, value, onChange, options
-}: { label: string; value: string; onChange: (v: string) => void; options: string[] }) {
-  return (
-    <label className="inline-flex items-center gap-1.5 text-[13px] text-charcoal-15">
-      <span className="text-charcoal-12">{label}:</span>
-      <select
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        className="bg-charcoal-white border border-charcoal-5 rounded-md px-2 py-1.5 pr-7 text-[13px] text-charcoal-18 focus:outline-none focus:border-blue-10"
-      >
-        {options.map(o => <option key={o}>{o}</option>)}
-      </select>
-    </label>
   )
 }
