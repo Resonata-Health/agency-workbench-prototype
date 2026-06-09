@@ -51,7 +51,7 @@ export default function MlrLandingView() {
 
       <main className={`${CONTAINER} py-8`}>
         <div className="mb-6">
-          <h1 className="text-[26px] font-semibold text-charcoal-18 leading-tight">MLR Review</h1>
+          <h1 className="text-[26px] font-semibold text-charcoal-18 leading-tight">Care Options</h1>
           <p className="text-[14px] text-charcoal-14 mt-1">
             Patient-facing content awaiting review for {sponsor}. Click a submission in
             review to read it and approve or reject.

@@ -100,7 +100,7 @@ export const PERSONA_TO_ROLE: Record<Persona, string> = {
 export const WORKBENCH_LABEL: Record<Persona, string> = {
   agency:  'Agency Workbench',
   sponsor: 'Sponsor Workbench',
-  mlr:     'MLR Review'
+  mlr:     'MLR Workbench'
 }
 
 export const PERSONA_HOME: Record<Persona, string> = {
