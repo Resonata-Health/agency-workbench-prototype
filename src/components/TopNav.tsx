@@ -37,9 +37,9 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
     return subscribeLogo(() => setSponsorLogo(getStoredLogo()))
   }, [])
 
-  // Sponsor switcher is for users who navigate across sponsors (agency operators,
-  // MLR reviewers). The Sponsor persona IS the sponsor — no need to switch.
-  const showSponsorSwitcher = persona === 'agency' || persona === 'mlr'
+  // Sponsor switcher is only for agency operators (they work across multiple
+  // sponsors). Sponsor IS the sponsor; MLR is a department inside one sponsor.
+  const showSponsorSwitcher = persona === 'agency'
   const showAdminLink = can('manage_permissions')
 
   const handlePersonaPick = (p: Persona) => {
