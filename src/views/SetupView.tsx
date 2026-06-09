@@ -34,9 +34,20 @@ function SetupReadOnly() {
   const canEditEndDate      = can('edit_setup_end_date')
   const canEditClinical     = can('edit_setup_clinical')
 
+  const canEditPatientFacing = can('edit_patient_facing_content')
+
+  // Hidden for now per spec — kept in code so we can re-surface easily.
+  const SHOW_DISPLAY_TITLE = false
+
   const [sponsor, setSponsor] = useState<SponsorName>(offer.sponsor as SponsorName)
   const [displayTitle, setDisplayTitle] = useState(fields.displayTitle)
   const [endDate, setEndDate] = useState('')
+
+  // Patient/provider-facing fields (editable by Sponsor + Agency, read-only for MLR).
+  const drugName = offer.title.split(/[—-]/)[0].trim()
+  const [optionName, setOptionName]         = useState(drugName)
+  const [optionSubtitle, setOptionSubtitle] = useState(fields.displayTitle)
+  const [pfDescription, setPfDescription]   = useState(fields.briefSummary)
 
   return (
     <div className="min-h-screen bg-charcoal-1 flex flex-col">
@@ -67,26 +78,28 @@ function SetupReadOnly() {
               <ReadonlyRow label="Sponsor" value={fields.sponsor} />
               <ReadonlyRow label="Official Title" value={fields.officialTitle} />
 
-              {/* Display Title — gated by edit_setup_display_title */}
-              <FieldRow
-                label={
-                  <>
-                    Display Title{' '}
-                    <span className="text-[11px] text-charcoal-10">(optional - for patient-facing communications)</span>
-                  </>
-                }
-              >
-                {canEditDisplayTitle ? (
-                  <input
-                    type="text"
-                    value={displayTitle}
-                    onChange={e => setDisplayTitle(e.target.value)}
-                    className="w-full bg-charcoal-white border border-charcoal-6 rounded-md px-[11px] py-[7px] text-[13px] text-charcoal-18 focus:outline-none focus:border-blue-10"
-                  />
-                ) : (
-                  <ReadonlyBox value={displayTitle} />
-                )}
-              </FieldRow>
+              {/* Display Title — hidden per spec; kept here (gated by SHOW_DISPLAY_TITLE) so it can be re-surfaced later. */}
+              {SHOW_DISPLAY_TITLE && (
+                <FieldRow
+                  label={
+                    <>
+                      Display Title{' '}
+                      <span className="text-[11px] text-charcoal-10">(optional - for patient-facing communications)</span>
+                    </>
+                  }
+                >
+                  {canEditDisplayTitle ? (
+                    <input
+                      type="text"
+                      value={displayTitle}
+                      onChange={e => setDisplayTitle(e.target.value)}
+                      className="w-full bg-charcoal-white border border-charcoal-6 rounded-md px-[11px] py-[7px] text-[13px] text-charcoal-18 focus:outline-none focus:border-blue-10"
+                    />
+                  ) : (
+                    <ReadonlyBox value={displayTitle} />
+                  )}
+                </FieldRow>
+              )}
 
               <FieldRow label="Brief Summary">
                 <div className="w-full bg-charcoal-1 border border-charcoal-4 rounded-md px-[11px] py-[7px] text-[13px] text-charcoal-14 leading-[19.5px] cursor-default select-text">
@@ -106,6 +119,53 @@ function SetupReadOnly() {
                     </span>
                   ))}
                 </div>
+              </FieldRow>
+            </section>
+
+            {/* For patient and provider facing communications */}
+            <section className="flex flex-col gap-4">
+              <h2 className="text-[14px] font-semibold text-charcoal-15">
+                For patient and provider facing communications
+                <span className="text-[11px] font-normal text-red-13 ml-2">* Required</span>
+              </h2>
+
+              <FieldRow label={<>Option name <span className="text-red-13">*</span></>}>
+                {canEditPatientFacing ? (
+                  <input
+                    type="text"
+                    value={optionName}
+                    onChange={e => setOptionName(e.target.value)}
+                    className="w-full bg-charcoal-white border border-charcoal-6 rounded-md px-[11px] py-[7px] text-[13px] text-charcoal-18 focus:outline-none focus:border-blue-10"
+                  />
+                ) : (
+                  <ReadonlyBox value={optionName} />
+                )}
+              </FieldRow>
+
+              <FieldRow label={<>Option subtitle <span className="text-red-13">*</span></>}>
+                {canEditPatientFacing ? (
+                  <input
+                    type="text"
+                    value={optionSubtitle}
+                    onChange={e => setOptionSubtitle(e.target.value)}
+                    className="w-full bg-charcoal-white border border-charcoal-6 rounded-md px-[11px] py-[7px] text-[13px] text-charcoal-18 focus:outline-none focus:border-blue-10"
+                  />
+                ) : (
+                  <ReadonlyBox value={optionSubtitle} />
+                )}
+              </FieldRow>
+
+              <FieldRow label={<>Description <span className="text-red-13">*</span></>}>
+                {canEditPatientFacing ? (
+                  <textarea
+                    value={pfDescription}
+                    onChange={e => setPfDescription(e.target.value)}
+                    rows={3}
+                    className="w-full bg-charcoal-white border border-charcoal-6 rounded-md px-[11px] py-[7px] text-[13px] text-charcoal-18 focus:outline-none focus:border-blue-10 resize-y leading-relaxed"
+                  />
+                ) : (
+                  <ReadonlyBox value={pfDescription} />
+                )}
               </FieldRow>
             </section>
 

@@ -7,6 +7,10 @@ import { CONTAINER } from '@/components/container'
 import { getOfferStatus } from '@/data/offerStatusOverrides'
 import type { CareOffer } from '@/data/mockCareOffers'
 import { setupFieldsFor } from '@/data/mockCareOffers'
+import { usePermissions } from '@/app/providers'
+
+// Hidden per spec — kept in JSX behind this flag so we can re-surface it later.
+const SHOW_DISPLAY_TITLE = false
 
 interface Intervention {
   id: string
@@ -41,6 +45,8 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
   const fields = useMemoFields(offer)
   const status = getOfferStatus(offer.id) ?? offer.status
   const isClinicalTrial = offer.offerKind === 'clinical_trial'
+  const { can } = usePermissions()
+  const canEditPatientFacing = can('edit_patient_facing_content')
 
   const [offerId, setOfferId]               = useState(fields.offerId)
   const [sponsor, setSponsor]               = useState(fields.sponsor)
@@ -58,6 +64,12 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
     ]
   )
   const [endDate, setEndDate]               = useState('')
+
+  // Patient/provider-facing fields
+  const drugName = offer.title.split(/[—-]/)[0].trim()
+  const [optionName, setOptionName]         = useState(drugName)
+  const [optionSubtitle, setOptionSubtitle] = useState(fields.displayTitle)
+  const [pfDescription, setPfDescription]   = useState(fields.briefSummary)
 
   const removeIntervention = (id: string) =>
     setInterventions(prev => prev.filter(i => i.id !== id))
@@ -103,9 +115,11 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
             <input value={officialTitle} onChange={e => setOfficialTitle(e.target.value)} className={inputClass} />
           </Field>
 
-          <Field label={<>Display Title <span className="text-[11px] text-charcoal-10">(optional - for patient-facing communications)</span></>}>
-            <input value={displayTitle} onChange={e => setDisplayTitle(e.target.value)} className={inputClass} />
-          </Field>
+          {SHOW_DISPLAY_TITLE && (
+            <Field label={<>Display Title <span className="text-[11px] text-charcoal-10">(optional - for patient-facing communications)</span></>}>
+              <input value={displayTitle} onChange={e => setDisplayTitle(e.target.value)} className={inputClass} />
+            </Field>
+          )}
 
           <Field label="Brief Summary" required>
             <textarea
@@ -164,6 +178,42 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
                 )
               })}
             </div>
+          </Field>
+        </section>
+
+        {/* For patient and provider facing communications */}
+        <section className="flex flex-col gap-4">
+          <h2 className="text-[14px] font-semibold text-charcoal-15">
+            For patient and provider facing communications
+            <span className="text-[11px] font-normal text-red-13 ml-2">* Required</span>
+          </h2>
+
+          <Field label="Option name" required>
+            <input
+              value={optionName}
+              onChange={e => setOptionName(e.target.value)}
+              disabled={!canEditPatientFacing}
+              className={`${inputClass} disabled:bg-charcoal-1 disabled:text-charcoal-14`}
+            />
+          </Field>
+
+          <Field label="Option subtitle" required>
+            <input
+              value={optionSubtitle}
+              onChange={e => setOptionSubtitle(e.target.value)}
+              disabled={!canEditPatientFacing}
+              className={`${inputClass} disabled:bg-charcoal-1 disabled:text-charcoal-14`}
+            />
+          </Field>
+
+          <Field label="Description" required>
+            <textarea
+              value={pfDescription}
+              onChange={e => setPfDescription(e.target.value)}
+              disabled={!canEditPatientFacing}
+              rows={3}
+              className={`${inputClass} resize-y leading-relaxed disabled:bg-charcoal-1 disabled:text-charcoal-14`}
+            />
           </Field>
         </section>
 

@@ -37,6 +37,7 @@ export const CAPABILITIES: Capability[] = [
   { id: 'edit_setup_clinical',       label: 'Edit clinical fields',     group: 'Setup',    description: 'Official title, brief summary, offer type, geographies, activation date' },
   { id: 'edit_setup_display_title',  label: 'Edit display title',       group: 'Setup' },
   { id: 'edit_setup_end_date',       label: 'Edit end date',            group: 'Setup' },
+  { id: 'edit_patient_facing_content', label: 'Edit patient-facing fields', group: 'Setup', description: 'Option name, subtitle, description' },
   { id: 'manage_interventions',      label: 'Manage interventions',     group: 'Setup',    description: 'Spec only — surface not built yet' },
   { id: 'view_eligibility_matrix',   label: 'View eligibility matrix',  group: 'Setup',    description: 'Spec only — surface not built yet' },
   { id: 'view_sites',                label: 'View sites',               group: 'Setup',    description: 'Spec only — surface not built yet' },
@@ -58,6 +59,7 @@ export type Matrix = Record<string, Record<string, boolean>>
 export const DEFAULT_MATRIX: Matrix = {
   sponsor_admin: {
     view_setup: true,  edit_setup_clinical: true,  edit_setup_display_title: true,  edit_setup_end_date: true,
+    edit_patient_facing_content: true,
     manage_interventions: true, view_eligibility_matrix: true, view_sites: true, activate_care_option: true,
     view_matches: true, select_matches: true, see_patient_details: false, message_patients: true,
     view_outreach: true, edit_outreach: true, submit_outreach: true, approve_outreach: true, reject_outreach: true,
@@ -65,6 +67,7 @@ export const DEFAULT_MATRIX: Matrix = {
   },
   sponsor_std: {
     view_setup: true,  edit_setup_clinical: true,  edit_setup_display_title: true,  edit_setup_end_date: true,
+    edit_patient_facing_content: true,
     manage_interventions: true, view_eligibility_matrix: true, view_sites: true, activate_care_option: false,
     view_matches: true, select_matches: true, see_patient_details: false, message_patients: true,
     view_outreach: true, edit_outreach: true, submit_outreach: true, approve_outreach: false, reject_outreach: false,
@@ -72,6 +75,7 @@ export const DEFAULT_MATRIX: Matrix = {
   },
   mlr: {
     view_setup: true,  edit_setup_clinical: false, edit_setup_display_title: false, edit_setup_end_date: false,
+    edit_patient_facing_content: false,
     manage_interventions: false, view_eligibility_matrix: true, view_sites: true, activate_care_option: false,
     view_matches: false, select_matches: false, see_patient_details: false, message_patients: false,
     view_outreach: true, edit_outreach: false, submit_outreach: false, approve_outreach: true, reject_outreach: true,
@@ -79,6 +83,7 @@ export const DEFAULT_MATRIX: Matrix = {
   },
   agency: {
     view_setup: true,  edit_setup_clinical: false, edit_setup_display_title: true,  edit_setup_end_date: true,
+    edit_patient_facing_content: true,
     manage_interventions: false, view_eligibility_matrix: true, view_sites: true, activate_care_option: false,
     view_matches: true, select_matches: true, see_patient_details: false, message_patients: false,
     view_outreach: true, edit_outreach: true, submit_outreach: true, approve_outreach: false, reject_outreach: false,
