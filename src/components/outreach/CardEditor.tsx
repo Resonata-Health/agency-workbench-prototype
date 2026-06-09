@@ -90,7 +90,7 @@ function TrialCard({ draft, readOnly, update }: { draft: CardDraft; readOnly?: b
   return (
     <div
       className="w-[560px] max-w-full border-2 border-green-10 rounded-xl px-8 py-7 shadow-card"
-      style={{ backgroundColor: '#a8d49e' }}
+      style={{ backgroundColor: '#f2f9f0' }}
     >
       <EditText
         value={draft.headline}
@@ -110,24 +110,22 @@ function TrialCard({ draft, readOnly, update }: { draft: CardDraft; readOnly?: b
         className="text-[14px] text-charcoal-15 leading-relaxed mb-5"
       />
 
-      <div className="flex gap-3">
-        <div className="flex-1 bg-green-12 rounded-lg px-5 py-3.5 text-center">
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-green-12 rounded-lg px-5 py-3.5 text-center min-w-0">
           <EditText
             value={draft.ctaLabel}
             onChange={v => update({ ctaLabel: v })}
             disabled={readOnly}
             ariaLabel="Primary CTA label"
-            autoWidth
             className="!border-charcoal-white/40 text-charcoal-white text-[14px] font-bold text-center"
           />
         </div>
-        <div className="flex-1 bg-charcoal-white border-2 border-green-12 rounded-lg px-5 py-3.5 text-center">
+        <div className="bg-charcoal-white border-2 border-green-12 rounded-lg px-5 py-3.5 text-center min-w-0">
           <EditText
             value={draft.secondaryCtaLabel ?? ''}
             onChange={v => update({ secondaryCtaLabel: v })}
             disabled={readOnly}
             ariaLabel="Secondary CTA label"
-            autoWidth
             className="!border-green-12/40 text-green-12 text-[14px] font-bold text-center"
           />
         </div>
