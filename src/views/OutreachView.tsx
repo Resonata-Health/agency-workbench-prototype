@@ -297,7 +297,7 @@ export default function OutreachView() {
       {/* Footer */}
       <div className="fixed bottom-0 left-0 right-0 bg-charcoal-white border-t border-charcoal-4 py-3">
         <div className={`${CONTAINER} flex justify-end items-center gap-2.5`}>
-          {canEdit && editMode && (
+          {canEdit && editMode && dirty && (
             <button
               type="button"
               onClick={() => setDialog({ kind: 'discard' })}
@@ -342,7 +342,7 @@ export default function OutreachView() {
               Approve ✓
             </button>
           )}
-          {!(canEdit && editMode) && !showEditButton && !showPrimaryCta && !(canApprove && inMlrReview) && !(canReject && inMlrReview) && (
+          {!editMode && !showEditButton && !showPrimaryCta && !(canApprove && inMlrReview) && !(canReject && inMlrReview) && (
             <span className="text-[12px] text-charcoal-12">
               {inMlrReview
                 ? 'Pending MLR review — no edits until approved or rejected.'
