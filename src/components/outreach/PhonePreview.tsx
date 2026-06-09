@@ -49,18 +49,38 @@ function EmailMini({ drafts }: { drafts: OutreachDrafts }) {
 
 function CardMini({ drafts, meta }: { drafts: OutreachDrafts; meta: InheritedMeta }) {
   const c = drafts.card
+  const isTrial = c.kind === 'trial'
+
   return (
     <div>
       <div className="text-[9px] text-charcoal-11 mb-1.5">Your matches · 6</div>
-      <div className="border-[1.5px] border-green-10 rounded-[6px] px-2.5 py-3 mb-1.5 text-center">
-        <span className="inline-block bg-green-1 text-green-14 text-[6px] font-bold tracking-wide rounded-full px-1.5 py-0.5 mb-1.5">
-          SPONSORED · {meta.sponsorShort.toUpperCase()}
-        </span>
+      <div
+        className={`border-[1.5px] border-green-10 rounded-[6px] px-2.5 py-3 mb-1.5 ${
+          isTrial ? 'text-left' : 'text-center'
+        }`}
+      >
+        {!isTrial && (
+          <span className="inline-block bg-green-1 text-green-14 text-[6px] font-bold tracking-wide rounded-full px-1.5 py-0.5 mb-1.5">
+            SPONSORED · {meta.sponsorShort.toUpperCase()}
+          </span>
+        )}
         <div className="font-bold text-[10px] text-charcoal-18 leading-tight mb-1">{c.headline}</div>
-        <div className="text-[7px] text-charcoal-12 leading-snug mb-2 line-clamp-2">{c.subtext}</div>
-        <div className="bg-green-12 text-charcoal-white rounded-[3px] py-1.5 text-[8px] font-bold">
-          {c.ctaLabel}
-        </div>
+        <div className="text-[7px] text-charcoal-12 leading-snug mb-2 line-clamp-3">{c.subtext}</div>
+
+        {isTrial ? (
+          <div className="flex gap-1">
+            <div className="flex-1 bg-green-12 text-charcoal-white rounded-[3px] py-1 text-[7px] font-bold text-center leading-tight">
+              {c.ctaLabel}
+            </div>
+            <div className="flex-1 bg-charcoal-white border border-green-12 text-green-12 rounded-[3px] py-1 text-[7px] font-bold text-center leading-tight">
+              {c.secondaryCtaLabel}
+            </div>
+          </div>
+        ) : (
+          <div className="bg-green-12 text-charcoal-white rounded-[3px] py-1.5 text-[8px] font-bold">
+            {c.ctaLabel}
+          </div>
+        )}
       </div>
       {[0, 1].map(i => (
         <div key={i} className="border border-charcoal-4 rounded-[2px] p-1.5 mb-1 opacity-50">

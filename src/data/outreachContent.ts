@@ -16,11 +16,16 @@ export interface EmailDraft {
   footerText: string
 }
 
+export type CardKind = 'sponsored' | 'trial'
+
 export interface CardDraft {
   templateId: string
+  kind: CardKind
   headline: string
   subtext: string
   ctaLabel: string
+  /** Only used when kind === 'trial' (renders as the second outlined button). */
+  secondaryCtaLabel?: string
 }
 
 export interface DetailsKpi { value: string; label: string }
@@ -77,10 +82,8 @@ export const templateOptions: Record<Artifact, string[]> = {
     'Trial-style consent invite'
   ],
   card: [
-    'Approved drug — Full match',
-    'Approved drug — Near match',
-    'Clinical trial — Full match',
-    'Compassionate use'
+    'Approved treatment — Sponsored',
+    'Clinical trial — Apply'
   ],
   details: [
     'FDA-approved drug — long form',
@@ -95,6 +98,40 @@ export const defaultTemplate: Record<Artifact, string> = {
   email: templateOptions.email[0],
   card: templateOptions.card[0],
   details: templateOptions.details[0]
+}
+
+/** Card template IDs as constants so callers don't typo-stringify them. */
+export const CARD_TEMPLATE_SPONSORED = 'Approved treatment — Sponsored'
+export const CARD_TEMPLATE_TRIAL     = 'Clinical trial — Apply'
+
+/** Default card template per offer kind. */
+export function defaultCardTemplateId(offer: CareOffer): string {
+  return offer.offerKind === 'clinical_trial'
+    ? CARD_TEMPLATE_TRIAL
+    : CARD_TEMPLATE_SPONSORED
+}
+
+/** Build a card draft for a specific template ID. */
+export function cardSeedFor(offer: CareOffer, templateId: string): CardDraft {
+  const brand = inheritedFor(offer).brand
+  if (templateId === CARD_TEMPLATE_TRIAL) {
+    return {
+      templateId,
+      kind: 'trial',
+      headline: 'Apply to this trial',
+      subtext:
+        'To apply, we need to share verified records with the trial team — about 8 hours from consent to ready. You’ll review and approve everything that’s shared.',
+      ctaLabel: 'Start application — connect records',
+      secondaryCtaLabel: 'Bookmark for later'
+    }
+  }
+  return {
+    templateId,
+    kind: 'sponsored',
+    headline: `Want to learn more about ${brand}?`,
+    subtext: 'Cost support options, how it works, and what to expect — all in one place.',
+    ctaLabel: `Learn More About ${brand} →`
+  }
 }
 
 export const artifactHint: Record<Artifact, string> = {
@@ -147,12 +184,7 @@ export function seedDrafts(offer: CareOffer): OutreachDrafts {
       footerText:
         `You're receiving this because you opted in to Resonata matches. Unsubscribe · Privacy`
     },
-    card: {
-      templateId: defaultTemplate.card,
-      headline: `Want to learn more about ${brand}?`,
-      subtext: 'Cost support options, how it works, and what to expect — all in one place.',
-      ctaLabel: `Learn More About ${brand} →`
-    },
+    card: cardSeedFor(offer, defaultCardTemplateId(offer)),
     details: {
       templateId: defaultTemplate.details,
       howItWorksHeading: `How ${brand} works`,
