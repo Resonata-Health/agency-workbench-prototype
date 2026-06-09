@@ -77,8 +77,6 @@ export function CareOfferCard({
                 Approved Treatment
               </span>
               <span className="text-charcoal-7">·</span>
-              <span>{offer.subgroups} subgroups</span>
-              <span className="text-charcoal-7">·</span>
               <span className="text-violet-10 font-medium">Advertising Offer</span>
               <span className="text-charcoal-7">·</span>
               <span className="font-medium text-charcoal-15">{offer.matchesToDate.toLocaleString()} matches to date</span>
