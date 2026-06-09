@@ -58,6 +58,7 @@ function CardMini({ drafts, meta }: { drafts: OutreachDrafts; meta: InheritedMet
         className={`border-[1.5px] border-green-10 rounded-[6px] px-2.5 py-3 mb-1.5 ${
           isTrial ? 'text-left' : 'text-center'
         }`}
+        style={isTrial ? { backgroundColor: '#a8d49e' } : undefined}
       >
         {!isTrial && (
           <span className="inline-block bg-green-1 text-green-14 text-[6px] font-bold tracking-wide rounded-full px-1.5 py-0.5 mb-1.5">

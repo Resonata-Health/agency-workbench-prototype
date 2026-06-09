@@ -88,7 +88,10 @@ function SponsoredCard({ draft, meta, readOnly, update }: Props) {
 
 function TrialCard({ draft, readOnly, update }: { draft: CardDraft; readOnly?: boolean; update: (p: Partial<CardDraft>) => void }) {
   return (
-    <div className="w-[560px] max-w-full bg-charcoal-white border-2 border-green-10 rounded-xl px-8 py-7 shadow-card">
+    <div
+      className="w-[560px] max-w-full border-2 border-green-10 rounded-xl px-8 py-7 shadow-card"
+      style={{ backgroundColor: '#a8d49e' }}
+    >
       <EditText
         value={draft.headline}
         onChange={v => update({ headline: v })}
@@ -104,11 +107,11 @@ function TrialCard({ draft, readOnly, update }: { draft: CardDraft; readOnly?: b
         disabled={readOnly}
         ariaLabel="Card subtext"
         placeholder="Supporting line"
-        className="text-[14px] text-charcoal-14 leading-relaxed mb-5"
+        className="text-[14px] text-charcoal-15 leading-relaxed mb-5"
       />
 
       <div className="flex gap-3">
-        <div className="flex-1 bg-green-12 rounded-lg px-5 py-3.5">
+        <div className="flex-1 bg-green-12 rounded-lg px-5 py-3.5 text-center">
           <EditText
             value={draft.ctaLabel}
             onChange={v => update({ ctaLabel: v })}
@@ -118,7 +121,7 @@ function TrialCard({ draft, readOnly, update }: { draft: CardDraft; readOnly?: b
             className="!border-charcoal-white/40 text-charcoal-white text-[14px] font-bold text-center"
           />
         </div>
-        <div className="flex-1 bg-charcoal-white border-2 border-green-12 rounded-lg px-5 py-3.5">
+        <div className="flex-1 bg-charcoal-white border-2 border-green-12 rounded-lg px-5 py-3.5 text-center">
           <EditText
             value={draft.secondaryCtaLabel ?? ''}
             onChange={v => update({ secondaryCtaLabel: v })}
