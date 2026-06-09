@@ -56,21 +56,9 @@ export function CareOfferCard({
           {offer.offerKind === 'clinical_trial' ? (
             <div className="mt-2 flex items-center flex-wrap gap-x-2 gap-y-1 text-[12px] text-charcoal-14">
               {offer.phase && <span>{offer.phase}</span>}
-              {offer.cohorts !== undefined && (
-                <>
-                  <span className="text-charcoal-7">·</span>
-                  <span>{offer.cohorts} cohorts</span>
-                </>
-              )}
-              {offer.arms !== undefined && (
-                <>
-                  <span className="text-charcoal-7">·</span>
-                  <span>{offer.arms} arms</span>
-                </>
-              )}
               {offer.sites !== undefined && (
                 <>
-                  <span className="text-charcoal-7">·</span>
+                  {offer.phase && <span className="text-charcoal-7">·</span>}
                   <span>{offer.sites} sites</span>
                 </>
               )}
