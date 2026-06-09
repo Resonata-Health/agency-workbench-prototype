@@ -84,7 +84,7 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
               aria-haspopup="listbox"
               aria-expanded={personaOpen}
             >
-              <span className="text-charcoal-12">Viewing as:</span>
+              <span className="text-charcoal-12">For Dev Only: Viewing as…</span>
               <span className="font-medium text-charcoal-18">{PERSONA_LABEL[persona]}</span>
               <Chevron />
             </button>
