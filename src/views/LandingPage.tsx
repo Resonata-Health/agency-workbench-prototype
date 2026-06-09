@@ -49,7 +49,7 @@ export default function LandingPage() {
 
       <main className={`${CONTAINER} py-8`}>
         <div className="mb-6">
-          <h1 className="text-[26px] font-semibold text-charcoal-18 leading-tight">Care Offers</h1>
+          <h1 className="text-[26px] font-semibold text-charcoal-18 leading-tight">Care Options</h1>
           <p className="text-[14px] text-charcoal-14 mt-1">
             Care options assigned to your agency by {sponsor}
           </p>
@@ -72,7 +72,7 @@ export default function LandingPage() {
           {filtered.map(o => <CareOfferCard key={o.id} offer={o} />)}
           {filtered.length === 0 && (
             <div className="text-center text-charcoal-14 text-[13px] py-10 border border-dashed border-charcoal-5 rounded-lg bg-charcoal-white">
-              No care offers match the current filters.
+              No care options match the current filters.
             </div>
           )}
         </div>
