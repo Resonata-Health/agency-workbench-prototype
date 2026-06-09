@@ -36,7 +36,9 @@ interface PermsCtx {
 const PermissionsContext = createContext<PermsCtx | null>(null)
 
 function PermissionsProvider({ children }: { children: ReactNode }) {
-  const [persona, setPersonaState] = useState<Persona>('agency')
+  // Default persona is Sponsor — first-time visitors land in the Sponsor workbench.
+  // Returning users keep their last-selected persona (read from localStorage on mount).
+  const [persona, setPersonaState] = useState<Persona>('sponsor')
   const [matrix, setMatrix] = useState<Matrix>(DEFAULT_MATRIX)
 
   // Hydrate from localStorage after mount (avoid SSR mismatch).

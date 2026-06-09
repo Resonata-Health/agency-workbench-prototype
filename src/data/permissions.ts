@@ -121,9 +121,10 @@ const KEY_PERSONA = 'rwb_persona_v1'
 const KEY_MATRIX  = 'rwb_permission_matrix_v1'
 
 export function loadPersona(): Persona {
-  if (typeof window === 'undefined') return 'agency'
+  if (typeof window === 'undefined') return 'sponsor'
   const v = window.localStorage.getItem(KEY_PERSONA)
-  return v === 'sponsor' || v === 'mlr' ? v : 'agency'
+  if (v === 'sponsor' || v === 'mlr' || v === 'agency') return v
+  return 'sponsor'
 }
 export function savePersona(p: Persona) {
   if (typeof window === 'undefined') return
