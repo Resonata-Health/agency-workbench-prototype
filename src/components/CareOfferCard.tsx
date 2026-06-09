@@ -53,19 +53,51 @@ export function CareOfferCard({
             {offer.description}
           </p>
 
-          <div className="mt-2 flex items-center flex-wrap gap-x-2 gap-y-1 text-[12px] text-charcoal-14">
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full border border-green-4 text-green-14 bg-charcoal-white text-[11px] font-medium">
-              Approved Treatment
-            </span>
-            <span className="text-charcoal-7">·</span>
-            <span>{offer.subgroups} subgroups</span>
-            <span className="text-charcoal-7">·</span>
-            <span className="text-violet-10 font-medium">Advertising Offer</span>
-            <span className="text-charcoal-7">·</span>
-            <span className="font-medium text-charcoal-15">{offer.matchesToDate.toLocaleString()} matches to date</span>
-            <span className="text-charcoal-7">·</span>
-            <span>{offer.updatedLabel}</span>
-          </div>
+          {offer.offerKind === 'clinical_trial' ? (
+            <div className="mt-2 flex items-center flex-wrap gap-x-2 gap-y-1 text-[12px] text-charcoal-14">
+              {offer.phase && <span>{offer.phase}</span>}
+              {offer.cohorts !== undefined && (
+                <>
+                  <span className="text-charcoal-7">·</span>
+                  <span>{offer.cohorts} cohorts</span>
+                </>
+              )}
+              {offer.arms !== undefined && (
+                <>
+                  <span className="text-charcoal-7">·</span>
+                  <span>{offer.arms} arms</span>
+                </>
+              )}
+              {offer.sites !== undefined && (
+                <>
+                  <span className="text-charcoal-7">·</span>
+                  <span>{offer.sites} sites</span>
+                </>
+              )}
+              {offer.enrollmentComplete && (
+                <>
+                  <span className="text-charcoal-7">·</span>
+                  <span>Enrollment complete</span>
+                </>
+              )}
+              <span className="text-charcoal-7">·</span>
+              <span>{offer.updatedLabel}</span>
+            </div>
+          ) : (
+            <div className="mt-2 flex items-center flex-wrap gap-x-2 gap-y-1 text-[12px] text-charcoal-14">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full border border-green-4 text-green-14 bg-charcoal-white text-[11px] font-medium">
+                Approved Treatment
+              </span>
+              <span className="text-charcoal-7">·</span>
+              <span>{offer.subgroups} subgroups</span>
+              <span className="text-charcoal-7">·</span>
+              <span className="text-violet-10 font-medium">Advertising Offer</span>
+              <span className="text-charcoal-7">·</span>
+              <span className="font-medium text-charcoal-15">{offer.matchesToDate.toLocaleString()} matches to date</span>
+              <span className="text-charcoal-7">·</span>
+              <span>{offer.updatedLabel}</span>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0">

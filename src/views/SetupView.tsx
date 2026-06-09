@@ -9,8 +9,21 @@ import { CONTAINER } from '@/components/container'
 import { getOfferStatus } from '@/data/offerStatusOverrides'
 import { findOffer, setupFieldsFor, type SponsorName } from '@/data/mockCareOffers'
 import { usePermissions } from '@/app/providers'
+import SetupWizard from '@/views/setup/SetupWizard'
 
 export default function SetupView() {
+  const { can } = usePermissions()
+
+  // Sponsor admin / standard get the multi-step wizard (Overview → Criteria → Contacts).
+  // Agency / MLR / anyone without clinical-edit get the read-only summary view below.
+  if (can('edit_setup_clinical')) {
+    return <SetupWizard />
+  }
+
+  return <SetupReadOnly />
+}
+
+function SetupReadOnly() {
   const router = useRouter()
   const params = useSearchParams()
   const offer = useMemo(() => findOffer(params.get('offer')), [params])
