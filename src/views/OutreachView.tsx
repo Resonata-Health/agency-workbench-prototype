@@ -18,13 +18,11 @@ import {
   type Artifact,
   type OutreachDrafts,
   type EmailDraft,
-  type CardDraft,
   type DetailsDraft
 } from '@/data/outreachContent'
 import { Segmented } from '@/components/outreach/Segmented'
 import { TemplatesBar } from '@/components/outreach/TemplatesBar'
 import { EmailEditor } from '@/components/outreach/EmailEditor'
-import { CardEditor } from '@/components/outreach/CardEditor'
 import { DetailsEditor } from '@/components/outreach/DetailsEditor'
 import { PhonePreview } from '@/components/outreach/PhonePreview'
 import { SelectedPatientsPullTab } from '@/components/outreach/SelectedPatientsPullTab'
@@ -56,8 +54,8 @@ export default function OutreachView() {
   const [sponsor, setSponsor] = useState<SponsorName>(offer.sponsor as SponsorName)
 
   const viewParam = params.get('view')
-  const active: Artifact =
-    viewParam === 'card' || viewParam === 'details' ? viewParam : 'email'
+  // Sponsor Card was removed from the agency flow — fall back to email if a stale URL lands here.
+  const active: Artifact = viewParam === 'details' ? 'details' : 'email'
 
   const [drafts, setDrafts] = useState<OutreachDrafts>(() => seedDrafts(offer))
   const [dirty, setDirty] = useState(false)
@@ -248,14 +246,6 @@ export default function OutreachView() {
                     readOnly={readOnly}
                     update={(p: Partial<EmailDraft>) => patchActive<EmailDraft>(p)}
                     onOpenRecipients={() => setDrawerOpen(true)}
-                  />
-                )}
-                {active === 'card' && (
-                  <CardEditor
-                    draft={drafts.card}
-                    meta={meta}
-                    readOnly={readOnly}
-                    update={(p: Partial<CardDraft>) => patchActive<CardDraft>(p)}
                   />
                 )}
                 {active === 'details' && (

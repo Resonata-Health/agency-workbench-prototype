@@ -4,7 +4,6 @@ import type { Artifact } from '@/data/outreachContent'
 
 const OPTS: { id: Artifact; label: string }[] = [
   { id: 'email', label: 'Email' },
-  { id: 'card', label: 'Sponsor Card' },
   { id: 'details', label: 'Details page' }
 ]
 
