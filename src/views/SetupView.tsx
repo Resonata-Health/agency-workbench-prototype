@@ -10,6 +10,8 @@ import { getOfferStatus } from '@/data/offerStatusOverrides'
 import { findOffer, setupFieldsFor, type SponsorName } from '@/data/mockCareOffers'
 import { usePermissions } from '@/app/providers'
 import SetupWizard from '@/views/setup/SetupWizard'
+import { AudienceChip, CopyIcon } from '@/views/setup/OverviewStep'
+import { ConfirmDialog } from '@/components/outreach/ConfirmDialog'
 
 export default function SetupView() {
   const { can } = usePermissions()
@@ -43,11 +45,35 @@ function SetupReadOnly() {
   const [displayTitle, setDisplayTitle] = useState(fields.displayTitle)
   const [endDate, setEndDate] = useState('')
 
-  // Patient/provider-facing fields (editable by Sponsor + Agency, read-only for MLR).
+  // Patient-facing fields (existing values become patient values per spec).
   const drugName = offer.title.split(/[—-]/)[0].trim()
   const [optionName, setOptionName]         = useState(drugName)
   const [optionSubtitle, setOptionSubtitle] = useState(fields.displayTitle)
   const [pfDescription, setPfDescription]   = useState(fields.briefSummary)
+
+  // Provider-facing fields, backfilled from patient values for existing offers.
+  const [provOptionName, setProvOptionName]         = useState(drugName)
+  const [provOptionSubtitle, setProvOptionSubtitle] = useState(fields.displayTitle)
+  const [provDescription, setProvDescription]       = useState(fields.briefSummary)
+
+  const [showCopyConfirm, setShowCopyConfirm] = useState(false)
+
+  const anyProviderFilled =
+    provOptionName.trim().length > 0 ||
+    provOptionSubtitle.trim().length > 0 ||
+    provDescription.trim().length > 0
+
+  const doCopyFromPatient = () => {
+    setProvOptionName(optionName)
+    setProvOptionSubtitle(optionSubtitle)
+    setProvDescription(pfDescription)
+    setShowCopyConfirm(false)
+  }
+
+  const onCopyClicked = () => {
+    if (anyProviderFilled) setShowCopyConfirm(true)
+    else doCopyFromPatient()
+  }
 
   return (
     <div className="min-h-screen bg-charcoal-1 flex flex-col">
@@ -122,11 +148,11 @@ function SetupReadOnly() {
               </FieldRow>
             </section>
 
-            {/* For patient and provider facing communications */}
+            {/* For patient-facing communications */}
             <section className="flex flex-col gap-4">
-              <h2 className="text-[14px] font-semibold text-charcoal-15">
-                For patient and provider facing communications
-                <span className="text-[11px] font-normal text-red-13 ml-2">* Required</span>
+              <h2 className="text-[14px] font-semibold text-charcoal-15 flex items-center gap-2">
+                For patient-facing communications
+                <AudienceChip audience="patient" />
               </h2>
 
               <FieldRow label={<>Option name <span className="text-red-13">*</span></>}>
@@ -165,6 +191,65 @@ function SetupReadOnly() {
                   />
                 ) : (
                   <ReadonlyBox value={pfDescription} />
+                )}
+              </FieldRow>
+            </section>
+
+            {/* For provider-facing communications */}
+            <section className="flex flex-col gap-4">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-[14px] font-semibold text-charcoal-15 flex items-center gap-2">
+                  For provider-facing communications
+                  <AudienceChip audience="provider" />
+                </h2>
+                {canEditPatientFacing && (
+                  <button
+                    type="button"
+                    onClick={onCopyClicked}
+                    className="text-[12px] font-medium text-blue-12 hover:underline inline-flex items-center gap-1"
+                  >
+                    <CopyIcon />
+                    Copy from patient-facing
+                  </button>
+                )}
+              </div>
+
+              <FieldRow label={<>Option name <span className="text-red-13">*</span></>}>
+                {canEditPatientFacing ? (
+                  <input
+                    type="text"
+                    value={provOptionName}
+                    onChange={e => setProvOptionName(e.target.value)}
+                    className="w-full bg-charcoal-white border border-charcoal-6 rounded-md px-[11px] py-[7px] text-[13px] text-charcoal-18 focus:outline-none focus:border-blue-10"
+                  />
+                ) : (
+                  <ReadonlyBox value={provOptionName} />
+                )}
+              </FieldRow>
+
+              <FieldRow label={<>Option subtitle <span className="text-red-13">*</span></>}>
+                {canEditPatientFacing ? (
+                  <input
+                    type="text"
+                    value={provOptionSubtitle}
+                    onChange={e => setProvOptionSubtitle(e.target.value)}
+                    className="w-full bg-charcoal-white border border-charcoal-6 rounded-md px-[11px] py-[7px] text-[13px] text-charcoal-18 focus:outline-none focus:border-blue-10"
+                  />
+                ) : (
+                  <ReadonlyBox value={provOptionSubtitle} />
+                )}
+              </FieldRow>
+
+              <FieldRow label={<>Description <span className="text-red-13">*</span></>}>
+                {canEditPatientFacing ? (
+                  <textarea
+                    value={provDescription}
+                    onChange={e => setProvDescription(e.target.value)}
+                    rows={3}
+                    className="w-full bg-charcoal-white border border-charcoal-6 rounded-md px-[11px] py-[7px] text-[13px] text-charcoal-18 focus:outline-none focus:border-blue-10 resize-y leading-relaxed"
+                  />
+                ) : (
+                  <ReadonlyBox value={provDescription} />
                 )}
               </FieldRow>
             </section>
@@ -220,6 +305,17 @@ function SetupReadOnly() {
           </div>
         </div>
       </main>
+
+      {showCopyConfirm && (
+        <ConfirmDialog
+          title="Replace provider-facing content with the patient-facing values?"
+          body="This overwrites all three provider-facing fields (Option name, Option subtitle, Description). You can still edit them afterwards."
+          confirmLabel="Yes, replace"
+          destructive
+          onConfirm={doCopyFromPatient}
+          onCancel={() => setShowCopyConfirm(false)}
+        />
+      )}
     </div>
   )
 }

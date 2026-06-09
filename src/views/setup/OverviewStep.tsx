@@ -4,6 +4,7 @@ import { useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { StatusBadge } from '@/components/StatusBadge'
 import { CONTAINER } from '@/components/container'
+import { ConfirmDialog } from '@/components/outreach/ConfirmDialog'
 import { getOfferStatus } from '@/data/offerStatusOverrides'
 import type { CareOffer } from '@/data/mockCareOffers'
 import { setupFieldsFor } from '@/data/mockCareOffers'
@@ -65,11 +66,35 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
   )
   const [endDate, setEndDate]               = useState('')
 
-  // Patient/provider-facing fields
+  // Patient-facing fields (existing values become patient values per spec).
   const drugName = offer.title.split(/[—-]/)[0].trim()
   const [optionName, setOptionName]         = useState(drugName)
   const [optionSubtitle, setOptionSubtitle] = useState(fields.displayTitle)
   const [pfDescription, setPfDescription]   = useState(fields.briefSummary)
+
+  // Provider-facing fields. Backfilled from patient values so existing offers stay valid.
+  const [provOptionName, setProvOptionName]         = useState(drugName)
+  const [provOptionSubtitle, setProvOptionSubtitle] = useState(fields.displayTitle)
+  const [provDescription, setProvDescription]       = useState(fields.briefSummary)
+
+  const [showCopyConfirm, setShowCopyConfirm] = useState(false)
+
+  const anyProviderFilled =
+    provOptionName.trim().length > 0 ||
+    provOptionSubtitle.trim().length > 0 ||
+    provDescription.trim().length > 0
+
+  const doCopyFromPatient = () => {
+    setProvOptionName(optionName)
+    setProvOptionSubtitle(optionSubtitle)
+    setProvDescription(pfDescription)
+    setShowCopyConfirm(false)
+  }
+
+  const onCopyClicked = () => {
+    if (anyProviderFilled) setShowCopyConfirm(true)
+    else doCopyFromPatient()
+  }
 
   const removeIntervention = (id: string) =>
     setInterventions(prev => prev.filter(i => i.id !== id))
@@ -181,11 +206,11 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
           </Field>
         </section>
 
-        {/* For patient and provider facing communications */}
+        {/* For patient-facing communications */}
         <section className="flex flex-col gap-4">
-          <h2 className="text-[14px] font-semibold text-charcoal-15">
-            For patient and provider facing communications
-            <span className="text-[11px] font-normal text-red-13 ml-2">* Required</span>
+          <h2 className="text-[14px] font-semibold text-charcoal-15 flex items-center gap-2">
+            For patient-facing communications
+            <AudienceChip audience="patient" />
           </h2>
 
           <Field label="Option name" required>
@@ -210,6 +235,53 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
             <textarea
               value={pfDescription}
               onChange={e => setPfDescription(e.target.value)}
+              disabled={!canEditPatientFacing}
+              rows={3}
+              className={`${inputClass} resize-y leading-relaxed disabled:bg-charcoal-1 disabled:text-charcoal-14`}
+            />
+          </Field>
+        </section>
+
+        {/* For provider-facing communications */}
+        <section className="flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-[14px] font-semibold text-charcoal-15 flex items-center gap-2">
+              For provider-facing communications
+              <AudienceChip audience="provider" />
+            </h2>
+            <button
+              type="button"
+              onClick={onCopyClicked}
+              disabled={!canEditPatientFacing}
+              className="text-[12px] font-medium text-blue-12 hover:underline inline-flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline"
+            >
+              <CopyIcon />
+              Copy from patient-facing
+            </button>
+          </div>
+
+          <Field label="Option name" required>
+            <input
+              value={provOptionName}
+              onChange={e => setProvOptionName(e.target.value)}
+              disabled={!canEditPatientFacing}
+              className={`${inputClass} disabled:bg-charcoal-1 disabled:text-charcoal-14`}
+            />
+          </Field>
+
+          <Field label="Option subtitle" required>
+            <input
+              value={provOptionSubtitle}
+              onChange={e => setProvOptionSubtitle(e.target.value)}
+              disabled={!canEditPatientFacing}
+              className={`${inputClass} disabled:bg-charcoal-1 disabled:text-charcoal-14`}
+            />
+          </Field>
+
+          <Field label="Description" required>
+            <textarea
+              value={provDescription}
+              onChange={e => setProvDescription(e.target.value)}
               disabled={!canEditPatientFacing}
               rows={3}
               className={`${inputClass} resize-y leading-relaxed disabled:bg-charcoal-1 disabled:text-charcoal-14`}
@@ -332,6 +404,17 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
           </button>
         </div>
       </FooterNav>
+
+      {showCopyConfirm && (
+        <ConfirmDialog
+          title="Replace provider-facing content with the patient-facing values?"
+          body="This overwrites all three provider-facing fields (Option name, Option subtitle, Description). You can still edit them afterwards."
+          confirmLabel="Yes, replace"
+          destructive
+          onConfirm={doCopyFromPatient}
+          onCancel={() => setShowCopyConfirm(false)}
+        />
+      )}
     </>
   )
 }
@@ -378,6 +461,27 @@ export function FooterNav({ children }: { children: ReactNode }) {
     <div className={`${CONTAINER} flex justify-between items-center pt-6`}>
       {children}
     </div>
+  )
+}
+
+export function AudienceChip({ audience }: { audience: 'patient' | 'provider' }) {
+  const cls = audience === 'patient'
+    ? 'bg-green-2 text-green-14 border-green-5'
+    : 'bg-violet-2 text-violet-14 border-violet-5'
+  const label = audience === 'patient' ? 'Patient' : 'Provider'
+  return (
+    <span className={`inline-flex items-center text-[10px] uppercase font-semibold tracking-wide px-1.5 py-0.5 rounded border ${cls}`}>
+      {label}
+    </span>
+  )
+}
+
+export function CopyIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden>
+      <rect x="3.5" y="3.5" width="7" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M2 8V2.5C2 1.95 2.45 1.5 3 1.5h5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
   )
 }
 
