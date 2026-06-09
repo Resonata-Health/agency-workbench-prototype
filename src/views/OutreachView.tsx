@@ -33,6 +33,7 @@ import { MessagesDialog } from '@/components/outreach/MessagesDialog'
 type DialogKind =
   | { kind: 'discard' }
   | { kind: 'submit' }
+  | { kind: 'activate' }
   | { kind: 'replaceTemplate'; artifact: Artifact; template: string }
   | { kind: 'saveTemplate' }
   | { kind: 'approve' }
@@ -64,7 +65,7 @@ export default function OutreachView() {
   const [dialog, setDialog] = useState<DialogKind>(null)
   const [busy, setBusy] = useState(false)
 
-  const { can } = usePermissions()
+  const { can, persona } = usePermissions()
   const canEdit    = can('edit_outreach')
   const canSubmit  = can('submit_outreach')
   const canApprove = can('approve_outreach')
@@ -77,6 +78,10 @@ export default function OutreachView() {
   const inMlrReview   = currentStatus === 'inMlrReview'
   const wasRejected   = currentStatus === 'rejectedByMlr'
   const messages = getRejectionMessages(offer.id)
+
+  // Sponsor-led clinical trials skip MLR review — they activate directly from outreach.
+  const isClinicalTrial = offer.offerKind === 'clinical_trial'
+  const sponsorClinicalTrial = persona === 'sponsor' && isClinicalTrial
 
   // Debounced autosave simulation
   useEffect(() => {
@@ -139,6 +144,16 @@ export default function OutreachView() {
       setDialog(null)
       router.push('/')
     }, 1100)
+  }
+
+  const onActivate = () => {
+    setBusy(true)
+    setTimeout(() => {
+      setOfferStatus(offer.id, 'active')
+      setBusy(false)
+      setDialog(null)
+      router.push('/sponsor')
+    }, 900)
   }
 
   const onApprove = () => {
@@ -282,10 +297,10 @@ export default function OutreachView() {
           {canSubmit && (
             <button
               type="button"
-              onClick={() => setDialog({ kind: 'submit' })}
+              onClick={() => setDialog({ kind: sponsorClinicalTrial ? 'activate' : 'submit' })}
               className="px-5 py-2 rounded-md bg-green-12 hover:bg-green-13 text-charcoal-white text-[13px] font-medium"
             >
-              Submit for Sponsor Approval →
+              {sponsorClinicalTrial ? 'Activate Offer' : 'Submit for Sponsor Approval →'}
             </button>
           )}
           {canReject && inMlrReview && (
@@ -340,6 +355,16 @@ export default function OutreachView() {
           confirmLabel="Yes, proceed"
           busy={busy}
           onConfirm={onSubmit}
+          onCancel={() => (busy ? null : setDialog(null))}
+        />
+      )}
+      {dialog?.kind === 'activate' && (
+        <ConfirmDialog
+          title="Activate this offer?"
+          body="This will mark the offer Active and patient outreach can begin. As a sponsor-led clinical trial, no MLR review is required."
+          confirmLabel="Yes, activate"
+          busy={busy}
+          onConfirm={onActivate}
           onCancel={() => (busy ? null : setDialog(null))}
         />
       )}
