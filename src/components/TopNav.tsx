@@ -69,12 +69,7 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
           {onAdmin && showAdminLink && (
             <>
               <span className="text-charcoal-12">·</span>
-              <Link
-                href="/admin/branding"
-                className="text-[13px] font-medium text-blue-12 hover:underline"
-              >
-                Admin
-              </Link>
+              <span className="text-[14px] text-charcoal-14">Admin</span>
             </>
           )}
         </div>
