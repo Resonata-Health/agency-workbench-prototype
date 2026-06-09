@@ -70,7 +70,6 @@ export default function OutreachView() {
   const canSubmit  = can('submit_outreach')
   const canApprove = can('approve_outreach')
   const canReject  = can('reject_outreach')
-  const readOnly = !canEdit
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Live offer status (drives Approve/Reject visibility and the rejected-banner).
@@ -82,6 +81,19 @@ export default function OutreachView() {
   // Sponsor-led clinical trials skip MLR review — they activate directly from outreach.
   const isClinicalTrial = offer.offerKind === 'clinical_trial'
   const sponsorClinicalTrial = persona === 'sponsor' && isClinicalTrial
+
+  // Edit-mode rule (KD spec):
+  //  - Draft offers are editable on entry. Submit button always shown.
+  //  - Active or Rejected-by-MLR offers start frozen with an "Edit" button.
+  //    Clicking Edit unlocks the editors. The Submit button only appears
+  //    once the user actually changes something (dirty = true).
+  //  - In-MLR-Review / Inactive / Deactivated stay locked end-to-end.
+  const unlockableStatus = currentStatus === 'active' || currentStatus === 'rejectedByMlr'
+  const [editMode, setEditMode] = useState(() => currentStatus === 'inDesign')
+  const readOnly = !canEdit || (!editMode && currentStatus !== 'inDesign')
+
+  const showPrimaryCta = canSubmit && (currentStatus === 'inDesign' || dirty)
+  const showEditButton = canEdit && !editMode && unlockableStatus && !showPrimaryCta
 
   // Debounced autosave simulation
   useEffect(() => {
@@ -285,7 +297,7 @@ export default function OutreachView() {
       {/* Footer */}
       <div className="fixed bottom-0 left-0 right-0 bg-charcoal-white border-t border-charcoal-4 py-3">
         <div className={`${CONTAINER} flex justify-end items-center gap-2.5`}>
-          {canEdit && (
+          {canEdit && editMode && (
             <button
               type="button"
               onClick={() => setDialog({ kind: 'discard' })}
@@ -294,7 +306,16 @@ export default function OutreachView() {
               Discard
             </button>
           )}
-          {canSubmit && (
+          {showEditButton && (
+            <button
+              type="button"
+              onClick={() => setEditMode(true)}
+              className="px-4 py-2 rounded-md border border-charcoal-5 text-[13px] text-charcoal-15 hover:bg-charcoal-1"
+            >
+              Edit
+            </button>
+          )}
+          {showPrimaryCta && (
             <button
               type="button"
               onClick={() => setDialog({ kind: sponsorClinicalTrial ? 'activate' : 'submit' })}
@@ -321,11 +342,13 @@ export default function OutreachView() {
               Approve ✓
             </button>
           )}
-          {!canEdit && !canSubmit && !(canApprove && inMlrReview) && !(canReject && inMlrReview) && (
+          {!(canEdit && editMode) && !showEditButton && !showPrimaryCta && !(canApprove && inMlrReview) && !(canReject && inMlrReview) && (
             <span className="text-[12px] text-charcoal-12">
-              {wasRejected
-                ? 'This was rejected. Resubmission rights are with the agency.'
-                : 'No actions available for your role on this screen.'}
+              {inMlrReview
+                ? 'Pending MLR review — no edits until approved or rejected.'
+                : wasRejected
+                  ? 'This was rejected. Resubmission rights are with the agency.'
+                  : 'No actions available for your role on this screen.'}
             </span>
           )}
         </div>
