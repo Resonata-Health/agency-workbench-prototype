@@ -31,7 +31,7 @@ export function ContactsStep({ offer }: { offer: CareOffer }) {
     ])
 
   const goPrev = () => router.push(`/setup?offer=${offer.id}&step=criteria`)
-  const completeSetup = () => router.push('/sponsor')
+  const completeSetup = () => router.push(`/matches?offer=${offer.id}`)
 
   return (
     <>
