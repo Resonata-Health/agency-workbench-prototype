@@ -265,14 +265,18 @@ export default function OutreachView() {
           {/* Editor + phone preview */}
           <div className="flex-1 grid grid-cols-[1fr_320px] gap-4 min-h-[560px]">
             <div className="bg-charcoal-white border border-charcoal-4 rounded-lg overflow-hidden flex flex-col">
-              <TemplatesBar
-                artifact={active}
-                current={drafts[active].templateId || defaultTemplate[active]}
-                disabled={readOnly}
-                onPick={t => setDialog({ kind: 'replaceTemplate', artifact: active, template: t })}
-                onBlank={() => newFromBlank(active)}
-                onSaveAsTemplate={() => setDialog({ kind: 'saveTemplate' })}
-              />
+              {/* Sponsor Card auto-loads the template that matches the offer kind — */}
+              {/* no picker needed for that artifact.                                 */}
+              {active !== 'card' && (
+                <TemplatesBar
+                  artifact={active}
+                  current={drafts[active].templateId || defaultTemplate[active]}
+                  disabled={readOnly}
+                  onPick={t => setDialog({ kind: 'replaceTemplate', artifact: active, template: t })}
+                  onBlank={() => newFromBlank(active)}
+                  onSaveAsTemplate={() => setDialog({ kind: 'saveTemplate' })}
+                />
+              )}
               <div className="flex-1 overflow-hidden flex flex-col">
                 {active === 'email' && (
                   <EmailEditor
