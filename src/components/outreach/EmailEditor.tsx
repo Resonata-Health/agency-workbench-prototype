@@ -8,25 +8,29 @@ interface Props {
   draft: EmailDraft
   meta: InheritedMeta
   readOnly?: boolean
+  /** Hide the To/recipients row until patient selection is unlocked (offer Active). */
+  showRecipients?: boolean
   update: (patch: Partial<EmailDraft>) => void
   onOpenRecipients: () => void
 }
 
-export function EmailEditor({ draft, meta, readOnly, update, onOpenRecipients }: Props) {
+export function EmailEditor({ draft, meta, readOnly, showRecipients = true, update, onOpenRecipients }: Props) {
   return (
     <div className="flex flex-col h-full">
       {/* Header strip */}
       <div className="px-4 py-3 border-b border-charcoal-4 bg-charcoal-white space-y-2">
-        <div className="flex items-baseline gap-3">
-          <span className="text-[11px] text-charcoal-11 w-14 shrink-0">To</span>
-          <button
-            type="button"
-            onClick={onOpenRecipients}
-            className="bg-blue-1 text-blue-12 text-[11px] font-semibold rounded-full px-2 py-0.5 hover:bg-blue-2"
-          >
-            {meta.recipientCount} selected patients
-          </button>
-        </div>
+        {showRecipients && (
+          <div className="flex items-baseline gap-3">
+            <span className="text-[11px] text-charcoal-11 w-14 shrink-0">To</span>
+            <button
+              type="button"
+              onClick={onOpenRecipients}
+              className="bg-blue-1 text-blue-12 text-[11px] font-semibold rounded-full px-2 py-0.5 hover:bg-blue-2"
+            >
+              {meta.recipientCount} selected patients
+            </button>
+          </div>
+        )}
         <div className="flex items-baseline gap-3">
           <span className="text-[11px] text-charcoal-11 w-14 shrink-0">Subject</span>
           <EditText

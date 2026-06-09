@@ -6,6 +6,7 @@ import { TopNav } from '@/components/TopNav'
 import { WorkbenchTabs } from '@/components/WorkbenchTabs'
 import { KpiCard } from '@/components/KpiCard'
 import { findOffer, setupFieldsFor, type SponsorName } from '@/data/mockCareOffers'
+import { getOfferStatus } from '@/data/offerStatusOverrides'
 import { CONTAINER } from '@/components/container'
 import { usePermissions } from '@/app/providers'
 
@@ -68,9 +69,16 @@ export default function MatchesView() {
   const params = useSearchParams()
   const offer = useMemo(() => findOffer(params.get('offer')), [params])
   const fields = useMemo(() => setupFieldsFor(offer), [offer])
-  const { can } = usePermissions()
+  const { can, persona } = usePermissions()
   const canSelect       = can('select_matches')
   const canViewOutreach = can('view_outreach')
+
+  // Selection is allowed only once the offer is approved/Active. Until then,
+  // checkboxes are hidden across all roles and the sponsor sees an info banner.
+  const currentStatus = getOfferStatus(offer.id) ?? offer.status
+  const selectionUnlocked = currentStatus === 'active'
+  const showCheckboxes = canSelect && selectionUnlocked
+  const showSponsorInfo = persona === 'sponsor' && !selectionUnlocked
 
   const [sponsor, setSponsor] = useState<SponsorName>(offer.sponsor as SponsorName)
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -130,6 +138,12 @@ export default function MatchesView() {
             <KpiCard label="Email Opens"     value={67}  caption="75.3% open rate" accent="blue" />
           </div>
 
+          {showSponsorInfo && (
+            <div className="bg-blue-1 border border-blue-3 text-blue-14 text-[13px] rounded-md px-4 py-2.5">
+              Patients can be selected for outreach once the outreach and patient-facing content has been designed and approved.
+            </div>
+          )}
+
           {/* Matched patients table */}
           <div className="bg-charcoal-white border border-charcoal-4 rounded-lg overflow-hidden">
             <div className="bg-charcoal-1 border-b border-charcoal-4 flex items-center justify-between px-4 py-3">
@@ -143,18 +157,18 @@ export default function MatchesView() {
             <table className="w-full border-collapse">
               <thead className="sticky top-0 bg-charcoal-white">
                 <tr className="text-left text-[12px] font-semibold text-charcoal-12">
-                  <th className="border-b-2 border-charcoal-4 px-3 py-[10px] w-[40px] text-center">
-                    <input
-                      type="checkbox"
-                      aria-label="Select all patients"
-                      checked={allSelected}
-                      ref={el => { if (el) el.indeterminate = someSelected }}
-                      onChange={toggleAll}
-                      disabled={!canSelect}
-                      title={canSelect ? undefined : 'Your role cannot select patients'}
-                      className="size-4 rounded-[2.5px] border border-charcoal-12 accent-blue-10 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-                    />
-                  </th>
+                  {showCheckboxes && (
+                    <th className="border-b-2 border-charcoal-4 px-3 py-[10px] w-[40px] text-center">
+                      <input
+                        type="checkbox"
+                        aria-label="Select all patients"
+                        checked={allSelected}
+                        ref={el => { if (el) el.indeterminate = someSelected }}
+                        onChange={toggleAll}
+                        className="size-4 rounded-[2.5px] border border-charcoal-12 accent-blue-10 cursor-pointer"
+                      />
+                    </th>
+                  )}
                   <Th>Patient ID</Th>
                   <Th>Match Date</Th>
                   <Th>Match Type</Th>
@@ -172,7 +186,7 @@ export default function MatchesView() {
                     group={group}
                     selected={selected}
                     onToggle={toggle}
-                    canSelect={canSelect}
+                    showCheckboxes={showCheckboxes}
                   />
                 ))}
               </tbody>
@@ -238,17 +252,18 @@ function GroupRows({
   group,
   selected,
   onToggle,
-  canSelect
+  showCheckboxes
 }: {
   group: MatchGroup
   selected: Set<string>
   onToggle: (id: string) => void
-  canSelect: boolean
+  showCheckboxes: boolean
 }) {
+  const colSpan = showCheckboxes ? 9 : 8
   return (
     <>
       <tr>
-        <td colSpan={9} className="bg-blue-1 border-b border-charcoal-2 text-center py-1.5 text-[13px] font-semibold text-blue-14">
+        <td colSpan={colSpan} className="bg-blue-1 border-b border-charcoal-2 text-center py-1.5 text-[13px] font-semibold text-blue-14">
           {group.site}
         </td>
       </tr>
@@ -256,16 +271,16 @@ function GroupRows({
         const accent = p.matchType === 'Full Match' ? 'border-l-green-10' : 'border-l-gold-10'
         return (
           <tr key={p.id} className={`border-l-[3px] ${accent} border-b border-charcoal-2 hover:bg-charcoal-1`}>
-            <td className="px-3 py-3 text-center">
-              <input
-                type="checkbox"
-                checked={selected.has(p.id)}
-                onChange={() => onToggle(p.id)}
-                disabled={!canSelect}
-                title={canSelect ? undefined : 'Your role cannot select patients'}
-                className="size-4 rounded-[2.5px] border border-charcoal-12 accent-blue-10 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-              />
-            </td>
+            {showCheckboxes && (
+              <td className="px-3 py-3 text-center">
+                <input
+                  type="checkbox"
+                  checked={selected.has(p.id)}
+                  onChange={() => onToggle(p.id)}
+                  className="size-4 rounded-[2.5px] border border-charcoal-12 accent-blue-10 cursor-pointer"
+                />
+              </td>
+            )}
             <td className="px-3 py-3 text-[12px] text-charcoal-15">{p.id}</td>
             <td className="px-3 py-3 text-[13px] text-charcoal-15">{p.matchDate}</td>
             <td className="px-3 py-3 text-[13px] text-charcoal-15">{p.matchType}</td>

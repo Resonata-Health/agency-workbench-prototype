@@ -2,8 +2,6 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { CONTAINER } from '@/components/container'
-import { findOffer } from '@/data/mockCareOffers'
-import { getOfferStatus } from '@/data/offerStatusOverrides'
 import { usePermissions } from '@/app/providers'
 
 type Tab = 'Setup' | 'Matches' | 'Outreach'
@@ -21,13 +19,10 @@ export function WorkbenchTabs({ active }: { active: Tab }) {
   const qs = offerId ? `?offer=${offerId}` : ''
   const { can } = usePermissions()
 
-  // Hide Matches when the offer is Draft (no patients yet) OR when the persona can't see patients.
-  const offer = findOffer(offerId)
-  const status = getOfferStatus(offer.id) ?? offer.status
+  // Matches is visible to anyone with view_matches at all times. Selection of patients
+  // is gated separately, inside the Matches view, by the offer's approval state.
   const visibleTabs = TABS.filter(t => {
-    if (t.label !== 'Matches') return true
-    if (status === 'inDesign') return false
-    if (!can('view_matches')) return false
+    if (t.label === 'Matches' && !can('view_matches')) return false
     return true
   })
 

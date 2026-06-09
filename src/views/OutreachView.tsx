@@ -244,6 +244,7 @@ export default function OutreachView() {
                     draft={drafts.email}
                     meta={meta}
                     readOnly={readOnly}
+                    showRecipients={currentStatus === 'active'}
                     update={(p: Partial<EmailDraft>) => patchActive<EmailDraft>(p)}
                     onOpenRecipients={() => setDrawerOpen(true)}
                   />
