@@ -25,6 +25,7 @@ const STATUS_MAP: Record<Exclude<Filter, 'All'>, string> = {
 export default function SponsorLandingView() {
   const [sponsor, setSponsor] = useState<SponsorName>(sponsors[0])
   const [filter, setFilter] = useState<Filter>('All')
+  const [query, setQuery] = useState('')
 
   const offers = useMemo(
     () =>
@@ -36,9 +37,16 @@ export default function SponsorLandingView() {
   )
 
   const filtered = useMemo(() => {
-    if (filter === 'All') return offers
-    return offers.filter(o => o.status === STATUS_MAP[filter])
-  }, [offers, filter])
+    const q = query.trim().toLowerCase()
+    return offers.filter(o => {
+      if (filter !== 'All' && o.status !== STATUS_MAP[filter]) return false
+      if (q.length > 0) {
+        const hay = `${o.internalId} ${o.title}`.toLowerCase()
+        if (!hay.includes(q)) return false
+      }
+      return true
+    })
+  }, [offers, filter, query])
 
   const kpis = useMemo(() => {
     return {
@@ -64,14 +72,6 @@ export default function SponsorLandingView() {
               Your clinical trials and approved treatments in {sponsor}.
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              className="bg-green-12 hover:bg-green-13 text-charcoal-white text-[13px] font-medium rounded-md px-4 py-[8px]"
-            >
-              + New Care Option
-            </button>
-          </div>
         </div>
 
         <div className="flex gap-3 mb-6">
@@ -82,24 +82,37 @@ export default function SponsorLandingView() {
           <KpiCard label="Drafts"             value={kpis.inDesign}   caption="Awaiting setup" accent="gold" />
         </div>
 
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2 text-[12px] text-charcoal-12 flex-wrap">
-            <span>Show:</span>
-            {(['All', 'Draft', 'In MLR Review', 'Active', 'Inactive', 'Deactivated'] as Filter[]).map(f => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-3 py-1 rounded-full border text-[12px] ${
-                  f === filter
-                    ? 'border-blue-10 text-blue-12 bg-blue-1 font-medium'
-                    : 'border-charcoal-5 text-charcoal-14 hover:bg-charcoal-1'
-                }`}
-              >
-                {f}
-              </button>
-            ))}
+        <div className="flex items-center justify-between gap-4 mb-3">
+          <div className="flex items-center gap-3 flex-wrap flex-1 min-w-0">
+            <div className="relative w-[360px] max-w-full">
+              <SearchIcon />
+              <input
+                type="search"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                placeholder="Search by NCT number, drug name, or offer title…"
+                className="w-full bg-charcoal-white border border-charcoal-5 rounded-md pl-9 pr-3 py-[7px] text-[13px] text-charcoal-18 placeholder:text-charcoal-11 focus:outline-none focus:border-blue-10"
+              />
+            </div>
+            <span className="text-charcoal-7">|</span>
+            <div className="flex items-center gap-2 text-[12px] text-charcoal-12 flex-wrap">
+              <span>Show:</span>
+              {(['All', 'Draft', 'In MLR Review', 'Active', 'Inactive', 'Deactivated'] as Filter[]).map(f => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={`px-3 py-1 rounded-full border text-[12px] ${
+                    f === filter
+                      ? 'border-blue-10 text-blue-12 bg-blue-1 font-medium'
+                      : 'border-charcoal-5 text-charcoal-14 hover:bg-charcoal-1'
+                  }`}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="text-[12px] text-charcoal-12">
+          <div className="text-[12px] text-charcoal-12 shrink-0">
             {filtered.length} of {offers.length}
           </div>
         </div>
@@ -108,11 +121,27 @@ export default function SponsorLandingView() {
           {filtered.map(o => <CareOfferCard key={o.id} offer={o} linkTo="setup" />)}
           {filtered.length === 0 && (
             <div className="text-center text-charcoal-14 text-[13px] py-10 border border-dashed border-charcoal-5 rounded-lg bg-charcoal-white">
-              No care options match the current filter.
+              No care options match your search or filter.
             </div>
           )}
         </div>
       </main>
     </div>
+  )
+}
+
+function SearchIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      aria-hidden
+      className="absolute left-3 top-1/2 -translate-y-1/2 text-charcoal-11"
+    >
+      <circle cx="6" cy="6" r="4" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M9 9l3 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
   )
 }
