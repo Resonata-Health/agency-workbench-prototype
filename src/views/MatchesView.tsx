@@ -74,11 +74,12 @@ export default function MatchesView() {
   const canViewOutreach = can('view_outreach')
 
   // Selection is allowed only once the offer is approved/Active. Until then,
-  // checkboxes are hidden across all roles and the sponsor sees an info banner.
+  // checkboxes are hidden across all roles. Sponsor and Agency both see an
+  // info banner explaining when selection unlocks.
   const currentStatus = getOfferStatus(offer.id) ?? offer.status
   const selectionUnlocked = currentStatus === 'active'
   const showCheckboxes = canSelect && selectionUnlocked
-  const showSponsorInfo = persona === 'sponsor' && !selectionUnlocked
+  const showLockedInfo = !selectionUnlocked && (persona === 'sponsor' || persona === 'agency')
 
   const [sponsor, setSponsor] = useState<SponsorName>(offer.sponsor as SponsorName)
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -138,7 +139,7 @@ export default function MatchesView() {
             <KpiCard label="Email Opens"     value={67}  caption="75.3% open rate" accent="blue" />
           </div>
 
-          {showSponsorInfo && (
+          {showLockedInfo && (
             <div className="bg-blue-1 border border-blue-3 text-blue-14 text-[13px] rounded-md px-4 py-2.5">
               Patients can be selected for outreach once the outreach and patient-facing content has been designed and approved.
             </div>
