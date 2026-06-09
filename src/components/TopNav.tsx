@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { sponsors, type SponsorName } from '@/data/mockCareOffers'
 import { CONTAINER } from '@/components/container'
 import { asset } from '@/lib/asset'
@@ -24,6 +24,8 @@ const PERSONAS: Persona[] = ['agency', 'sponsor', 'mlr']
 
 export function TopNav({ activeSponsor, onSponsorChange }: Props) {
   const router = useRouter()
+  const pathname = usePathname() ?? ''
+  const onAdmin = pathname.startsWith('/admin')
   const [sponsorOpen, setSponsorOpen] = useState(false)
   const [personaOpen, setPersonaOpen] = useState(false)
   const { persona, setPersona, can } = usePermissions()
@@ -49,7 +51,7 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
   return (
     <header className="bg-charcoal-white border-b border-charcoal-2">
       <div className={`${CONTAINER} h-16 flex items-center justify-between`}>
-        {/* Left: logo + workbench label + (admin link) */}
+        {/* Left: logo + workbench label + (admin breadcrumb when on admin pages) */}
         <div className="flex items-center gap-3">
           <Link href={PERSONA_HOME[persona]} className="flex items-center gap-3 group" aria-label="Home">
             <img src={asset('/resonata-logo.svg')} alt="Resonata" width={28} height={28} className="shrink-0" />
@@ -58,7 +60,23 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
             </span>
           </Link>
           <span className="text-charcoal-12">·</span>
-          <span className="text-[14px] text-charcoal-14">{WORKBENCH_LABEL[persona]}</span>
+          <Link
+            href={PERSONA_HOME[persona]}
+            className="text-[14px] text-charcoal-14 hover:text-blue-12 transition-colors"
+          >
+            {WORKBENCH_LABEL[persona]}
+          </Link>
+          {onAdmin && showAdminLink && (
+            <>
+              <span className="text-charcoal-12">·</span>
+              <Link
+                href="/admin/branding"
+                className="text-[13px] font-medium text-blue-12 hover:underline"
+              >
+                Admin
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Right: persona switcher + (sponsor switcher) + avatar */}
@@ -133,7 +151,7 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
               className="h-7 max-w-[120px] object-contain"
             />
           )}
-          {showAdminLink && (
+          {showAdminLink && !onAdmin && (
             <Link
               href="/admin/branding"
               aria-label="Admin settings"
