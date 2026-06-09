@@ -64,7 +64,7 @@ export const DISPLAY_ROLES: DisplayRoleRow[] = [
     id: 'agency',
     label: 'Media Agency',
     cells: [
-      { level: 'custom', text: 'Edit only these fields:\nDisplay Title, End Date' },
+      { level: 'custom', text: 'Patient and provider communication fields' },
       N, N, N,
       { level: 'custom', text: 'Yes (Commercial · Approved-Treatment medication only)' },
       Y, Y, N, N, Y
