@@ -5,18 +5,8 @@ interface Props {
 
 export function FilterBar({ statusFilter, onStatusChange }: Props) {
   return (
-    <div className="flex items-center justify-between mb-4">
-      <div className="flex items-center gap-2">
-        <Select label="Status" value={statusFilter} onChange={onStatusChange} options={['All', 'Active', 'In MLR Review', 'In Design', 'Inactive', 'Deactivated']} />
-      </div>
-      <div className="flex items-center gap-2">
-        <button className="px-3 py-1.5 rounded-md border border-charcoal-5 bg-charcoal-white text-[13px] text-charcoal-15 hover:bg-charcoal-1">
-          Filter
-        </button>
-        <button className="px-3 py-1.5 rounded-md border border-charcoal-5 bg-charcoal-white text-[13px] text-charcoal-15 hover:bg-charcoal-1">
-          Export
-        </button>
-      </div>
+    <div className="flex items-center mb-4">
+      <Select label="Status" value={statusFilter} onChange={onStatusChange} options={['All', 'Active', 'In MLR Review', 'In Design', 'Inactive', 'Deactivated']} />
     </div>
   )
 }

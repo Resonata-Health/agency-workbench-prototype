@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { TopNav } from '@/components/TopNav'
 import { KpiCard } from '@/components/KpiCard'
@@ -12,7 +11,6 @@ import {
   type SponsorName
 } from '@/data/mockCareOffers'
 import { getOfferStatus } from '@/data/offerStatusOverrides'
-import { usePermissions } from '@/app/providers'
 
 type Filter = 'All' | 'Draft' | 'In MLR Review' | 'Active' | 'Inactive' | 'Deactivated'
 
@@ -27,8 +25,6 @@ const STATUS_MAP: Record<Exclude<Filter, 'All'>, string> = {
 export default function SponsorLandingView() {
   const [sponsor, setSponsor] = useState<SponsorName>(sponsors[0])
   const [filter, setFilter] = useState<Filter>('All')
-  const { can } = usePermissions()
-  const showAdminLink = can('manage_permissions')
 
   const offers = useMemo(
     () =>
@@ -69,14 +65,6 @@ export default function SponsorLandingView() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            {showAdminLink && (
-              <Link
-                href="/admin/branding"
-                className="border border-charcoal-5 hover:bg-charcoal-1 text-[13px] text-charcoal-15 rounded-md px-4 py-[8px]"
-              >
-                Admin
-              </Link>
-            )}
             <button
               type="button"
               className="bg-green-12 hover:bg-green-13 text-charcoal-white text-[13px] font-medium rounded-md px-4 py-[8px]"

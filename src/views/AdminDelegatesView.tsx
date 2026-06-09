@@ -25,11 +25,14 @@ const SEED_DELEGATES: Delegate[] = [
   { id: 'd4', name: 'Dr. Aiden Rao',       email: 'aiden_rao@curex.com',        roleId: 'clinical',      invitedAt: 'Sep 18, 2025', status: 'Invited' }
 ]
 
+// Sponsor Admin is provisioned by Resonata, not invited via this UI.
+const INVITABLE_ROLES = DISPLAY_ROLES.filter(r => r.id !== 'sponsor_admin')
+
 export default function AdminDelegatesView() {
   const [delegates, setDelegates] = useState<Delegate[]>(SEED_DELEGATES)
   const [email, setEmail]   = useState('')
   const [name, setName]     = useState('')
-  const [roleId, setRoleId] = useState<string>(DISPLAY_ROLES[0].id)
+  const [roleId, setRoleId] = useState<string>(INVITABLE_ROLES[0].id)
 
   const canInvite = email.trim().length > 0 && name.trim().length > 0
 
@@ -92,7 +95,7 @@ export default function AdminDelegatesView() {
                 onChange={e => setRoleId(e.target.value)}
                 className="mt-1 w-full bg-charcoal-white border border-charcoal-6 rounded-md px-[11px] py-[7px] text-[13px] text-charcoal-18 focus:outline-none focus:border-blue-10"
               >
-                {DISPLAY_ROLES.map(r => (
+                {INVITABLE_ROLES.map(r => (
                   <option key={r.id} value={r.id}>{r.label}</option>
                 ))}
               </select>

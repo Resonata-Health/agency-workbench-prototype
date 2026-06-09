@@ -57,7 +57,7 @@ export default function LandingPage() {
 
         <div className="flex gap-3 mb-6">
           <KpiCard label="Assigned offers"   value={kpis.total}        caption={`Across ${sponsor}`} />
-          <KpiCard label="In MLR Review"     value={kpis.inMlr}        caption="Awaiting Form 2253 filing" accent="gold" />
+          <KpiCard label="In MLR Review"     value={kpis.inMlr}        caption="Awaiting approval" accent="gold" />
           <KpiCard label="Active"            value={kpis.active}       caption="Live with patients" accent="green" />
           <KpiCard label="Matched patients"  value={kpis.matchedTotal.toLocaleString()} caption="Across all offers" accent="blue" />
           <KpiCard label="Outreach sent"     value={kpis.outreachSent.toLocaleString()} caption="Last 7 days" />

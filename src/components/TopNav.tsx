@@ -59,17 +59,6 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
           </Link>
           <span className="text-charcoal-12">·</span>
           <span className="text-[14px] text-charcoal-14">{WORKBENCH_LABEL[persona]}</span>
-          {showAdminLink && (
-            <>
-              <span className="text-charcoal-12">·</span>
-              <Link
-                href="/admin/branding"
-                className="text-[13px] font-medium text-blue-12 hover:underline"
-              >
-                Admin
-              </Link>
-            </>
-          )}
         </div>
 
         {/* Right: persona switcher + (sponsor switcher) + avatar */}
@@ -144,6 +133,15 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
               className="h-7 max-w-[120px] object-contain"
             />
           )}
+          {showAdminLink && (
+            <Link
+              href="/admin/branding"
+              aria-label="Admin settings"
+              className="text-charcoal-12 hover:text-charcoal-15 p-1"
+            >
+              <GearIcon />
+            </Link>
+          )}
           <div
             className="h-8 w-8 rounded-full bg-blue-10 text-charcoal-white flex items-center justify-center text-[13px] font-semibold"
             title="Jane Doe"
@@ -164,6 +162,24 @@ function Chevron() {
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function GearIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
+      <path
+        d="M10 13a3 3 0 100-6 3 3 0 000 6z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+      />
+      <path
+        d="M16.5 10c0-.5-.05-.98-.14-1.45l1.34-1.05-1.5-2.6-1.6.55a6.5 6.5 0 00-2.5-1.45L11.75 2h-3.5l-.35 1.99a6.5 6.5 0 00-2.5 1.45l-1.6-.54-1.5 2.6 1.34 1.05A6.7 6.7 0 003.5 10c0 .5.05.98.14 1.45l-1.34 1.05 1.5 2.6 1.6-.54a6.5 6.5 0 002.5 1.44L8.25 18h3.5l.35-1.99a6.5 6.5 0 002.5-1.44l1.6.54 1.5-2.6-1.34-1.05c.09-.47.14-.95.14-1.45z"
+        stroke="currentColor"
+        strokeWidth="1.3"
         strokeLinejoin="round"
       />
     </svg>
