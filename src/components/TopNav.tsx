@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { sponsors, type SponsorName } from '@/data/mockCareOffers'
 import { CONTAINER } from '@/components/container'
 import { asset } from '@/lib/asset'
 import { usePermissions } from '@/app/providers'
+import { getStoredLogo, subscribeLogo } from '@/data/logoStore'
 import {
   PERSONA_HOME,
   PERSONA_LABEL,
@@ -26,6 +27,13 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
   const [sponsorOpen, setSponsorOpen] = useState(false)
   const [personaOpen, setPersonaOpen] = useState(false)
   const { persona, setPersona, can } = usePermissions()
+
+  // Sponsor logo (uploaded on /admin/branding). Re-renders when Branding saves.
+  const [sponsorLogo, setSponsorLogo] = useState<string | null>(null)
+  useEffect(() => {
+    setSponsorLogo(getStoredLogo())
+    return subscribeLogo(() => setSponsorLogo(getStoredLogo()))
+  }, [])
 
   // Sponsor switcher is for users who navigate across sponsors (agency operators,
   // MLR reviewers). The Sponsor persona IS the sponsor — no need to switch.
@@ -55,7 +63,7 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
             <>
               <span className="text-charcoal-12">·</span>
               <Link
-                href="/admin/permissions"
+                href="/admin/branding"
                 className="text-[13px] font-medium text-blue-12 hover:underline"
               >
                 Admin
@@ -129,6 +137,13 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
             </div>
           )}
 
+          {sponsorLogo && (
+            <img
+              src={sponsorLogo}
+              alt="Sponsor logo"
+              className="h-7 max-w-[120px] object-contain"
+            />
+          )}
           <div
             className="h-8 w-8 rounded-full bg-blue-10 text-charcoal-white flex items-center justify-center text-[13px] font-semibold"
             title="Jane Doe"

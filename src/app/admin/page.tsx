@@ -3,11 +3,10 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-// Permissions are no longer editable; the read-only matrix lives on /admin/delegates.
 export default function Page() {
   const router = useRouter()
   useEffect(() => {
-    router.replace('/admin/delegates')
+    router.replace('/admin/branding')
   }, [router])
   return null
 }

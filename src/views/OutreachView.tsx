@@ -300,7 +300,7 @@ export default function OutreachView() {
               onClick={() => setDialog({ kind: sponsorClinicalTrial ? 'activate' : 'submit' })}
               className="px-5 py-2 rounded-md bg-green-12 hover:bg-green-13 text-charcoal-white text-[13px] font-medium"
             >
-              {sponsorClinicalTrial ? 'Activate Offer' : 'Submit for Sponsor Approval →'}
+              {sponsorClinicalTrial ? 'Activate Offer' : 'Submit for MLR Approval →'}
             </button>
           )}
           {canReject && inMlrReview && (
@@ -350,7 +350,7 @@ export default function OutreachView() {
       )}
       {dialog?.kind === 'submit' && (
         <ConfirmDialog
-          title="Submit for Sponsor Approval"
+          title="Submit for MLR Approval"
           body="This will submit your changes for review and approval by Sponsor's MLR team. You will not be able to make any edit until these changes are approved. Do you want to proceed?"
           confirmLabel="Yes, proceed"
           busy={busy}

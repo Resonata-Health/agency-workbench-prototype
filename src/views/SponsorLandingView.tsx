@@ -71,7 +71,7 @@ export default function SponsorLandingView() {
           <div className="flex items-center gap-2">
             {showAdminLink && (
               <Link
-                href="/admin/permissions"
+                href="/admin/branding"
                 className="border border-charcoal-5 hover:bg-charcoal-1 text-[13px] text-charcoal-15 rounded-md px-4 py-[8px]"
               >
                 Admin
