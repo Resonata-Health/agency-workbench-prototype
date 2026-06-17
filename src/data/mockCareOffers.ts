@@ -28,7 +28,7 @@ export interface CareOffer {
   enrollmentComplete?: boolean
 }
 
-export const sponsors = ['CureX Pharmaceuticals', 'Nuveero Therapeutics'] as const
+export const sponsors = ['CureX Pharmaceuticals', 'Nuveero Therapeutics', 'NMD Pharma'] as const
 export type SponsorName = (typeof sponsors)[number]
 
 export interface SponsorMeta {
@@ -37,7 +37,8 @@ export interface SponsorMeta {
 
 export const sponsorMeta: Record<SponsorName, SponsorMeta> = {
   'CureX Pharmaceuticals': { outreachSentLast7d: 18420 },
-  'Nuveero Therapeutics':  { outreachSentLast7d: 7840 }
+  'Nuveero Therapeutics':  { outreachSentLast7d: 7840 },
+  'NMD Pharma':            { outreachSentLast7d: 0 }
 }
 
 /* ------------------------------------------------------------------ */
@@ -123,7 +124,8 @@ export const careOffersBySponsor: Record<SponsorName, CareOffer[]> = {
       updatedLabel: 'Last updated: Aug 15, 2025',
       offerKind: 'approved_treatment'
     }
-  ]
+  ],
+  'NMD Pharma': []
 }
 
 /* ------------------------------------------------------------------ */
@@ -206,7 +208,27 @@ export const sponsorPortfolioBySponsor: Record<SponsorName, CareOffer[]> = {
       enrollmentComplete: true
     }
   ],
-  'Nuveero Therapeutics': careOffersBySponsor['Nuveero Therapeutics']
+  'Nuveero Therapeutics': careOffersBySponsor['Nuveero Therapeutics'],
+  'NMD Pharma': [
+    {
+      id: 'nmd670-mg',
+      title: 'NMD670 in adult AChR/MuSK-Ab+ Myasthenia Gravis',
+      internalId: 'NCT06414954',
+      sponsor: 'NMD Pharma',
+      sponsorShort: 'NMD',
+      description:
+        'Proof-of-concept, dose range finding study of NMD670 in adult patients with AChR or MuSK antibody positive MG.',
+      subgroups: 0,
+      matchesToDate: 0,
+      status: 'active',
+      updatedLabel: 'Last updated: Jun 17, 2026',
+      offerKind: 'clinical_trial',
+      officialTitle:
+        'A Phase 2b, Randomised, Double-Blind, Placebo-Controlled Study to Evaluate the Efficacy, Safety, and Tolerability of 3 Dose Levels of NMD670 Over 21 Days in Adult Patients With AChR/MuSK-Ab+ Myasthenia Gravis',
+      displayTitle: 'NMD670 for AChR/MuSK-Ab+ Myasthenia Gravis',
+      phase: 'Phase 2b'
+    }
+  ]
 }
 
 export const allOffers: CareOffer[] = [
@@ -214,7 +236,8 @@ export const allOffers: CareOffer[] = [
   ...careOffersBySponsor['Nuveero Therapeutics'],
   ...sponsorPortfolioBySponsor['CureX Pharmaceuticals'].filter(
     o => !careOffersBySponsor['CureX Pharmaceuticals'].some(a => a.id === o.id)
-  )
+  ),
+  ...sponsorPortfolioBySponsor['NMD Pharma']
 ]
 
 export function findOffer(id: string | null | undefined): CareOffer {

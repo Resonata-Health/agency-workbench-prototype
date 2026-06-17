@@ -5,8 +5,25 @@ import { useRouter } from 'next/navigation'
 import { CONTAINER } from '@/components/container'
 import type { CareOffer } from '@/data/mockCareOffers'
 import { CATEGORIES, SUBGROUPS, type CellValue, type CriteriaCategory } from '@/data/mockEligibilityCriteria'
+import { EmCriteriaStep } from './EmCriteriaStep'
+import { NCT06414954_EM } from '@/data/em/nct06414954'
+
+// Offers with a real Sponsor Eligibility Matrix render the full EM (sections,
+// concepts, slots, expand/collapse, add subgroup/category). Everything else
+// keeps the lightweight in/out grid below.
+const EM_BY_OFFER_ID: Record<string, typeof NCT06414954_EM | undefined> = {
+  'nmd670-mg': NCT06414954_EM
+}
 
 export function CriteriaStep({ offer }: { offer: CareOffer }) {
+  const realEm = EM_BY_OFFER_ID[offer.id]
+  if (realEm) {
+    return <EmCriteriaStep offer={offer} seed={realEm} />
+  }
+  return <SimpleCriteriaGrid offer={offer} />
+}
+
+function SimpleCriteriaGrid({ offer }: { offer: CareOffer }) {
   const router = useRouter()
   const [categories, setCategories] = useState<CriteriaCategory[]>(CATEGORIES)
   const [subgroups, setSubgroups] = useState<string[]>([...SUBGROUPS])
