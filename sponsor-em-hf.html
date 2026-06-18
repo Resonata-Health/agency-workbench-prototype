@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Eligibility Criteria — NCT99000001 · Sponsor Workbench · Resonata</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --bg-alt: #f7f8fa;
+  --bg-page: #f4f5f7;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --text-subtle: #9ca3af;
+  --brand: #16a34a;
+  --brand-soft: #dcfce7;
+  --brand-deep: #15803d;
+  --blue: #2563eb;
+  --blue-soft: #dbeafe;
+  --amber: #d97706;
+  --amber-soft: #fef3c7;
+  --red: #dc2626;
+  --red-soft: #fee2e2;
+  --purple: #7c3aed;
+  --purple-soft: #ede9fe;
+  --teal: #0d9488;
+  --teal-soft: #ccfbf1;
+  --rose: #e11d48;
+  --rose-soft: #ffe4e6;
+  --radius: 8px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.04);
+  --shadow: 0 4px 12px rgba(0,0,0,.06);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+  color: var(--text);
+  font-size: 14px;
+  background: var(--bg-page);
+  min-height: 100vh;
+}
+button { font-family: inherit; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+
+/* ── Top bar ─────────────────────────────────── */
+.top-bar {
+  position: sticky; top: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 52px; padding: 0 28px;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+}
+.top-bar-left { display: flex; align-items: center; gap: 14px; }
+.logo-mark { width: 28px; height: 28px; position: relative; }
+.logo-mark .ring { position: absolute; border-radius: 50%; border: 2.2px solid var(--brand); }
+.logo-mark .ring-outer { width: 28px; height: 28px; top: 0; left: 0; opacity: .35; }
+.logo-mark .ring-mid { width: 20px; height: 20px; top: 4px; left: 4px; opacity: .6; }
+.logo-mark .ring-inner { width: 12px; height: 12px; top: 8px; left: 8px; background: var(--brand); border: none; }
+.logo-wordmark { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
+.workbench-label {
+  font-size: 12.5px; color: var(--text-muted);
+  border-left: 1px solid var(--border); padding-left: 14px;
+}
+.top-bar-right { display: flex; align-items: center; gap: 14px; }
+.org-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 12px 4px 6px;
+  background: var(--blue-soft); border-radius: 20px;
+}
+.org-icon {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--blue); display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 10px; font-weight: 700;
+}
+.org-name { font-size: 13px; font-weight: 600; color: var(--blue); }
+.avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--brand-soft); color: var(--brand-deep);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; border: 1.5px solid var(--brand);
+}
+
+/* ── Trial header ─────────────────────────────── */
+.trial-header {
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  padding: 16px 28px 0;
+}
+.trial-header-inner { max-width: 1200px; }
+.trial-top-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 4px;
+}
+.trial-nct { font-size: 15px; font-weight: 700; color: var(--text); }
+.trial-desc { font-size: 13px; color: var(--text-muted); margin-left: 10px; }
+.trial-updated { font-size: 12px; color: var(--text-subtle); white-space: nowrap; }
+.trial-tab-row { display: flex; gap: 0; margin-top: 12px; }
+.trial-tab {
+  padding: 8px 16px; font-size: 13px; font-weight: 500;
+  color: var(--text-muted); border-bottom: 2px solid transparent;
+  cursor: pointer; transition: all .15s;
+}
+.trial-tab:hover { color: var(--text); }
+.trial-tab.active {
+  color: var(--blue); border-bottom-color: var(--blue); font-weight: 600;
+}
+
+/* ── Stepper ──────────────────────────────────── */
+.stepper-wrap {
+  display: flex; justify-content: center;
+  padding: 28px 0 20px; background: var(--bg-page);
+}
+.stepper { display: flex; align-items: center; gap: 0; }
+.step {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  min-width: 120px; position: relative;
+}
+.step-circle {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 600;
+  background: var(--bg); border: 2px solid var(--border-strong);
+  color: var(--text-muted); position: relative; z-index: 2;
+}
+.step.done .step-circle {
+  background: var(--brand); border-color: var(--brand); color: white;
+}
+.step.active .step-circle {
+  background: var(--blue); border-color: var(--blue); color: white;
+}
+.step-label { font-size: 12.5px; color: var(--text-muted); font-weight: 500; }
+.step.active .step-label { color: var(--text); font-weight: 600; }
+.step-line {
+  width: 80px; height: 2px; background: var(--border-strong);
+  margin: 0 -8px; margin-bottom: 22px; z-index: 1;
+}
+.step-line.done { background: var(--brand); }
+
+/* ── Content area ─────────────────────────────── */
+.content-area {
+  max-width: 1200px; margin: 0 auto; padding: 0 28px 100px;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 13px; color: var(--blue); margin-bottom: 12px;
+  cursor: pointer;
+}
+.back-link:hover { text-decoration: underline; }
+.page-title {
+  font-size: 22px; font-weight: 700; letter-spacing: -0.3px;
+  margin-bottom: 24px; line-height: 1.3;
+}
+
+/* ── Matrix ───────────────────────────────────── */
+.matrix {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.matrix-scroll { overflow-x: auto; }
+.matrix-table {
+  width: 100%; border-collapse: collapse; table-layout: fixed;
+  min-width: 800px;
+}
+.matrix-table col.col-criteria { width: 280px; }
+.matrix-table col.col-sub { width: 140px; }
+.matrix-table col.col-add { width: 120px; }
+
+/* ── Table header ─────────────────────────────── */
+.matrix-table thead th {
+  background: var(--bg-alt); padding: 14px 12px;
+  font-size: 11px; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  text-align: center; border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  position: sticky; top: 52px; z-index: 100;
+}
+.matrix-table thead th:first-child { text-align: left; padding-left: 20px; }
+.matrix-table thead th.add-col {
+  color: var(--blue); font-weight: 500; text-transform: none;
+  letter-spacing: 0; cursor: pointer;
+}
+.matrix-table thead th.add-col:hover { background: var(--blue-soft); }
+
+/* ── Section rows ─────────────────────────────── */
+.section-row td {
+  padding: 0; border-bottom: 1px solid var(--border);
+  background: #f0f4ff;
+}
+.section-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 20px; cursor: pointer; user-select: none;
+}
+.section-header:hover { background: var(--bg-alt); }
+.section-name {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.4px; color: var(--text);
+}
+.section-badge {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--blue); color: white;
+  font-size: 10px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.section-chevron {
+  font-size: 12px; color: var(--text-subtle); transition: transform .2s;
+  display: inline-block; width: 14px; text-align: center;
+}
+.section-chevron.collapsed { transform: rotate(-90deg); }
+
+/* ── Concept rows ─────────────────────────────── */
+.concept-row td {
+  padding: 0; border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.concept-row:hover td { background: #fafbfc; }
+.concept-row td:first-child { padding: 0; }
+
+.criterion-cell {
+  display: flex; align-items: center; gap: 8px;
+  padding: 11px 12px 11px 40px; min-height: 44px;
+  flex-wrap: wrap;
+}
+.expand-chevron {
+  font-size: 12px; color: var(--text-subtle);
+  cursor: pointer; width: 16px; text-align: center;
+  transition: transform .2s; flex-shrink: 0;
+  display: inline-block; line-height: 1;
+}
+.expand-chevron.expanded { transform: rotate(90deg); }
+.expand-chevron.hidden-chevron { visibility: hidden; }
+.criterion-name {
+  font-size: 13.5px; color: var(--text); line-height: 1.3;
+}
+
+/* ── Verdict badges ───────────────────────────── */
+.cell-center { display: flex; justify-content: center; padding: 8px 6px; }
+.badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 4px 14px; border-radius: 4px;
+  font-size: 11.5px; font-weight: 600; letter-spacing: 0.3px;
+  min-width: 42px; user-select: none;
+}
+.badge-in {
+  background: var(--brand-soft); color: var(--brand-deep);
+  cursor: pointer; transition: all .15s;
+}
+.badge .star {
+  font-size: 10px; margin-left: 2px; color: var(--amber);
+}
+.badge-in:hover { box-shadow: 0 0 0 2px var(--brand); }
+.badge-ex {
+  background: var(--red-soft); color: var(--red);
+  cursor: pointer; transition: all .15s;
+}
+.badge-ex:hover { box-shadow: 0 0 0 2px var(--red); }
+
+.badge-empty {
+  color: var(--text-subtle); font-size: 13px;
+  cursor: pointer; padding: 4px 10px; border-radius: 4px;
+  border: 1px dashed var(--border); transition: all .15s;
+}
+.badge-empty:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-soft); }
+
+
+/* ── Slot rows (expanded modifier details) ───── */
+.slot-row td {
+  padding: 0; border-bottom: 1px solid #f0f1f3;
+  background: #fafbfc;
+}
+.slot-row:last-of-type td { border-bottom: 1px solid var(--border); }
+.slot-label-cell {
+  padding: 8px 12px 8px 64px;
+  font-size: 12.5px; color: var(--text-muted);
+  display: flex; align-items: center; gap: 6px;
+}
+.slot-label-cell .slot-icon {
+  color: var(--text-subtle); font-size: 11px; flex-shrink: 0;
+}
+.slot-value-cell {
+  display: flex; justify-content: center; padding: 6px 6px;
+}
+
+/* ── Slot value pills ─────────────────────────── */
+.slot-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 4px;
+  font-size: 12px; font-weight: 500;
+}
+.slot-pill.numeric {
+  background: transparent; color: var(--text);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 12px; font-weight: 600;
+}
+.slot-pill.ordinal {
+  background: transparent; color: var(--text);
+  font-weight: 600;
+}
+.slot-pill.category {
+  background: transparent; color: var(--text);
+}
+.slot-pill.duration {
+  background: transparent; color: var(--text);
+}
+.slot-pill.result-type {
+  background: transparent; color: var(--text);
+}
+.slot-pill .flag-tag {
+  font-size: 10px; font-weight: 700;
+  background: var(--red-soft); color: var(--red);
+  padding: 0 4px; border-radius: 2px; margin-left: 2px;
+}
+.slot-empty {
+  color: var(--text-subtle); font-size: 12px;
+}
+
+/* ── Inline slot editors ──────────────────────── */
+.slot-input-wrap {
+  display: inline-flex; align-items: center; gap: 0;
+  border-radius: 4px; overflow: hidden;
+  border: 1px solid transparent; transition: border-color .15s;
+}
+.slot-input-wrap:focus-within { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue-soft); }
+
+.slot-input-num {
+  width: 52px; padding: 3px 6px; border: 1px solid var(--border);
+  border-radius: 4px; font-size: 12px; font-weight: 600;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  text-align: center; outline: none;
+  background: #fff; color: var(--text);
+}
+.slot-input-num:focus { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue-soft); }
+
+.slot-select {
+  padding: 3px 20px 3px 8px; border: 1px solid var(--border);
+  border-radius: 4px; font-size: 12px; font-weight: 600;
+  outline: none; cursor: pointer;
+  appearance: none; -webkit-appearance: none;
+  background-repeat: no-repeat;
+  background-position: right 5px center;
+  background-size: 10px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239ca3af'/%3E%3C/svg%3E");
+}
+.slot-select:focus { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue-soft); }
+.slot-select.ordinal { background-color: #fff; color: var(--text); }
+.slot-select.category { background-color: #fff; color: var(--text); }
+.slot-select.result-type { background-color: #fff; color: var(--text); }
+
+.slot-duration-wrap {
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.slot-dur-num {
+  width: 40px; padding: 3px 4px; border: 1px solid var(--border);
+  border-radius: 4px; font-size: 12px; font-weight: 600;
+  text-align: center; outline: none;
+  background: #fff; color: var(--text);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+.slot-dur-num:focus { border-color: var(--teal); box-shadow: 0 0 0 2px var(--teal-soft); }
+.slot-dur-unit {
+  padding: 3px 18px 3px 6px; border: 1px solid var(--border);
+  border-radius: 4px; font-size: 11px; font-weight: 500;
+  outline: none; cursor: pointer;
+  background-color: #fff; color: var(--text);
+  appearance: none; -webkit-appearance: none;
+  background-repeat: no-repeat; background-position: right 4px center; background-size: 8px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%230d9488'/%3E%3C/svg%3E");
+}
+.slot-dur-unit:focus { border-color: var(--teal); }
+
+.slot-input-empty {
+  display: inline-block; padding: 3px 10px; border-radius: 4px;
+  border: 1px dashed var(--border); color: var(--text-subtle);
+  font-size: 12px; cursor: pointer; min-width: 42px; text-align: center;
+}
+.slot-input-empty:hover { border-color: var(--brand); background: var(--brand-soft); }
+
+
+/* ── NEW: Antisignal [A] slot rows ───────────── */
+.slot-row-antisignal td {
+  background: var(--bg);
+}
+.slot-row-antisignal:last-of-type td { border-bottom: 1px solid var(--border); }
+.antisignal-label {
+  color: var(--rose); font-weight: 600;
+}
+
+/* ── NEW: TANDEM IF condition tags ───────────── */
+.tandem-tag {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px 8px; border-radius: 10px;
+  font-size: 10.5px; font-weight: 500;
+  background: #f0f4ff; color: #4b6cb7;
+  border: 1px solid #d6e0f5;
+  margin-left: 6px; white-space: nowrap;
+}
+.tandem-tag .tandem-if {
+  font-weight: 700; color: #3b5998;
+}
+
+/* ── NEW: Compound rule pill and rows ────────── */
+.compound-pill {
+  font-size: 10px; font-weight: 600; color: var(--purple);
+  background: var(--purple-soft); padding: 1px 6px;
+  border-radius: 3px; margin-left: 4px; white-space: nowrap;
+}
+.compound-expr {
+  font-size: 11.5px; color: var(--text-subtle); margin-left: 6px;
+  font-style: italic;
+}
+.component-row td {
+  padding: 0; border-bottom: 1px solid #f0f1f3;
+  background: #faf8ff;
+}
+.component-row:last-of-type td { border-bottom: 1px solid var(--border); }
+.component-label-cell {
+  padding: 7px 12px 7px 74px;
+  font-size: 12px; color: var(--text-muted);
+  display: flex; align-items: center; gap: 6px;
+}
+.component-label-cell .component-icon {
+  color: var(--purple); font-size: 10px; flex-shrink: 0;
+}
+.component-name {
+  font-weight: 500; color: var(--text);
+}
+
+/* ── NEW: INDEX fold banner (AND override) ───── */
+.index-fold-banner {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 20px;
+  background: #f0f4ff;
+  border-bottom: 1px solid var(--border);
+  font-size: 11.5px; color: var(--text-muted);
+}
+.index-fold-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px 7px; border-radius: 3px;
+  background: #fbbf24; color: #78350f;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+/* ── Add-row links ────────────────────────────── */
+.add-row td {
+  padding: 0; border-bottom: 1px solid var(--border);
+}
+.add-row-link {
+  display: flex; align-items: center; gap: 4px;
+  padding: 8px 20px; font-size: 12.5px; color: var(--blue);
+  cursor: pointer; transition: background .1s;
+}
+.add-row-link:hover { background: var(--blue-soft); }
+
+/* ── Add Category ─────────────────────────────── */
+.add-category-row td { padding: 0; }
+.add-category-cell {
+  display: flex; justify-content: center; padding: 16px 20px;
+}
+.add-category-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 20px; border-radius: 20px;
+  border: 1px solid var(--border-strong); background: var(--bg);
+  font-size: 13px; font-weight: 500; color: var(--text-muted);
+  transition: all .15s;
+}
+.add-category-btn:hover {
+  border-color: var(--brand); color: var(--brand); background: var(--brand-soft);
+}
+.add-category-btn svg { flex-shrink: 0; }
+
+/* ── Footer bar ───────────────────────────────── */
+.footer-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px; padding: 0 28px;
+  background: var(--bg); border-top: 1px solid var(--border);
+  box-shadow: 0 -2px 8px rgba(0,0,0,.04);
+}
+.footer-left { display: flex; gap: 12px; }
+.footer-right { display: flex; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border-radius: 6px;
+  font-size: 13px; font-weight: 500;
+  border: 1px solid var(--border-strong); background: var(--bg);
+  color: var(--text); transition: all .15s; white-space: nowrap;
+}
+.btn:hover { background: var(--bg-alt); }
+.btn-primary {
+  background: var(--brand); color: white; border-color: var(--brand-deep);
+}
+.btn-primary:hover { background: var(--brand-deep); }
+
+/* ── Matrix toolbar ──────────────────────────── */
+.matrix-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 0 10px 0;
+}
+.matrix-toolbar-right {
+  display: flex; align-items: center; gap: 8px;
+}
+.toolbar-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: 5px;
+  font-size: 12px; font-weight: 500;
+  border: 1px solid var(--border); background: var(--bg);
+  color: var(--text-muted); cursor: pointer; transition: all .15s;
+  white-space: nowrap;
+}
+.toolbar-btn:hover { background: var(--bg-alt); color: var(--text); border-color: var(--border-strong); }
+.toolbar-btn svg { flex-shrink: 0; }
+
+/* ── Per-section expand/collapse toggle ──────── */
+.section-toggle {
+  margin-left: auto;
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 4px;
+  font-size: 10.5px; font-weight: 500; text-transform: none;
+  letter-spacing: 0; color: var(--text-subtle);
+  background: transparent; border: none; cursor: pointer;
+  transition: all .15s; opacity: 0;
+}
+.section-header:hover .section-toggle { opacity: 1; }
+.section-toggle:hover { background: rgba(0,0,0,.05); color: var(--text-muted); }
+
+/* ── Modal ────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 400;
+  background: rgba(0,0,0,.3);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden; transition: all .2s ease;
+}
+.modal-backdrop.open { opacity: 1; visibility: visible; }
+.modal {
+  background: var(--bg); border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.15);
+  width: 420px; max-width: 90vw;
+  transform: translateY(10px); transition: transform .2s ease;
+}
+.modal-backdrop.open .modal { transform: translateY(0); }
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px 14px; border-bottom: 1px solid var(--border);
+}
+.modal-header h3 { font-size: 16px; font-weight: 600; }
+.modal-close {
+  background: none; border: none; font-size: 18px;
+  color: var(--text-muted); padding: 2px 6px; border-radius: 4px;
+}
+.modal-close:hover { background: var(--bg-alt); }
+.modal-body { padding: 18px 20px; }
+.modal-body label {
+  display: block; font-size: 12px; font-weight: 600;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.3px; margin-bottom: 6px;
+}
+.modal-body input[type="text"] {
+  width: 100%; padding: 9px 12px; border: 1px solid var(--border-strong);
+  border-radius: 6px; font-size: 14px; outline: none;
+  font-family: inherit;
+}
+.modal-body input:focus { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue-soft); }
+.modal-footer {
+  display: flex; justify-content: flex-end; gap: 8px;
+  padding: 14px 20px; border-top: 1px solid var(--border);
+}
+
+/* ── Popover ──────────────────────────────────── */
+.popover {
+  position: fixed; z-index: 310;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  min-width: 220px; max-width: 300px; overflow: hidden;
+}
+.popover-header {
+  padding: 10px 14px 8px; font-size: 11px; font-weight: 600;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.4px; border-bottom: 1px solid var(--border);
+}
+.popover-item {
+  display: block; width: 100%; padding: 9px 14px;
+  font-size: 13px; color: var(--text); background: none;
+  border: none; text-align: left; cursor: pointer; transition: background .1s;
+}
+.popover-item:hover { background: var(--brand-soft); color: var(--brand-deep); }
+
+.hidden { display: none !important; }
+
+/* ── Scrollbar ────────────────────────────────── */
+.matrix-scroll::-webkit-scrollbar { height: 6px; }
+.matrix-scroll::-webkit-scrollbar-track { background: transparent; }
+.matrix-scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 900px) {
+  .matrix-table col.col-criteria { width: 220px; }
+  .matrix-table col.col-sub { width: 110px; }
+  .content-area { padding: 0 16px 100px; }
+  .stepper-wrap { padding: 20px 0 16px; }
+  .step-line { width: 50px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ TOP BAR ═══════ -->
+<header class="top-bar">
+  <div class="top-bar-left">
+    <div class="logo-mark">
+      <div class="ring ring-outer"></div>
+      <div class="ring ring-mid"></div>
+      <div class="ring ring-inner"></div>
+    </div>
+    <span class="logo-wordmark">Resonata</span>
+    <span class="workbench-label">Sponsor Workbench</span>
+  </div>
+  <div class="top-bar-right">
+    <div class="org-pill">
+      <div class="org-icon">N</div>
+      <span class="org-name">Novartis Pharma</span>
+    </div>
+    <div class="avatar">AU</div>
+  </div>
+</header>
+
+<!-- ═══════ TRIAL HEADER ═══════ -->
+<div class="trial-header">
+  <div class="trial-header-inner">
+    <div class="trial-top-row">
+      <div>
+        <span class="trial-nct">NCT99000001</span>
+        <span class="trial-desc">A Study of RES-4471 in Adults With Chronic Heart Failure</span>
+      </div>
+      <span class="trial-updated">Last updated: Jun 14, 2026</span>
+    </div>
+    <div class="trial-tab-row">
+      <div class="trial-tab active">Setup</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ STEPPER ═══════ -->
+<div class="stepper-wrap">
+  <div class="stepper">
+    <div class="step done">
+      <div class="step-circle">&#10003;</div>
+      <span class="step-label">Overview</span>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step active">
+      <div class="step-circle">2</div>
+      <span class="step-label">Criteria</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-circle">3</div>
+      <span class="step-label">Contacts</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ CONTENT ═══════ -->
+<div class="content-area">
+  <a class="back-link" href="#">&#8592; Back</a>
+  <h1 class="page-title">NCT99000001 &#8211; Eligibility Criteria</h1>
+
+  <div class="matrix-toolbar">
+    <div></div>
+    <div class="matrix-toolbar-right">
+      <button class="toolbar-btn" id="globalToggleBtn" onclick="toggleAllGlobal()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M4 5.5L7 8.5L10 5.5"/>
+        </svg>
+        <span id="globalToggleLabel">Collapse All</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="matrix">
+    <div class="matrix-scroll">
+      <table class="matrix-table" id="matrixTable">
+        <colgroup id="colgroup"></colgroup>
+        <thead id="matrixHead"></thead>
+        <tbody id="matrixBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ FOOTER ═══════ -->
+<div class="footer-bar">
+  <div class="footer-left">
+    <button class="btn">Previous: Overview</button>
+  </div>
+  <div class="footer-right">
+    <button class="btn btn-primary" onclick="alert('Navigating to Contacts (prototype)')">Next: Contacts</button>
+  </div>
+</div>
+
+<!-- ═══════ MODAL: ADD SUBGROUP ═══════ -->
+<div class="modal-backdrop" id="addSubgroupModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add Subgroup</h3>
+      <button class="modal-close" onclick="closeModal('addSubgroupModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <label for="subgroupName">Subgroup Name</label>
+      <input type="text" id="subgroupName" placeholder="e.g., HFrEF Severe, High Dose Arm" />
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('addSubgroupModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('addSubgroupModal')">Add Subgroup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ CATEGORY DROPDOWN ═══════ -->
+<div id="categoryDropdown" class="hidden"></div>
+
+
+<script>
+// ══════════════════════════════════════════════════
+// DATA — NCT99000001: Heart Failure trial with
+// V2.0 patterns: E!, Antisignal, TANDEM IF,
+// Compound rules, INDEX: AND override
+// ══════════════════════════════════════════════════
+
+const SUBGROUPS = [
+  { id: 'hfref', name: 'HFrEF (EF <40%)' },
+  { id: 'hfmref', name: 'HFmrEF (EF 40-49%)' },
+  { id: 'hfpef', name: 'HFpEF (EF ≥50%)' }
+];
+
+const SECTIONS = [
+  { id: 'diagnosis', name: 'DIAGNOSIS', addLabel: '+ Add Condition' },
+  { id: 'disease_desc', name: 'DISEASE CHARACTERISTIC', addLabel: '+ Add Characteristic' },
+  { id: 'clinical_scores', name: 'CLINICAL SCORE', addLabel: '+ Add Score' },
+  { id: 'biomarkers', name: 'BIOMARKERS', addLabel: '+ Add Biomarker' },
+  { id: 'medications', name: 'MEDICATIONS', addLabel: '+ Add Medication' },
+  { id: 'procedures', name: 'PROCEDURES', addLabel: '+ Add Procedure' },
+  { id: 'lab_values', name: 'LAB VALUES', addLabel: '+ Add Lab Value' },
+  { id: 'demographics', name: 'DEMOGRAPHICS', addLabel: '+ Add Demographic' },
+  { id: 'group', name: 'GROUP PARAMETRIC', addLabel: '+ Add Group Rule' },
+  { id: 'screening', name: 'SCREENING', addLabel: '+ Add Criterion' }
+];
+
+// Concepts: supports isIndex (I!), isExIndex (E!),
+// antisignal slots, tandem IF, and compound rules
+const CONCEPTS = [
+
+  // ─── DIAGNOSIS ────────────────────────────────
+  {
+    id: 'DX-HF001', section: 'diagnosis',
+    name: 'Heart failure',
+    isIndex: true,
+    verdicts: { hfref: 'I!', hfmref: 'I!', hfpef: 'I!' },
+    slots: [
+      { label: 'Severity: NYHA Class (min)', type: 'ordinal',
+        values: { hfref: 'II', hfmref: 'II', hfpef: 'II' } },
+      { label: 'Severity: NYHA Class (max)', type: 'ordinal',
+        values: { hfref: 'IV', hfmref: 'III', hfpef: 'III' } },
+      { label: 'LVEF (%) — min', type: 'numeric',
+        values: { hfref: null, hfmref: '40', hfpef: '50' } },
+      { label: 'LVEF (%) — max', type: 'numeric',
+        values: { hfref: '40', hfmref: '49', hfpef: null } }
+    ],
+    antisignalSlots: [
+      { label: '[A] LVEF (%) — nadir (Ever)', type: 'numeric',
+        helpText: 'If LVEF was EVER below this threshold, exclude patient',
+        values: { hfref: '15', hfmref: '15', hfpef: null } }
+    ]
+  },
+  {
+    id: 'DX-MAL001', section: 'diagnosis',
+    name: 'Active malignancy',
+    isExIndex: true,
+    verdicts: { hfref: 'E!', hfmref: 'E!', hfpef: 'E!' },
+    slots: [
+      { label: 'Exception: non-melanoma skin cancer', type: 'category',
+        values: { hfref: 'Allowed', hfmref: 'Allowed', hfpef: 'Allowed' } }
+    ]
+  },
+  {
+    id: 'DX-AF001', section: 'diagnosis',
+    name: 'Atrial fibrillation',
+    verdicts: { hfref: 'I', hfmref: 'I', hfpef: 'I' },
+    slots: [
+      { label: 'Rhythm type', type: 'category',
+        values: { hfref: 'Persistent', hfmref: 'Persistent', hfpef: 'Paroxysmal' } }
+    ]
+  },
+  {
+    id: 'DX-CA001', section: 'diagnosis',
+    name: 'Cardiac amyloidosis',
+    verdicts: { hfref: null, hfmref: 'I', hfpef: 'I' },
+    slots: []
+  },
+  {
+    id: 'BM-TTR001', section: 'biomarkers',
+    name: 'TTR mutation',
+    verdicts: { hfref: null, hfmref: 'I', hfpef: 'I' },
+    slots: [
+      { label: 'BM/ResultType', type: 'result-type',
+        values: { hfref: null, hfmref: 'Present', hfpef: 'Present' } }
+    ],
+    antisignalSlots: [
+      { label: '[A] TTR Mutation — Variant (protective)', type: 'category',
+        helpText: 'Protective variants should NOT trigger the inclusion',
+        values: { hfref: null, hfmref: 'R104H', hfpef: 'T119M' } }
+    ]
+  },
+
+  // ─── DEMOGRAPHICS ─────────────────────────────
+  {
+    id: 'DM-C0000001', section: 'demographics',
+    name: 'Age (Years)',
+    verdicts: { hfref: 'I', hfmref: 'I', hfpef: 'I' },
+    slots: [
+      { label: 'min', type: 'numeric',
+        values: { hfref: '18', hfmref: '18', hfpef: '18' } },
+      { label: 'max', type: 'numeric',
+        values: { hfref: '80', hfmref: '80', hfpef: '85' } }
+    ]
+  },
+  {
+    id: 'DM-C0000002', section: 'demographics',
+    name: 'Sex',
+    verdicts: { hfref: 'I', hfmref: 'I', hfpef: 'I' },
+    slots: [
+      { label: 'Allowed categories', type: 'category',
+        values: { hfref: 'Male, Female', hfmref: 'Male, Female', hfpef: 'Male, Female' } }
+    ]
+  },
+
+  // ─── DISEASE DESCRIPTORS ──────────────────────
+  {
+    id: 'DC-CHR001', section: 'disease_desc',
+    name: 'Chronic/stable disease',
+    verdicts: { hfref: 'I', hfmref: 'I', hfpef: 'I' },
+    slots: [
+      { label: 'Stability duration (min)', type: 'duration',
+        values: { hfref: '3 months', hfmref: '3 months', hfpef: '6 months' } }
+    ]
+  },
+  {
+    id: 'DC-REF001', section: 'disease_desc',
+    name: 'Refractory disease',
+    verdicts: { hfref: 'E', hfmref: 'E', hfpef: null },
+    slots: []
+  },
+
+  // ─── CLINICAL SCORES ──────────────────────────
+  {
+    id: 'CS-BNP001', section: 'clinical_scores',
+    name: 'BNP (pg/mL)',
+    verdicts: { hfref: 'I', hfmref: 'I', hfpef: 'I' },
+    slots: [],
+    tandemSlots: [
+      { label: 'BNP — min', tandemIf: 'Physiological state: AF', type: 'numeric',
+        values: { hfref: '250', hfmref: '250', hfpef: '300' } },
+      { label: 'BNP — min', tandemIf: 'Physiological state: Sinus rhythm', type: 'numeric',
+        values: { hfref: '100', hfmref: '100', hfpef: '150' } }
+    ]
+  },
+  {
+    id: 'CS-6MWT001', section: 'clinical_scores',
+    name: '6MWT distance (meters)',
+    verdicts: { hfref: 'I', hfmref: 'I', hfpef: null },
+    slots: [
+      { label: 'min', type: 'numeric',
+        values: { hfref: '100', hfmref: '150', hfpef: null } },
+      { label: 'max', type: 'numeric',
+        values: { hfref: '450', hfmref: '500', hfpef: null } }
+    ]
+  },
+
+  // ─── BIOMARKERS ───────────────────────────────
+  {
+    id: 'BM-NT001', section: 'biomarkers',
+    name: 'NT-proBNP (pg/mL)',
+    verdicts: { hfref: 'I', hfmref: 'I', hfpef: 'I' },
+    slots: [
+      { label: 'min', type: 'numeric',
+        values: { hfref: '400', hfmref: '300', hfpef: '300' } }
+    ],
+    tandemSlots: [
+      { label: 'NT-proBNP — min', tandemIf: 'Physiological state: AF', type: 'numeric',
+        values: { hfref: '900', hfmref: '600', hfpef: '900' } },
+      { label: 'NT-proBNP — min', tandemIf: 'Physiological state: Sinus rhythm', type: 'numeric',
+        values: { hfref: '400', hfmref: '300', hfpef: '300' } }
+    ]
+  },
+  {
+    id: 'BM-TROP001', section: 'biomarkers',
+    name: 'Troponin I (ng/mL)',
+    verdicts: { hfref: 'I', hfmref: null, hfpef: 'I' },
+    slots: [
+      { label: 'max', type: 'numeric',
+        values: { hfref: '0.04', hfmref: null, hfpef: '0.04' } }
+    ]
+  },
+
+  // ─── INTERVENTIONS ────────────────────────────
+  {
+    id: 'DB-ACE001', section: 'medications',
+    name: 'ACE inhibitor / ARB',
+    verdicts: { hfref: 'I', hfmref: 'I', hfpef: null },
+    slots: [
+      { label: 'Stable dose duration (min)', type: 'duration',
+        values: { hfref: '1 months', hfmref: '1 months', hfpef: null } }
+    ]
+  },
+  {
+    id: 'DB-BB001', section: 'medications',
+    name: 'Beta-blocker',
+    verdicts: { hfref: 'I', hfmref: 'I', hfpef: 'I' },
+    slots: [
+      { label: 'Stable dose duration (min)', type: 'duration',
+        values: { hfref: '1 months', hfmref: '1 months', hfpef: '1 months' } }
+    ]
+  },
+  {
+    id: 'DB-SGLT2001', section: 'medications',
+    name: 'SGLT2 inhibitor',
+    verdicts: { hfref: 'I', hfmref: 'I', hfpef: null },
+    slots: [
+      { label: 'Stable dose duration (min)', type: 'duration',
+        values: { hfref: '1 months', hfmref: '1 months', hfpef: null } }
+    ]
+  },
+  {
+    id: 'PR-HT001', section: 'procedures',
+    name: 'Prior heart transplant',
+    verdicts: { hfref: 'E', hfmref: 'E', hfpef: 'E' },
+    slots: []
+  },
+  {
+    id: 'DB-RTX001', section: 'medications',
+    name: 'Rituximab',
+    verdicts: { hfref: 'E', hfmref: 'E', hfpef: null },
+    slots: [
+      { label: 'Recency (within)', type: 'duration',
+        values: { hfref: '12 months', hfmref: '12 months', hfpef: null } }
+    ]
+  },
+
+  // ─── MEASURES ─────────────────────────────────
+  {
+    id: 'MS-EGFR001', section: 'lab_values',
+    name: 'eGFR (mL/min/1.73m²)',
+    verdicts: { hfref: 'E', hfmref: 'E', hfpef: 'E' },
+    slots: [
+      { label: 'threshold (below = exclude)', type: 'numeric',
+        values: { hfref: '30', hfmref: '30', hfpef: '25' } }
+    ]
+  },
+  {
+    id: 'MS-HGB001', section: 'lab_values',
+    name: 'Hemoglobin (g/dL)',
+    verdicts: { hfref: 'E', hfmref: 'E', hfpef: null },
+    slots: [
+      { label: 'threshold (below = exclude)', type: 'numeric',
+        values: { hfref: '9', hfmref: '9', hfpef: null } }
+    ]
+  },
+  {
+    id: 'MS-K001', section: 'lab_values',
+    name: 'Potassium (mEq/L)',
+    verdicts: { hfref: 'E', hfmref: 'E', hfpef: 'E' },
+    slots: [
+      { label: 'range low (below = exclude)', type: 'numeric',
+        values: { hfref: '3.5', hfmref: '3.5', hfpef: '3.5' } },
+      { label: 'range high (above = exclude)', type: 'numeric',
+        values: { hfref: '5.5', hfmref: '5.5', hfpef: '5.5' } }
+    ]
+  },
+
+  // ─── GROUP (Compound Rule) ────────────────────
+  {
+    id: 'GR-CNS001', section: 'group',
+    name: 'CNS disorder',
+    isCompound: true,
+    compoundOp: 'OR',
+    compoundExpr: 'Epilepsy OR Neurodegenerative disease OR CNS vasculitis',
+    components: [
+      { name: 'Epilepsy', id: 'GR-CNS001-a' },
+      { name: 'Neurodegenerative disease', id: 'GR-CNS001-b' },
+      { name: 'CNS vasculitis', id: 'GR-CNS001-c' }
+    ],
+    verdicts: { hfref: 'E', hfmref: 'E', hfpef: null },
+    slots: []
+  },
+
+  // ─── SCREENING ────────────────────────────────
+  {
+    id: 'SI00000013', section: 'screening',
+    name: 'Pregnancy',
+    verdicts: { hfref: 'E', hfmref: 'E', hfpef: 'E' },
+    slots: []
+  },
+  {
+    id: 'SI00000014', section: 'screening',
+    name: 'Breastfeeding',
+    verdicts: { hfref: 'E', hfmref: 'E', hfpef: 'E' },
+    slots: []
+  },
+  {
+    id: 'SI00000015', section: 'screening',
+    name: 'Contraception',
+    verdicts: { hfref: 'I', hfmref: 'I', hfpef: 'I' },
+    slots: [
+      { label: 'Required method', type: 'category',
+        values: { hfref: 'Highly effective', hfmref: 'Highly effective', hfpef: 'Highly effective' } }
+    ]
+  }
+];
+
+const AVAILABLE_CATEGORIES = [
+  'Diagnosis', 'Clinical Findings', 'Disease Descriptors',
+  'Secondary Conditions', 'Clinical Scores', 'Biomarkers',
+  'Interventions', 'Procedures', 'Measures',
+  'Demographics', 'Group', 'Screening'
+];
+
+
+// ══════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════
+const sectionCollapsed = {};
+const conceptExpanded = {};
+const compoundExpanded = {};
+const indexOverrides = {};
+const verdictOverrides = {};
+
+// Default: expand compound concepts only
+CONCEPTS.forEach(c => {
+  if (c.isCompound) {
+    compoundExpanded[c.id] = true;
+  }
+});
+
+
+// ══════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════
+function render() {
+  const cg = document.getElementById('colgroup');
+  cg.innerHTML = '<col class="col-criteria"/>' +
+    SUBGROUPS.map(() => '<col class="col-sub"/>').join('') +
+    '<col class="col-add"/>';
+
+  const thead = document.getElementById('matrixHead');
+  let th = '<tr><th>CRITERIA</th>';
+  SUBGROUPS.forEach(sg => {
+    th += `<th>${esc(sg.name).toUpperCase()}</th>`;
+  });
+  th += `<th class="add-col" onclick="openModal('addSubgroupModal')">+ ADD SUBGROUP</th></tr>`;
+  thead.innerHTML = th;
+
+  const tbody = document.getElementById('matrixBody');
+  let html = '';
+
+  SECTIONS.forEach(sec => {
+    const concepts = CONCEPTS.filter(c => c.section === sec.id);
+    if (concepts.length === 0) return;
+
+    const collapsed = sectionCollapsed[sec.id];
+
+    const expandableConcepts = concepts.filter(c => hasExpandableContent(c));
+    const allSlotsExpanded = expandableConcepts.length > 0 && expandableConcepts.every(c => conceptExpanded[c.id]);
+    const sectionToggleLabel = allSlotsExpanded ? 'Collapse slots' : 'Expand slots';
+
+    // INDEX: AND banner for DIAGNOSIS section
+    const showAndBanner = (sec.id === 'diagnosis' && !collapsed);
+
+    html += `<tr class="section-row">
+      <td colspan="${SUBGROUPS.length + 2}">
+        <div class="section-header" onclick="toggleSection('${sec.id}')">
+          <span class="section-chevron ${collapsed ? 'collapsed' : ''}">&#9662;</span>
+          <span class="section-name">${sec.name}</span>
+          <span class="section-badge">${concepts.length}</span>
+          ${!collapsed && expandableConcepts.length > 0 ? `<button class="section-toggle" onclick="event.stopPropagation(); toggleSectionSlots('${sec.id}')">${sectionToggleLabel}</button>` : ''}
+        </div>
+        ${showAndBanner ? `<div class="index-fold-banner">
+          <span class="index-fold-badge">INDEX: AND</span>
+          <span>All Index conditions in this section must be satisfied (AND logic). Custom override applied by the pipeline.</span>
+        </div>` : ''}
+      </td>
+    </tr>`;
+
+    if (collapsed) return;
+
+    concepts.forEach(concept => {
+      const hasExp = hasExpandableContent(concept);
+      const expanded = conceptExpanded[concept.id];
+
+      html += `<tr class="concept-row">`;
+      html += `<td><div class="criterion-cell">
+        <span class="expand-chevron ${hasExp ? (expanded ? 'expanded' : '') : 'hidden-chevron'}"
+              ${hasExp ? `onclick="toggleConcept('${concept.id}')"` : ''}>&#9656;</span>
+        <span class="criterion-name">${esc(concept.name)}</span>
+        ${concept.isCompound ? '<span class="compound-pill">COMPOUND</span>' : ''}
+        ${concept.compoundExpr ? `<span class="compound-expr">${esc(concept.compoundExpr)}</span>` : ''}
+      </div></td>`;
+
+      SUBGROUPS.forEach(sg => {
+        const verdict = getEffectiveVerdict(concept, sg.id);
+        html += `<td>${renderVerdict(verdict, concept, sg.id)}</td>`;
+      });
+
+      html += '<td></td></tr>';
+
+      // Compound components (expanded)
+      if (concept.isCompound && compoundExpanded[concept.id]) {
+        concept.components.forEach(comp => {
+          html += `<tr class="component-row">`;
+          html += `<td><div class="component-label-cell">
+            <span class="component-icon">&#9679;</span>
+            <span class="component-name">${esc(comp.name)}</span>
+          </div></td>`;
+          SUBGROUPS.forEach(sg => {
+            html += `<td></td>`;
+          });
+          html += '<td></td></tr>';
+        });
+      }
+
+      // Regular slots
+      if (hasExp && expanded) {
+        if (concept.slots) {
+          concept.slots.forEach(slot => {
+            html += renderSlotRow(slot, concept, false);
+          });
+        }
+
+        // Antisignal slots
+        if (concept.antisignalSlots) {
+          concept.antisignalSlots.forEach(slot => {
+            html += renderAntisignalSlotRow(slot, concept);
+          });
+        }
+
+        // Tandem IF slots
+        if (concept.tandemSlots) {
+          concept.tandemSlots.forEach(slot => {
+            html += renderTandemSlotRow(slot, concept);
+          });
+        }
+      }
+    });
+
+    html += `<tr class="add-row">
+      <td colspan="${SUBGROUPS.length + 2}">
+        <div class="add-row-link" onclick="alert('Add criterion to ${sec.name} (prototype)')">
+          ${sec.addLabel}
+        </div>
+      </td>
+    </tr>`;
+  });
+
+  html += `<tr class="add-category-row">
+    <td colspan="${SUBGROUPS.length + 2}">
+      <div class="add-category-cell">
+        <button class="add-category-btn" id="addCategoryBtn" onclick="toggleCategoryDropdown(event)">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 5v6M5 8h6"/></svg>
+          Add Category
+        </button>
+      </div>
+    </td>
+  </tr>`;
+
+  tbody.innerHTML = html;
+  updateGlobalToggleLabel();
+}
+
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function hasExpandableContent(concept) {
+  return (concept.slots && concept.slots.length > 0) ||
+         (concept.antisignalSlots && concept.antisignalSlots.length > 0) ||
+         (concept.tandemSlots && concept.tandemSlots.length > 0);
+}
+
+function getEffectiveVerdict(concept, subgroupId) {
+  const key = `${concept.id}::${subgroupId}`;
+  if (verdictOverrides[key] !== undefined) {
+    return verdictOverrides[key];
+  }
+  return concept.verdicts[subgroupId];
+}
+
+function renderVerdict(verdict, concept, subgroupId) {
+  if (!verdict) return `<div class="cell-center"><span class="badge-empty" onclick="cycleVerdict('${concept.id}','${subgroupId}')">&nbsp;</span></div>`;
+
+  if (verdict === 'I!') {
+    return `<div class="cell-center"><span class="badge badge-in" onclick="cycleVerdict('${concept.id}','${subgroupId}')">IN <span class="star">&#9733;</span></span></div>`;
+  }
+  if (verdict === 'E!') {
+    return `<div class="cell-center"><span class="badge badge-ex" onclick="cycleVerdict('${concept.id}','${subgroupId}')">EX <span class="star">&#9733;</span></span></div>`;
+  }
+  if (verdict === 'I') {
+    return `<div class="cell-center"><span class="badge badge-in" onclick="cycleVerdict('${concept.id}','${subgroupId}')">IN</span></div>`;
+  }
+  if (verdict === 'E') {
+    return `<div class="cell-center"><span class="badge badge-ex" onclick="cycleVerdict('${concept.id}','${subgroupId}')">EX</span></div>`;
+  }
+  return `<div class="cell-center"><span class="badge-empty" onclick="cycleVerdict('${concept.id}','${subgroupId}')" title="Click to assign">+</span></div>`;
+}
+
+// ── Regular slot row ──────────────────────────
+function renderSlotRow(slot, concept, isTandem) {
+  let html = `<tr class="slot-row">`;
+  html += `<td><div class="slot-label-cell">
+    <span class="slot-icon">&#8627;</span>
+    ${esc(slot.label)}
+  </div></td>`;
+
+  SUBGROUPS.forEach(sg => {
+    const val = slot.values[sg.id];
+    html += `<td>${renderSlotValue(val, slot)}</td>`;
+  });
+
+  html += '<td></td></tr>';
+  return html;
+}
+
+// ── Antisignal [A] slot row ───────────────────
+function renderAntisignalSlotRow(slot, concept) {
+  let html = `<tr class="slot-row slot-row-antisignal">`;
+  html += `<td><div class="slot-label-cell">
+    <span class="antisignal-label">${esc(slot.label)}</span>
+  </div></td>`;
+
+  SUBGROUPS.forEach(sg => {
+    const val = slot.values[sg.id];
+    html += `<td>${renderSlotValue(val, slot)}</td>`;
+  });
+
+  html += '<td></td></tr>';
+  return html;
+}
+
+// ── Tandem IF slot row ────────────────────────
+function renderTandemSlotRow(slot, concept) {
+  let html = `<tr class="slot-row">`;
+  html += `<td><div class="slot-label-cell">
+    <span class="slot-icon">&#8627;</span>
+    ${esc(slot.label)}
+    <span class="tandem-tag"><span class="tandem-if">IF</span> ${esc(slot.tandemIf)}</span>
+  </div></td>`;
+
+  SUBGROUPS.forEach(sg => {
+    const val = slot.values[sg.id];
+    html += `<td>${renderSlotValue(val, slot)}</td>`;
+  });
+
+  html += '<td></td></tr>';
+  return html;
+}
+
+
+// Scale options for ordinal dropdowns
+const ORDINAL_SCALES = {
+  'NYHA Class': ['I', 'II', 'III', 'IV']
+};
+const CATEGORY_OPTIONS = {
+  'Rhythm type': ['Persistent', 'Paroxysmal', 'Permanent', 'New-onset'],
+  'Exception': ['Allowed', 'Not allowed'],
+  'Allowed categories': ['Male, Female', 'Male', 'Female'],
+  'Required method': ['Highly effective', 'Effective', 'Any'],
+  'BM/ResultType': ['Present', 'Absent', 'Positive', 'Negative'],
+  'Disease Control': ['Active', 'Inactive', 'Latent', 'Resolved'],
+  'Treatment Response': ['Improvement', 'Stable', 'Worsening', 'No Response'],
+  // Antisignal category (protective variants)
+  'Variant': ['R104H', 'T119M', 'V30M', 'L111M', 'None']
+};
+const DURATION_UNITS = ['months', 'years'];
+
+function renderSlotValue(value, slot) {
+  if (!value && value !== 0) return '<div class="slot-value-cell"><span class="slot-input-empty">&nbsp;</span></div>';
+
+  const type = slot.type || 'category';
+
+  if (type === 'numeric') {
+    return `<div class="slot-value-cell">
+      <input type="text" class="slot-input-num" value="${value}" step="any"
+             title="Edit value" />
+    </div>`;
+  }
+
+  if (type === 'ordinal') {
+    let scaleKey = Object.keys(ORDINAL_SCALES).find(k => slot.label.includes(k));
+    let options = scaleKey ? ORDINAL_SCALES[scaleKey] : [value];
+    let optHtml = options.map(o =>
+      `<option value="${o}" ${o === value ? 'selected' : ''}>${o}</option>`
+    ).join('');
+    return `<div class="slot-value-cell">
+      <select class="slot-select ordinal">${optHtml}</select>
+    </div>`;
+  }
+
+  if (type === 'category') {
+    let catKey = Object.keys(CATEGORY_OPTIONS).find(k => slot.label.includes(k));
+    let options = catKey ? CATEGORY_OPTIONS[catKey] : [value];
+    // Make sure current value is in options
+    if (!options.includes(value)) options = [value, ...options];
+    let optHtml = options.map(o =>
+      `<option value="${o}" ${o === value ? 'selected' : ''}>${o}</option>`
+    ).join('');
+    return `<div class="slot-value-cell">
+      <select class="slot-select category">${optHtml}</select>
+    </div>`;
+  }
+
+  if (type === 'result-type') {
+    let options = CATEGORY_OPTIONS['BM/ResultType'] || [value];
+    let optHtml = options.map(o =>
+      `<option value="${o}" ${o === value ? 'selected' : ''}>${o}</option>`
+    ).join('');
+    return `<div class="slot-value-cell">
+      <select class="slot-select result-type">${optHtml}</select>
+    </div>`;
+  }
+
+  if (type === 'duration') {
+    let displayVal = value;
+    const match = displayVal.match(/^(\d+)\s*(days?|weeks?|months?|years?)$/i);
+    if (match) {
+      let num = match[1];
+      let unit = match[2].replace(/s$/, '');
+      let unitOpts = DURATION_UNITS.map(u =>
+        `<option value="${u}" ${u.startsWith(unit) ? 'selected' : ''}>${u}</option>`
+      ).join('');
+      return `<div class="slot-value-cell">
+        <div class="slot-duration-wrap">
+          <input type="number" class="slot-dur-num" value="${num}" min="1" step="1" />
+          <select class="slot-dur-unit">${unitOpts}</select>
+        </div>
+      </div>`;
+    }
+    return `<div class="slot-value-cell"><span class="slot-pill duration">${displayVal}</span></div>`;
+  }
+
+  // Fallback
+  return `<div class="slot-value-cell"><span class="slot-pill ${type}">${value}</span></div>`;
+}
+
+
+// ══════════════════════════════════════════════════
+// INTERACTIONS
+// ══════════════════════════════════════════════════
+function toggleSection(id) {
+  sectionCollapsed[id] = !sectionCollapsed[id];
+  render();
+}
+
+function toggleConcept(id) {
+  conceptExpanded[id] = !conceptExpanded[id];
+  // Also toggle compound expansion with concept expansion
+  const concept = CONCEPTS.find(c => c.id === id);
+  if (concept && concept.isCompound) {
+    compoundExpanded[id] = conceptExpanded[id];
+  }
+  render();
+}
+
+// ── Global expand/collapse all ──────────────
+function toggleAllGlobal() {
+  const anySectionCollapsed = SECTIONS.some(s => sectionCollapsed[s.id]);
+  const anySlotCollapsed = CONCEPTS.some(c => hasExpandableContent(c) && !conceptExpanded[c.id]);
+  const anyCompoundCollapsed = CONCEPTS.some(c => c.isCompound && !compoundExpanded[c.id]);
+
+  if (anySectionCollapsed || anySlotCollapsed || anyCompoundCollapsed) {
+    SECTIONS.forEach(s => { sectionCollapsed[s.id] = false; });
+    CONCEPTS.forEach(c => {
+      if (hasExpandableContent(c)) conceptExpanded[c.id] = true;
+      if (c.isCompound) compoundExpanded[c.id] = true;
+    });
+  } else {
+    SECTIONS.forEach(s => { sectionCollapsed[s.id] = true; });
+    CONCEPTS.forEach(c => {
+      conceptExpanded[c.id] = false;
+      if (c.isCompound) compoundExpanded[c.id] = false;
+    });
+  }
+  render();
+  updateGlobalToggleLabel();
+}
+
+function updateGlobalToggleLabel() {
+  const anySectionCollapsed = SECTIONS.some(s => sectionCollapsed[s.id]);
+  const anySlotCollapsed = CONCEPTS.some(c => hasExpandableContent(c) && !conceptExpanded[c.id]);
+  const label = document.getElementById('globalToggleLabel');
+  const btn = document.getElementById('globalToggleBtn');
+  if (!label || !btn) return;
+
+  if (anySectionCollapsed || anySlotCollapsed) {
+    label.textContent = 'Expand All';
+    btn.querySelector('svg').style.transform = 'rotate(-90deg)';
+  } else {
+    label.textContent = 'Collapse All';
+    btn.querySelector('svg').style.transform = 'rotate(0deg)';
+  }
+}
+
+// ── Per-section: expand/collapse all slots ──
+function toggleSectionSlots(sectionId) {
+  const concepts = CONCEPTS.filter(c => c.section === sectionId && hasExpandableContent(c));
+  const allExpanded = concepts.every(c => conceptExpanded[c.id]);
+
+  concepts.forEach(c => {
+    conceptExpanded[c.id] = !allExpanded;
+    if (c.isCompound) compoundExpanded[c.id] = !allExpanded;
+  });
+  render();
+  updateGlobalToggleLabel();
+}
+
+// ── Verdict cycle: IN -> EX -> empty -> IN ────
+function cycleVerdict(conceptId, subgroupId) {
+  const key = `${conceptId}::${subgroupId}`;
+  const concept = CONCEPTS.find(c => c.id === conceptId);
+  if (!concept) return;
+
+  const current = getEffectiveVerdict(concept, subgroupId);
+
+  let next;
+  if (current === 'I' || current === 'I!') next = 'E';
+  else if (current === 'E' || current === 'E!') next = null;
+  else next = 'I';
+
+  const original = concept.verdicts[subgroupId];
+  if (next === original) {
+    delete verdictOverrides[key];
+  } else {
+    verdictOverrides[key] = next;
+  }
+  render();
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  const input = document.getElementById(id).querySelector('input');
+  if (input) setTimeout(() => input.focus(), 200);
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+let categoryDropdownOpen = false;
+
+function toggleCategoryDropdown(e) {
+  e.stopPropagation();
+  if (categoryDropdownOpen) { closeCategoryDropdown(); return; }
+
+  const btn = document.getElementById('addCategoryBtn');
+  const rect = btn.getBoundingClientRect();
+  const dd = document.getElementById('categoryDropdown');
+
+  dd.className = 'popover';
+  dd.style.left = rect.left + 'px';
+  dd.style.bottom = (window.innerHeight - rect.top + 6) + 'px';
+  dd.style.top = 'auto';
+
+  let html = '<div class="popover-header">Add Category</div>';
+  AVAILABLE_CATEGORIES.forEach(cat => {
+    html += `<button class="popover-item" onclick="selectCategory('${cat}')">${cat}</button>`;
+  });
+  dd.innerHTML = html;
+  categoryDropdownOpen = true;
+  setTimeout(() => document.addEventListener('click', closeCategoryOnOutside), 0);
+}
+
+function closeCategoryDropdown() {
+  document.getElementById('categoryDropdown').className = 'hidden';
+  categoryDropdownOpen = false;
+  document.removeEventListener('click', closeCategoryOnOutside);
+}
+
+function closeCategoryOnOutside(e) {
+  const dd = document.getElementById('categoryDropdown');
+  if (!dd.contains(e.target) && e.target.id !== 'addCategoryBtn') closeCategoryDropdown();
+}
+
+function selectCategory(cat) {
+  closeCategoryDropdown();
+  alert(`Category "${cat}" would be added (prototype).`);
+}
+
+document.getElementById('addSubgroupModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal('addSubgroupModal');
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { closeModal('addSubgroupModal'); closeCategoryDropdown(); }
+});
+
+
+// ══════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════
+render();
+</script>
+</body>
+</html>
