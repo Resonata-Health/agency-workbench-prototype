@@ -89,11 +89,31 @@ export function EmCriteriaStep({ offer, seed }: Props) {
 
   const cycleVerdict = (conceptId: string, subgroupId: string) => {
     const current = effectiveVerdict(conceptId, subgroupId)
+    // Full cycle: empty → IN → IN★ → EX → EX★ → empty
     let next: Verdict
-    if (current === 'I' || current === 'I!') next = 'E'
-    else if (current === 'E' || current === 'E!') next = null
-    else next = 'I'
+    if (current === null)       next = 'I'
+    else if (current === 'I')   next = 'I!'
+    else if (current === 'I!')  next = 'E'
+    else if (current === 'E')   next = 'E!'
+    else /* 'E!' */             next = null
     setVerdictOverrides(prev => ({ ...prev, [`${conceptId}::${subgroupId}`]: next }))
+  }
+
+  const removeSection = (sectionId: string) => {
+    const section = sectionsToShow.find(s => s.id === sectionId)
+    const sectionName = section?.name ?? 'this section'
+    const inSection = concepts.filter(c => c.section === sectionId)
+    const note = inSection.length > 0
+      ? `Remove ${sectionName} and all ${inSection.length} criteria? You can re-add the category later from the “+ Add Category” menu.`
+      : `Remove ${sectionName}? You can re-add it later from the “+ Add Category” menu.`
+    if (typeof window !== 'undefined' && !window.confirm(note)) return
+    setConcepts(prev => prev.filter(c => c.section !== sectionId))
+    setExtraSectionIds(prev => prev.filter(id => id !== sectionId))
+    setCollapsedSections(prev => {
+      const next = new Set(prev)
+      next.delete(sectionId)
+      return next
+    })
   }
 
   const setSlotValue = (conceptId: string, slotIdx: number, subgroupId: string, value: string) => {
@@ -235,6 +255,7 @@ export function EmCriteriaStep({ offer, seed }: Props) {
                     slotToggleLabel={allInSectionOpen ? 'Collapse slots' : 'Expand slots'}
                     onToggleSection={() => toggleSection(section.id)}
                     onToggleSlots={() => toggleSectionSlots(section.id)}
+                    onRemoveSection={() => removeSection(section.id)}
                   >
                     {!collapsed && sectionConcepts.map(concept => (
                       <ConceptRows
@@ -335,6 +356,7 @@ function SectionBlock({
   slotToggleLabel,
   onToggleSection,
   onToggleSlots,
+  onRemoveSection,
   children
 }: {
   sectionName: string
@@ -346,6 +368,7 @@ function SectionBlock({
   slotToggleLabel: string
   onToggleSection: () => void
   onToggleSlots: () => void
+  onRemoveSection: () => void
   children?: ReactNode
 }) {
   return (
@@ -365,20 +388,45 @@ function SectionBlock({
             <span className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-blue-10 text-charcoal-white text-[10px] font-bold">
               {sectionConceptCount}
             </span>
-            {showSlotToggle && (
+            <div className="ml-auto flex items-center gap-1">
+              {showSlotToggle && (
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); onToggleSlots() }}
+                  className="opacity-0 group-hover:opacity-100 text-[10.5px] font-medium text-charcoal-11 hover:text-charcoal-15 hover:bg-charcoal-white px-2 py-0.5 rounded transition-opacity"
+                >
+                  {slotToggleLabel}
+                </button>
+              )}
               <button
                 type="button"
-                onClick={(e) => { e.stopPropagation(); onToggleSlots() }}
-                className="ml-auto opacity-0 group-hover:opacity-100 text-[10.5px] font-medium text-charcoal-11 hover:text-charcoal-15 hover:bg-charcoal-white px-2 py-0.5 rounded transition-opacity"
+                onClick={(e) => { e.stopPropagation(); onRemoveSection() }}
+                aria-label={`Remove ${sectionName}`}
+                title="Remove this category"
+                className="opacity-0 group-hover:opacity-100 text-charcoal-11 hover:text-red-13 hover:bg-charcoal-white p-1 rounded transition-opacity"
               >
-                {slotToggleLabel}
+                <TrashIcon />
               </button>
-            )}
+            </div>
           </div>
         </td>
       </tr>
       {children}
     </>
+  )
+}
+
+function TrashIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path
+        d="M2.5 4.5h11M6.5 4.5V3a1 1 0 011-1h1a1 1 0 011 1v1.5M4 4.5l.8 9a1 1 0 001 .9h4.4a1 1 0 001-.9l.8-9M6.8 7v5M9.2 7v5"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   )
 }
 
