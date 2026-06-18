@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { TopNav } from '@/components/TopNav'
 import { WorkbenchTabs } from '@/components/WorkbenchTabs'
@@ -30,7 +30,7 @@ function SetupReadOnly() {
   const params = useSearchParams()
   const offer = useMemo(() => findOffer(params.get('offer')), [params])
   const fields = useMemo(() => setupFieldsFor(offer), [offer])
-  const { can } = usePermissions()
+  const { can, sponsor: activeSponsor, setSponsor } = usePermissions()
 
   const canEditDisplayTitle = can('edit_setup_display_title')
   const canEditEndDate      = can('edit_setup_end_date')
@@ -41,7 +41,13 @@ function SetupReadOnly() {
   // Hidden for now per spec — kept in code so we can re-surface easily.
   const SHOW_DISPLAY_TITLE = false
 
-  const [sponsor, setSponsor] = useState<SponsorName>(offer.sponsor as SponsorName)
+  // Sync the global sponsor selector with the offer the user is on.
+  useEffect(() => {
+    if (offer.sponsor && offer.sponsor !== activeSponsor) {
+      setSponsor(offer.sponsor as SponsorName)
+    }
+  }, [offer.sponsor, activeSponsor, setSponsor])
+
   const [displayTitle, setDisplayTitle] = useState(fields.displayTitle)
   const [endDate, setEndDate] = useState('')
 
@@ -77,7 +83,7 @@ function SetupReadOnly() {
 
   return (
     <div className="min-h-screen bg-charcoal-1 flex flex-col">
-      <TopNav activeSponsor={sponsor} onSponsorChange={setSponsor} />
+      <TopNav />
       <WorkbenchTabs active="Setup" />
 
       <main className={`flex-1 ${CONTAINER} py-6`}>

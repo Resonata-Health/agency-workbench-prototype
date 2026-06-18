@@ -5,12 +5,13 @@ import { TopNav } from '@/components/TopNav'
 import { KpiCard } from '@/components/KpiCard'
 import { FilterBar } from '@/components/FilterBar'
 import { CareOfferCard } from '@/components/CareOfferCard'
-import { careOffersBySponsor, sponsorMeta, type SponsorName } from '@/data/mockCareOffers'
+import { careOffersBySponsor, sponsorMeta } from '@/data/mockCareOffers'
 import { getOfferStatus } from '@/data/offerStatusOverrides'
 import { CONTAINER } from '@/components/container'
+import { usePermissions } from '@/app/providers'
 
 export default function LandingPage() {
-  const [sponsor, setSponsor] = useState<SponsorName>('CureX Pharmaceuticals')
+  const { sponsor } = usePermissions()
   const [statusFilter, setStatusFilter] = useState('All')
 
   const offers = useMemo(
@@ -45,7 +46,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-charcoal-1">
-      <TopNav activeSponsor={sponsor} onSponsorChange={setSponsor} />
+      <TopNav />
 
       <main className={`${CONTAINER} py-8`}>
         <div className="mb-6">

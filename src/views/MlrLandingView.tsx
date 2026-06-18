@@ -5,17 +5,14 @@ import { TopNav } from '@/components/TopNav'
 import { KpiCard } from '@/components/KpiCard'
 import { CareOfferCard } from '@/components/CareOfferCard'
 import { CONTAINER } from '@/components/container'
-import {
-  careOffersBySponsor,
-  sponsors,
-  type SponsorName
-} from '@/data/mockCareOffers'
+import { careOffersBySponsor } from '@/data/mockCareOffers'
 import { getOfferStatus } from '@/data/offerStatusOverrides'
+import { usePermissions } from '@/app/providers'
 
 type Filter = 'All' | 'In MLR Review' | 'Active'
 
 export default function MlrLandingView() {
-  const [sponsor, setSponsor] = useState<SponsorName>(sponsors[0])
+  const { sponsor } = usePermissions()
   const [filter, setFilter] = useState<Filter>('All')
 
   const offers = useMemo(
@@ -47,7 +44,7 @@ export default function MlrLandingView() {
 
   return (
     <div className="min-h-screen bg-charcoal-1">
-      <TopNav activeSponsor={sponsor} onSponsorChange={setSponsor} />
+      <TopNav />
 
       <main className={`${CONTAINER} py-8`}>
         <div className="mb-6">

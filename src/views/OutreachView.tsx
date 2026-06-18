@@ -55,7 +55,6 @@ export default function OutreachView() {
     [offer, selectedCount]
   )
 
-  const [sponsor, setSponsor] = useState<SponsorName>(offer.sponsor as SponsorName)
 
   const viewParam = params.get('view')
   const active: Artifact =
@@ -68,7 +67,12 @@ export default function OutreachView() {
   const [dialog, setDialog] = useState<DialogKind>(null)
   const [busy, setBusy] = useState(false)
 
-  const { can, persona } = usePermissions()
+  const { can, persona, sponsor: activeSponsor, setSponsor } = usePermissions()
+  useEffect(() => {
+    if (offer.sponsor && offer.sponsor !== activeSponsor) {
+      setSponsor(offer.sponsor as SponsorName)
+    }
+  }, [offer.sponsor, activeSponsor, setSponsor])
   const canEdit    = can('edit_outreach')
   const canSubmit  = can('submit_outreach')
   const canApprove = can('approve_outreach')
@@ -206,7 +210,7 @@ export default function OutreachView() {
 
   return (
     <div className="min-h-screen bg-charcoal-1 flex flex-col">
-      <TopNav activeSponsor={sponsor} onSponsorChange={setSponsor} />
+      <TopNav />
 
       {/* Offer subheader */}
       <div className="bg-charcoal-white border-b border-charcoal-4">

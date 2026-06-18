@@ -22,10 +22,28 @@ import {
   type Matrix,
   type Persona
 } from '@/data/permissions'
+import { sponsors, type SponsorName } from '@/data/mockCareOffers'
+
+const KEY_SPONSOR = 'rwb_sponsor_v1'
+
+const DEFAULT_SPONSOR: SponsorName = 'NMD Pharma'
+
+function loadSponsor(): SponsorName {
+  if (typeof window === 'undefined') return DEFAULT_SPONSOR
+  const v = window.localStorage.getItem(KEY_SPONSOR)
+  if (v && (sponsors as readonly string[]).includes(v)) return v as SponsorName
+  return DEFAULT_SPONSOR
+}
+function saveSponsor(s: SponsorName) {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(KEY_SPONSOR, s)
+}
 
 interface PermsCtx {
   persona: Persona
   setPersona: (p: Persona) => void
+  sponsor: SponsorName
+  setSponsor: (s: SponsorName) => void
   matrix: Matrix
   setMatrixCell: (roleId: string, capId: string, value: boolean) => void
   resetMatrix: () => void
@@ -36,20 +54,27 @@ interface PermsCtx {
 const PermissionsContext = createContext<PermsCtx | null>(null)
 
 function PermissionsProvider({ children }: { children: ReactNode }) {
-  // Default persona is Sponsor — first-time visitors land in the Sponsor workbench.
-  // Returning users keep their last-selected persona (read from localStorage on mount).
+  // Default persona = Sponsor, default sponsor = NMD Pharma.
+  // Returning users keep their last selection (read from localStorage on mount).
   const [persona, setPersonaState] = useState<Persona>('sponsor')
+  const [sponsor, setSponsorState] = useState<SponsorName>(DEFAULT_SPONSOR)
   const [matrix, setMatrix] = useState<Matrix>(DEFAULT_MATRIX)
 
   // Hydrate from localStorage after mount (avoid SSR mismatch).
   useEffect(() => {
     setPersonaState(loadPersona())
+    setSponsorState(loadSponsor())
     setMatrix(loadMatrix())
   }, [])
 
   const setPersona = useCallback((p: Persona) => {
     setPersonaState(p)
     savePersona(p)
+  }, [])
+
+  const setSponsor = useCallback((s: SponsorName) => {
+    setSponsorState(s)
+    saveSponsor(s)
   }, [])
 
   const setMatrixCell = useCallback((roleId: string, capId: string, value: boolean) => {
@@ -75,8 +100,8 @@ function PermissionsProvider({ children }: { children: ReactNode }) {
   )
 
   const value = useMemo<PermsCtx>(
-    () => ({ persona, setPersona, matrix, setMatrixCell, resetMatrix, can, roleId }),
-    [persona, setPersona, matrix, setMatrixCell, resetMatrix, can, roleId]
+    () => ({ persona, setPersona, sponsor, setSponsor, matrix, setMatrixCell, resetMatrix, can, roleId }),
+    [persona, setPersona, sponsor, setSponsor, matrix, setMatrixCell, resetMatrix, can, roleId]
   )
 
   return (

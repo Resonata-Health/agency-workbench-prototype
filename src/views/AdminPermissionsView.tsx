@@ -1,23 +1,21 @@
 'use client'
 
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { TopNav } from '@/components/TopNav'
 import { CONTAINER } from '@/components/container'
-import { sponsors, type SponsorName } from '@/data/mockCareOffers'
 import { usePermissions } from '@/app/providers'
 import { CAPABILITIES, ROLES } from '@/data/permissions'
 
 const GROUPS = ['Setup', 'Matches', 'Outreach', 'Admin'] as const
 
 export default function AdminPermissionsView() {
-  const [sponsor, setSponsor] = useState<SponsorName>(sponsors[0])
   const { matrix, setMatrixCell, resetMatrix, can } = usePermissions()
 
   const allowed = can('manage_permissions')
 
   return (
     <div className="min-h-screen bg-charcoal-1">
-      <TopNav activeSponsor={sponsor} onSponsorChange={setSponsor} />
+      <TopNav />
 
       <main className={`${CONTAINER} py-8`}>
         <div className="flex items-end justify-between mb-6 gap-4">

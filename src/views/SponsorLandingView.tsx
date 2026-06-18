@@ -5,12 +5,9 @@ import { TopNav } from '@/components/TopNav'
 import { KpiCard } from '@/components/KpiCard'
 import { CareOfferCard } from '@/components/CareOfferCard'
 import { CONTAINER } from '@/components/container'
-import {
-  sponsorPortfolioBySponsor,
-  sponsors,
-  type SponsorName
-} from '@/data/mockCareOffers'
+import { sponsorPortfolioBySponsor } from '@/data/mockCareOffers'
 import { getOfferStatus } from '@/data/offerStatusOverrides'
+import { usePermissions } from '@/app/providers'
 
 type Filter = 'All' | 'Draft' | 'In MLR Review' | 'Active' | 'Inactive' | 'Deactivated'
 
@@ -23,7 +20,7 @@ const STATUS_MAP: Record<Exclude<Filter, 'All'>, string> = {
 }
 
 export default function SponsorLandingView() {
-  const [sponsor, setSponsor] = useState<SponsorName>(sponsors[0])
+  const { sponsor } = usePermissions()
   const [filter, setFilter] = useState<Filter>('All')
   const [query, setQuery] = useState('')
 
@@ -60,7 +57,7 @@ export default function SponsorLandingView() {
 
   return (
     <div className="min-h-screen bg-charcoal-1">
-      <TopNav activeSponsor={sponsor} onSponsorChange={setSponsor} />
+      <TopNav />
 
       <main className={`${CONTAINER} py-8`}>
         <div className="flex items-end justify-between mb-6 gap-4">

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { sponsors, type SponsorName } from '@/data/mockCareOffers'
+import { sponsors } from '@/data/mockCareOffers'
 import { CONTAINER } from '@/components/container'
 import { asset } from '@/lib/asset'
 import { usePermissions } from '@/app/providers'
@@ -15,20 +15,15 @@ import {
   type Persona
 } from '@/data/permissions'
 
-interface Props {
-  activeSponsor: SponsorName
-  onSponsorChange: (s: SponsorName) => void
-}
-
 const PERSONAS: Persona[] = ['agency', 'sponsor', 'mlr']
 
-export function TopNav({ activeSponsor, onSponsorChange }: Props) {
+export function TopNav() {
   const router = useRouter()
   const pathname = usePathname() ?? ''
   const onAdmin = pathname.startsWith('/admin')
   const [sponsorOpen, setSponsorOpen] = useState(false)
   const [personaOpen, setPersonaOpen] = useState(false)
-  const { persona, setPersona, can } = usePermissions()
+  const { persona, setPersona, sponsor, setSponsor, can } = usePermissions()
 
   // Sponsor logo (uploaded on /admin/branding). Re-renders when Branding saves.
   const [sponsorLogo, setSponsorLogo] = useState<string | null>(null)
@@ -37,9 +32,10 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
     return subscribeLogo(() => setSponsorLogo(getStoredLogo()))
   }, [])
 
-  // Sponsor switcher is only for agency operators (they work across multiple
-  // sponsors). Sponsor IS the sponsor; MLR is a department inside one sponsor.
-  const showSponsorSwitcher = persona === 'agency'
+  // Sponsor switcher is visible to every persona in the prototype so the
+  // demo can flip between sponsor portfolios. In production this is server-
+  // side context for Sponsor and MLR.
+  const showSponsorSwitcher = true
   const showAdminLink = can('manage_permissions')
 
   const handlePersonaPick = (p: Persona) => {
@@ -106,7 +102,7 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
             )}
           </div>
 
-          {/* Sponsor switcher (Agency persona only) */}
+          {/* Sponsor switcher — visible to every persona in the prototype */}
           {showSponsorSwitcher && (
             <div className="relative">
               <button
@@ -114,7 +110,7 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
                 className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-charcoal-5 hover:border-charcoal-7 text-[13px] text-charcoal-15 bg-charcoal-white"
               >
                 <span className="text-charcoal-12">Sponsor:</span>
-                <span className="font-medium text-charcoal-18">{activeSponsor}</span>
+                <span className="font-medium text-charcoal-18">{sponsor}</span>
                 <Chevron />
               </button>
               {sponsorOpen && (
@@ -123,15 +119,15 @@ export function TopNav({ activeSponsor, onSponsorChange }: Props) {
                     <button
                       key={s}
                       onClick={() => {
-                        onSponsorChange(s)
+                        setSponsor(s)
                         setSponsorOpen(false)
                       }}
                       className={`w-full text-left px-3 py-2 text-[13px] hover:bg-charcoal-1 ${
-                        s === activeSponsor ? 'text-blue-10 font-medium' : 'text-charcoal-15'
+                        s === sponsor ? 'text-blue-10 font-medium' : 'text-charcoal-15'
                       }`}
                     >
                       {s}
-                      {s === activeSponsor && <span className="ml-2">✓</span>}
+                      {s === sponsor && <span className="ml-2">✓</span>}
                     </button>
                   ))}
                 </div>

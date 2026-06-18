@@ -2,9 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { TopNav } from '@/components/TopNav'
-import { sponsors, type SponsorName } from '@/data/mockCareOffers'
 
 interface NavItem {
   href: string
@@ -40,11 +39,10 @@ const NAV: NavItem[] = [
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? ''
-  const [sponsor, setSponsor] = useState<SponsorName>(sponsors[0])
 
   return (
     <div className="min-h-screen bg-charcoal-1 flex flex-col">
-      <TopNav activeSponsor={sponsor} onSponsorChange={setSponsor} />
+      <TopNav />
 
       <div className="flex-1 flex">
         <aside className="w-[240px] shrink-0 bg-charcoal-white border-r border-charcoal-3 py-6 px-3">

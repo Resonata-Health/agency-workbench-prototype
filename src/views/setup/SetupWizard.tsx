@@ -1,12 +1,13 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { TopNav } from '@/components/TopNav'
 import { WorkbenchTabs } from '@/components/WorkbenchTabs'
 import { CONTAINER } from '@/components/container'
 import { SetupStepper, type SetupStep } from '@/components/setup/SetupStepper'
 import { findOffer, type SponsorName } from '@/data/mockCareOffers'
+import { usePermissions } from '@/app/providers'
 import { OverviewStep } from './OverviewStep'
 import { CriteriaStep } from './CriteriaStep'
 import { ContactsStep } from './ContactsStep'
@@ -20,11 +21,17 @@ export default function SetupWizard() {
   const step: SetupStep =
     STEP_VALUES.find(s => s === stepParam) ?? 'overview'
 
-  const [sponsor, setSponsor] = useState<SponsorName>(offer.sponsor as SponsorName)
+  // Keep the global sponsor selector in sync with the offer's sponsor.
+  const { sponsor, setSponsor } = usePermissions()
+  useEffect(() => {
+    if (offer.sponsor && offer.sponsor !== sponsor) {
+      setSponsor(offer.sponsor as SponsorName)
+    }
+  }, [offer.sponsor, sponsor, setSponsor])
 
   return (
     <div className="min-h-screen bg-charcoal-1 flex flex-col">
-      <TopNav activeSponsor={sponsor} onSponsorChange={setSponsor} />
+      <TopNav />
 
       {/* Offer subheader (consistent across all wizard steps after step 1 in spec; */}
       {/* keeping it on every step here for consistency with the rest of the app)   */}

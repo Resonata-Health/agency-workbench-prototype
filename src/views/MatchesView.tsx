@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { TopNav } from '@/components/TopNav'
 import { WorkbenchTabs } from '@/components/WorkbenchTabs'
@@ -69,9 +69,15 @@ export default function MatchesView() {
   const params = useSearchParams()
   const offer = useMemo(() => findOffer(params.get('offer')), [params])
   const fields = useMemo(() => setupFieldsFor(offer), [offer])
-  const { can, persona } = usePermissions()
+  const { can, persona, sponsor: activeSponsor, setSponsor } = usePermissions()
   const canSelect       = can('select_matches')
   const canViewOutreach = can('view_outreach')
+
+  useEffect(() => {
+    if (offer.sponsor && offer.sponsor !== activeSponsor) {
+      setSponsor(offer.sponsor as SponsorName)
+    }
+  }, [offer.sponsor, activeSponsor, setSponsor])
 
   // Selection is allowed only once the offer is approved/Active. Until then,
   // checkboxes are hidden across all roles. Sponsor and Agency both see an
@@ -81,7 +87,6 @@ export default function MatchesView() {
   const showCheckboxes = canSelect && selectionUnlocked
   const showLockedInfo = !selectionUnlocked && (persona === 'sponsor' || persona === 'agency')
 
-  const [sponsor, setSponsor] = useState<SponsorName>(offer.sponsor as SponsorName)
   const [selected, setSelected] = useState<Set<string>>(new Set())
 
   const drugName = offer.title.split('—')[0].trim()
@@ -113,7 +118,7 @@ export default function MatchesView() {
 
   return (
     <div className="min-h-screen bg-charcoal-1 flex flex-col">
-      <TopNav activeSponsor={sponsor} onSponsorChange={setSponsor} />
+      <TopNav />
 
       {/* Offer sub-header */}
       <div className="bg-charcoal-white border-b border-charcoal-4">
