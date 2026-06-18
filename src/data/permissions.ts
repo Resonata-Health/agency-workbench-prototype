@@ -117,7 +117,8 @@ export const PERSONA_LABEL: Record<Persona, string> = {
 
 /* ---------- storage ---------- */
 
-const KEY_PERSONA = 'rwb_persona_v1'
+// Versioned keys — bump to force everyone back to defaults next load.
+const KEY_PERSONA = 'rwb_persona_v2'
 const KEY_MATRIX  = 'rwb_permission_matrix_v1'
 
 export function loadPersona(): Persona {

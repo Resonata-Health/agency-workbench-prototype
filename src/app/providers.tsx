@@ -24,7 +24,7 @@ import {
 } from '@/data/permissions'
 import { sponsors, type SponsorName } from '@/data/mockCareOffers'
 
-const KEY_SPONSOR = 'rwb_sponsor_v1'
+const KEY_SPONSOR = 'rwb_sponsor_v2'
 
 const DEFAULT_SPONSOR: SponsorName = 'NMD Pharma'
 
