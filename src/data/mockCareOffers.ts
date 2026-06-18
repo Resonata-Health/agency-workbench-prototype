@@ -220,13 +220,13 @@ export const sponsorPortfolioBySponsor: Record<SponsorName, CareOffer[]> = {
         'Proof-of-concept, dose range finding study of NMD670 in adult patients with AChR or MuSK antibody positive MG.',
       subgroups: 0,
       matchesToDate: 0,
-      status: 'active',
+      status: 'inDesign',
       updatedLabel: 'Last updated: Jun 17, 2026',
       offerKind: 'clinical_trial',
       officialTitle:
         'A Phase 2b, Randomised, Double-Blind, Placebo-Controlled Study to Evaluate the Efficacy, Safety, and Tolerability of 3 Dose Levels of NMD670 Over 21 Days in Adult Patients With AChR/MuSK-Ab+ Myasthenia Gravis',
       displayTitle: 'NMD670 for AChR/MuSK-Ab+ Myasthenia Gravis',
-      phase: 'Phase 2b'
+      phase: 'Phase 2'
     }
   ]
 }
