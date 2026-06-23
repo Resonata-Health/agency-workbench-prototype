@@ -32,6 +32,8 @@ import { SelectedPatientsPullTab } from '@/components/outreach/SelectedPatientsP
 import { ConfirmDialog } from '@/components/outreach/ConfirmDialog'
 import { RejectDialog } from '@/components/outreach/RejectDialog'
 import { MessagesDialog } from '@/components/outreach/MessagesDialog'
+import { SendCampaignDialog } from '@/components/outreach/SendCampaignDialog'
+import { getCampaigns, recordSend } from '@/data/outreachCampaigns'
 
 type DialogKind =
   | { kind: 'discard' }
@@ -42,6 +44,7 @@ type DialogKind =
   | { kind: 'approve' }
   | { kind: 'reject' }
   | { kind: 'viewMessages' }
+  | { kind: 'send' }
   | null
 
 export default function OutreachView() {
@@ -50,6 +53,8 @@ export default function OutreachView() {
   const offer = useMemo(() => findOffer(params.get('offer')), [params])
   const fields = useMemo(() => setupFieldsFor(offer), [offer])
   const selectedCount = Math.max(0, Number(params.get('selected')) || 0)
+  const selectedFull  = Math.max(0, Number(params.get('full'))    || 0)
+  const selectedPart  = Math.max(0, Number(params.get('partial')) || 0)
   const meta = useMemo(
     () => ({ ...inheritedFor(offer), recipientCount: selectedCount }),
     [offer, selectedCount]
@@ -77,6 +82,15 @@ export default function OutreachView() {
   const inMlrReview   = currentStatus === 'inMlrReview'
   const wasRejected   = currentStatus === 'rejectedByMlr'
   const messages = getRejectionMessages(offer.id)
+
+  // Campaign send: agency, Active offer, has recipients, no prior send for this offer.
+  const [campaignsTick, setCampaignsTick] = useState(0)
+  const sentForThisOffer = getCampaigns(offer.id).length > 0
+  const showSendButton =
+    persona === 'agency'
+    && currentStatus === 'active'
+    && selectedCount > 0
+    && !sentForThisOffer
 
   // Sponsor-led clinical trials skip MLR review — they activate directly from outreach.
   const isClinicalTrial = offer.offerKind === 'clinical_trial'
@@ -188,6 +202,17 @@ export default function OutreachView() {
       setBusy(false)
       setDialog(null)
       router.push('/mlr')
+    }, 900)
+  }
+
+  const onSend = () => {
+    setBusy(true)
+    setTimeout(() => {
+      recordSend(offer.id, selectedFull, selectedPart)
+      setBusy(false)
+      setDialog(null)
+      setCampaignsTick(t => t + 1)
+      setDrawerOpen(true)
     }, 900)
   }
 
@@ -340,6 +365,15 @@ export default function OutreachView() {
               Edit
             </button>
           )}
+          {showSendButton && (
+            <button
+              type="button"
+              onClick={() => setDialog({ kind: 'send' })}
+              className="px-5 py-2 rounded-md bg-green-12 hover:bg-green-13 text-charcoal-white text-[13px] font-medium"
+            >
+              Send Email
+            </button>
+          )}
           {showPrimaryCta && (
             <button
               type="button"
@@ -382,8 +416,8 @@ export default function OutreachView() {
       <SelectedPatientsPullTab
         open={drawerOpen}
         onToggle={() => setDrawerOpen(o => !o)}
-        patientCount={meta.recipientCount}
-        costLabel="$4.2k"
+        offerId={offer.id}
+        refreshKey={campaignsTick}
       />
 
       {dialog?.kind === 'discard' && (
@@ -459,6 +493,15 @@ export default function OutreachView() {
         <MessagesDialog
           messages={messages}
           onClose={() => setDialog(null)}
+        />
+      )}
+      {dialog?.kind === 'send' && (
+        <SendCampaignDialog
+          fullCount={selectedFull}
+          partialCount={selectedPart}
+          busy={busy}
+          onConfirm={onSend}
+          onCancel={() => (busy ? null : setDialog(null))}
         />
       )}
     </div>

@@ -109,7 +109,7 @@ export default function MatchesView() {
     return { full, partial, total: full + partial }
   }, [selected, allPatients])
 
-  const outreachHref = `/outreach?offer=${offer.id}&selected=${summary.total}`
+  const outreachHref = `/outreach?offer=${offer.id}&selected=${summary.total}&full=${summary.full}&partial=${summary.partial}`
 
   return (
     <div className="min-h-screen bg-charcoal-1 flex flex-col">
