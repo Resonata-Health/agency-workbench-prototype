@@ -63,8 +63,8 @@ export interface InheritedMeta {
   brand: string             // e.g. "TOZIRET"
   parentheticalSrc: string  // e.g. "retatinib"
   displayTitle: string      // e.g. "Adult and Pediatric RET-Altered Cancer Treatment"
-  sponsor: string           // e.g. "CureX Pharmaceuticals"
-  sponsorShort: string      // e.g. "CureX"
+  sponsor: string           // e.g. "Janssen"
+  sponsorShort: string      // e.g. "Janssen"
   approvalBadge: string     // "FDA-APPROVED"
   matchBadge: string        // "FULL MATCH"
   therapyCategory: string

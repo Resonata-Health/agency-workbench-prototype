@@ -1,3 +1,27 @@
+/**
+ * Light data registry for the prototype.
+ *
+ * One source of truth: the OFFERS array. Each entry is a CareOffer with
+ * optional EM seed and an agencyAssigned flag. Everything else derives:
+ *   - sponsorPortfolioBySponsor → all offers per sponsor
+ *   - careOffersBySponsor       → only offers with agencyAssigned = true
+ *   - allOffers / findOffer     → lookups
+ *
+ * To add a new offer:
+ *   1. Drop an EM seed file in src/data/em/<slug>.ts (or skip — STARTER_EM
+ *      kicks in if `em` is omitted).
+ *   2. Add a new entry to OFFERS below. Set `agencyAssigned: true` if the
+ *      offer should also show up on the Agency landing.
+ *
+ * To add a new sponsor:
+ *   1. Append the sponsor name to `sponsors` and update `sponsorMeta`.
+ *   2. Add one or more offer entries with that sponsor.
+ */
+
+import type { EmData } from './em/types'
+import { NCT06414954_EM } from './em/nct06414954'
+import { IMAAVY_EM } from './em/imaavy'
+
 export type OfferStatus = 'active' | 'inMlrReview' | 'inDesign' | 'inactive' | 'deactivated' | 'rejectedByMlr'
 
 export type OfferKind = 'approved_treatment' | 'clinical_trial'
@@ -18,17 +42,22 @@ export interface CareOffer {
   displayTitle?: string
   activationLabel?: string
 
-  // Optional, richer fields used by the Sponsor portfolio (clinical trials etc.)
-  // Existing Agency offers omit these and render as before.
+  // Clinical-trial fields (rendered on the card meta line when present).
   offerKind?: OfferKind
-  phase?: string                  // e.g. 'Phase 1/2', 'Phase 3'
+  phase?: string
   arms?: number
   cohorts?: number
   sites?: number
   enrollmentComplete?: boolean
+
+  // Eligibility matrix seed. Falls back to STARTER_EM when omitted.
+  em?: EmData
+
+  // True = also visible on the Agency landing for this sponsor. Default false.
+  agencyAssigned?: boolean
 }
 
-export const sponsors = ['CureX Pharmaceuticals', 'Nuveero Therapeutics', 'NMD Pharma', 'Janssen'] as const
+export const sponsors = ['NMD Pharma', 'Janssen'] as const
 export type SponsorName = (typeof sponsors)[number]
 
 export interface SponsorMeta {
@@ -36,231 +65,87 @@ export interface SponsorMeta {
 }
 
 export const sponsorMeta: Record<SponsorName, SponsorMeta> = {
-  'CureX Pharmaceuticals': { outreachSentLast7d: 18420 },
-  'Nuveero Therapeutics':  { outreachSentLast7d: 7840 },
-  'NMD Pharma':            { outreachSentLast7d: 0 },
-  'Janssen':               { outreachSentLast7d: 0 }
+  'NMD Pharma': { outreachSentLast7d: 0 },
+  'Janssen':    { outreachSentLast7d: 0 }
 }
 
 /* ------------------------------------------------------------------ */
-/* Agency view: offers assigned to the agency.                         */
-/* (Unchanged — keeps existing Agency Workbench flow working as-is.)   */
+/* The registry. One record per care option.                          */
 /* ------------------------------------------------------------------ */
 
-export const careOffersBySponsor: Record<SponsorName, CareOffer[]> = {
-  'CureX Pharmaceuticals': [
-    {
-      id: 'toziret',
-      title: 'TOZIRET (retatinib) — RET-Altered Cancer Treatment',
-      internalId: 'TOZIRET-001',
-      sponsor: 'CureX Pharmaceuticals',
-      sponsorShort: 'CureX',
-      description:
-        'FDA-approved treatment for adult and pediatric patients with RET-altered cancers including NSCLC, thyroid cancer, and MTC. Direct-to-patient awareness campaign.',
-      subgroups: 4,
-      matchesToDate: 342,
-      status: 'inDesign',
-      updatedLabel: 'Last updated: Feb 1, 2026',
-      officialTitle:
-        'FDA-approved treatment for adult and pediatric patients with RET-altered cancers including NSCLC, thyroid cancer, and MTC',
-      displayTitle: 'Adult and Pediatric RET-Altered Cancer Treatment',
-      activationLabel: 'Jan 15, 2026',
-      offerKind: 'approved_treatment'
-    },
-    {
-      id: 'velkara',
-      title: 'VELKARA (obistamab) — Moderate-to-Severe Atopic Dermatitis',
-      internalId: 'VELK-012',
-      sponsor: 'CureX Pharmaceuticals',
-      sponsorShort: 'CureX',
-      description:
-        'Biologic therapy for adults with moderate-to-severe atopic dermatitis inadequately controlled by topical therapies. Patient education and treatment awareness.',
-      subgroups: 2,
-      matchesToDate: 1204,
-      status: 'active',
-      updatedLabel: 'Last updated: Sep 3, 2025',
-      offerKind: 'approved_treatment'
-    },
-    {
-      id: 'clarimod',
-      title: 'CLARIMOD (fenolimide) — Relapsing Multiple Sclerosis',
-      internalId: 'CLARI-005',
-      sponsor: 'CureX Pharmaceuticals',
-      sponsorShort: 'CureX',
-      description:
-        'Oral disease-modifying therapy for relapsing forms of multiple sclerosis in adults. Physician and patient awareness program.',
-      subgroups: 3,
-      matchesToDate: 587,
-      status: 'active',
-      updatedLabel: 'Last updated: Aug 28, 2025',
-      offerKind: 'approved_treatment'
-    }
-  ],
-  'Nuveero Therapeutics': [
-    {
-      id: 'brevanta',
-      title: 'BREVANTA (sulecizumab) — Chronic Heart Failure',
-      internalId: 'BREV-003',
-      sponsor: 'Nuveero Therapeutics',
-      sponsorShort: 'Nuveero',
-      description:
-        'Injectable biologic for adults with symptomatic chronic heart failure with reduced ejection fraction. Direct-to-patient outreach.',
-      subgroups: 2,
-      matchesToDate: 891,
-      status: 'active',
-      updatedLabel: 'Last updated: Sep 1, 2025',
-      offerKind: 'approved_treatment'
-    },
-    {
-      id: 'lumigen',
-      title: 'LUMIGEN (tarocetib) — Advanced Renal Cell Carcinoma',
-      internalId: 'LUMI-008',
-      sponsor: 'Nuveero Therapeutics',
-      sponsorShort: 'Nuveero',
-      description:
-        'Targeted kinase inhibitor for adults with advanced renal cell carcinoma following prior systemic therapy. HCP and patient awareness.',
-      subgroups: 3,
-      matchesToDate: 456,
-      status: 'inMlrReview',
-      updatedLabel: 'Last updated: Aug 15, 2025',
-      offerKind: 'approved_treatment'
-    }
-  ],
-  'NMD Pharma': [],
-  'Janssen': [
-    {
-      id: 'imaavy',
-      title: 'Nipocalimab (Imaavy) for patients ≥12 years who are AChR or MuSK positive',
-      internalId: 'Imaavy',
-      sponsor: 'Janssen',
-      sponsorShort: 'Janssen',
-      description:
-        'Nipocalimab (Imaavy) is a high-affinity humanized monoclonal antibody FcRn blocker administered intravenously. FDA approved for generalized myasthenia gravis in adults and pediatric patients 12 years and older who are AChR or MuSK antibody positive.',
-      subgroups: 1,
-      matchesToDate: 0,
-      status: 'active',
-      updatedLabel: 'Last updated: Jun 18, 2026',
-      offerKind: 'approved_treatment',
-      officialTitle:
-        'Nipocalimab (Imaavy) is a high-affinity humanized monoclonal antibody FcRn blocker administered intravenously. It reduces circulating IgG levels including pathogenic autoantibodies by blocking the neonatal Fc receptor. FDA approved for generalized myasthenia gravis in adults and pediatric patients 12 years and older who are AChR or MuSK antibody positive, offering treatment across a broader age range than some other approved therapies.',
-      displayTitle: 'Generalized Myasthenia Gravis (AChR or MuSK Antibody Positive, age ≥12)'
-    }
-  ]
-}
-
-/* ------------------------------------------------------------------ */
-/* Sponsor view: the sponsor's portfolio (clinical trials + treatments)*/
-/* This is what the Sponsor persona sees on /sponsor.                  */
-/* ------------------------------------------------------------------ */
-
-export const sponsorPortfolioBySponsor: Record<SponsorName, CareOffer[]> = {
-  'CureX Pharmaceuticals': [
-    {
-      id: 'cx3537982',
-      title: 'CX3537982 in KRAS G12C Cancer',
-      internalId: 'NCT02021234',
-      sponsor: 'CureX Pharmaceuticals',
-      sponsorShort: 'CureX',
-      description:
-        'Phase 1/2 study of LY3537982 in patients with solid tumors harboring KRAS G12C mutation. Multiple cohorts including monotherapy and combinations with pembrolizumab, cetuximab, and chemotherapy.',
-      subgroups: 0,
-      matchesToDate: 0,
-      status: 'inDesign',
-      updatedLabel: 'Last updated: Aug 20, 2025',
-      offerKind: 'clinical_trial',
-      officialTitle: 'Study of CX3537982 in Cancer Patients With a Specific Genetic Mutation (KRAS G12C)',
-      displayTitle: 'KRAS G12C Targeted Therapy Study',
-      phase: 'Phase 1/2',
-      cohorts: 7,
-      sites: 10
-    },
-    {
-      id: 'toziret-sponsor',
-      title: 'TOZIRET (retatinib) - RET-Altered Cancer Treatment',
-      internalId: 'TOZIRET-001',
-      sponsor: 'CureX Pharmaceuticals',
-      sponsorShort: 'CureX',
-      description:
-        'FDA-approved treatment for adult and pediatric patients with RET-altered cancers including NSCLC, thyroid cancer, and MTC. Direct-to-patient awareness campaign.',
-      subgroups: 4,
-      matchesToDate: 342,
-      status: 'inactive',
-      updatedLabel: 'Last updated: Aug 20, 2025',
-      offerKind: 'approved_treatment',
-      displayTitle: 'Adult and Pediatric RET-Altered Cancer Treatment'
-    },
-    {
-      id: 'tirzepatide-t2d',
-      title: 'Tirzepatide in Type 2 Diabetes with Cardiovascular Disease',
-      internalId: 'NCT04255433',
-      sponsor: 'CureX Pharmaceuticals',
-      sponsorShort: 'CureX',
-      description:
-        'Phase 3 study evaluating tirzepatide versus dulaglutide in adults with type 2 diabetes and increased cardiovascular risk. Primary endpoint: MACE reduction.',
-      subgroups: 0,
-      matchesToDate: 0,
-      status: 'active',
-      updatedLabel: 'Last updated: Aug 20, 2025',
-      offerKind: 'clinical_trial',
-      displayTitle: 'Tirzepatide T2D Cardiovascular Outcomes',
-      phase: 'Phase 3',
-      arms: 2,
-      sites: 47,
-      enrollmentComplete: true
-    },
-    {
-      id: 'tirzepatide-t1d',
-      title: 'Tirzepatide in Type 1 Diabetes',
-      internalId: 'NCT04255433',
-      sponsor: 'CureX Pharmaceuticals',
-      sponsorShort: 'CureX',
-      description:
-        'Phase 2 study evaluating tirzepatide versus dulaglutide in adults with type 2 diabetes and increased cardiovascular risk. Primary endpoint: MACE reduction.',
-      subgroups: 0,
-      matchesToDate: 0,
-      status: 'deactivated',
-      updatedLabel: 'Last updated: Aug 20, 2025',
-      offerKind: 'clinical_trial',
-      displayTitle: 'Tirzepatide T1D Outcomes',
-      phase: 'Phase 2',
-      arms: 2,
-      sites: 47,
-      enrollmentComplete: true
-    }
-  ],
-  'Nuveero Therapeutics': careOffersBySponsor['Nuveero Therapeutics'],
-  'Janssen': careOffersBySponsor['Janssen'],
-  'NMD Pharma': [
-    {
-      id: 'nmd670-mg',
-      title: 'NMD670 in adult AChR/MuSK-Ab+ Myasthenia Gravis',
-      internalId: 'NCT06414954',
-      sponsor: 'NMD Pharma',
-      sponsorShort: 'NMD',
-      description:
-        'Proof-of-concept, dose range finding study of NMD670 in adult patients with AChR or MuSK antibody positive MG.',
-      subgroups: 0,
-      matchesToDate: 0,
-      status: 'inDesign',
-      updatedLabel: 'Last updated: Jun 17, 2026',
-      offerKind: 'clinical_trial',
-      officialTitle:
-        'A Phase 2b, Randomised, Double-Blind, Placebo-Controlled Study to Evaluate the Efficacy, Safety, and Tolerability of 3 Dose Levels of NMD670 Over 21 Days in Adult Patients With AChR/MuSK-Ab+ Myasthenia Gravis',
-      displayTitle: 'NMD670 for AChR/MuSK-Ab+ Myasthenia Gravis',
-      phase: 'Phase 2'
-    }
-  ]
-}
-
-export const allOffers: CareOffer[] = [
-  ...careOffersBySponsor['CureX Pharmaceuticals'],
-  ...careOffersBySponsor['Nuveero Therapeutics'],
-  ...careOffersBySponsor['Janssen'],
-  ...sponsorPortfolioBySponsor['CureX Pharmaceuticals'].filter(
-    o => !careOffersBySponsor['CureX Pharmaceuticals'].some(a => a.id === o.id)
-  ),
-  ...sponsorPortfolioBySponsor['NMD Pharma']
+const OFFERS: CareOffer[] = [
+  {
+    id: 'nmd670-mg',
+    title: 'NMD670 in adult AChR/MuSK-Ab+ Myasthenia Gravis',
+    internalId: 'NCT06414954',
+    sponsor: 'NMD Pharma',
+    sponsorShort: 'NMD',
+    description:
+      'Proof-of-concept, dose range finding study of NMD670 in adult patients with AChR or MuSK antibody positive MG.',
+    subgroups: 0,
+    matchesToDate: 0,
+    status: 'inDesign',
+    updatedLabel: 'Last updated: Jun 17, 2026',
+    offerKind: 'clinical_trial',
+    officialTitle:
+      'A Phase 2b, Randomised, Double-Blind, Placebo-Controlled Study to Evaluate the Efficacy, Safety, and Tolerability of 3 Dose Levels of NMD670 Over 21 Days in Adult Patients With AChR/MuSK-Ab+ Myasthenia Gravis',
+    displayTitle: 'NMD670 for AChR/MuSK-Ab+ Myasthenia Gravis',
+    phase: 'Phase 2',
+    em: NCT06414954_EM
+    // agencyAssigned omitted → sponsor-only (no Agency landing entry)
+  },
+  {
+    id: 'imaavy',
+    title: 'Nipocalimab (Imaavy) for patients ≥12 years who are AChR or MuSK positive',
+    internalId: 'Imaavy',
+    sponsor: 'Janssen',
+    sponsorShort: 'Janssen',
+    description:
+      'Nipocalimab (Imaavy) is a high-affinity humanized monoclonal antibody FcRn blocker administered intravenously. FDA approved for generalized myasthenia gravis in adults and pediatric patients 12 years and older who are AChR or MuSK antibody positive.',
+    subgroups: 1,
+    matchesToDate: 0,
+    status: 'active',
+    updatedLabel: 'Last updated: Jun 18, 2026',
+    offerKind: 'approved_treatment',
+    officialTitle:
+      'Nipocalimab (Imaavy) is a high-affinity humanized monoclonal antibody FcRn blocker administered intravenously. It reduces circulating IgG levels including pathogenic autoantibodies by blocking the neonatal Fc receptor. FDA approved for generalized myasthenia gravis in adults and pediatric patients 12 years and older who are AChR or MuSK antibody positive, offering treatment across a broader age range than some other approved therapies.',
+    displayTitle: 'Generalized Myasthenia Gravis (AChR or MuSK Antibody Positive, age ≥12)',
+    em: IMAAVY_EM,
+    agencyAssigned: true
+  }
 ]
+
+/* ------------------------------------------------------------------ */
+/* Derived views                                                       */
+/* ------------------------------------------------------------------ */
+
+export const allOffers: CareOffer[] = OFFERS
+
+function emptyBySponsor(): Record<SponsorName, CareOffer[]> {
+  const out = {} as Record<SponsorName, CareOffer[]>
+  for (const s of sponsors) out[s] = []
+  return out
+}
+
+export const sponsorPortfolioBySponsor: Record<SponsorName, CareOffer[]> = OFFERS.reduce(
+  (acc, o) => {
+    if ((sponsors as readonly string[]).includes(o.sponsor)) {
+      acc[o.sponsor as SponsorName].push(o)
+    }
+    return acc
+  },
+  emptyBySponsor()
+)
+
+export const careOffersBySponsor: Record<SponsorName, CareOffer[]> = OFFERS.reduce(
+  (acc, o) => {
+    if (o.agencyAssigned && (sponsors as readonly string[]).includes(o.sponsor)) {
+      acc[o.sponsor as SponsorName].push(o)
+    }
+    return acc
+  },
+  emptyBySponsor()
+)
 
 export function findOffer(id: string | null | undefined): CareOffer {
   return allOffers.find(o => o.id === id) ?? allOffers[0]

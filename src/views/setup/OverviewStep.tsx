@@ -21,21 +21,12 @@ interface Intervention {
 }
 
 const DEFAULT_INTERVENTIONS_BY_OFFER: Record<string, Intervention[]> = {
-  'cx3537982': [
-    { id: 'i1', name: 'CX3537982',      type: 'KRAS G12C inhibitor', category: 'Targeted Therapy' },
-    { id: 'i2', name: 'pembrolizumab',  type: 'PD-1 inhibitor',      category: 'Immunotherapy' },
-    { id: 'i3', name: 'cetuximab',      type: 'EGFR inhibitor',      category: 'Targeted Therapy' },
-    { id: 'i4', name: 'pemetrexed',     type: 'Antifolate',          category: 'Chemotherapy' },
-    { id: 'i5', name: 'cisplatin',      type: 'Platinum agent',      category: 'Chemotherapy' },
-    { id: 'i6', name: 'carboplatin',    type: 'Platinum agent',      category: 'Chemotherapy' }
+  'nmd670-mg': [
+    { id: 'i1', name: 'NMD670',  type: 'ClC-1 inhibitor', category: 'Targeted Therapy' },
+    { id: 'i2', name: 'Placebo', type: 'Placebo',         category: 'Comparator' }
   ],
-  'tirzepatide-t2d': [
-    { id: 'i1', name: 'tirzepatide',  type: 'GIP/GLP-1 agonist', category: 'Targeted Therapy' },
-    { id: 'i2', name: 'dulaglutide',  type: 'GLP-1 agonist',     category: 'Comparator' }
-  ],
-  'tirzepatide-t1d': [
-    { id: 'i1', name: 'tirzepatide',  type: 'GIP/GLP-1 agonist', category: 'Targeted Therapy' },
-    { id: 'i2', name: 'dulaglutide',  type: 'GLP-1 agonist',     category: 'Comparator' }
+  'imaavy': [
+    { id: 'i1', name: 'Nipocalimab', type: 'FcRn blocker (mAb)', category: 'Biologic' }
   ]
 }
 

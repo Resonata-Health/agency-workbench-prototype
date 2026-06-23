@@ -14,23 +14,23 @@ export const CONTACTS: SetupContact[] = [
   {
     id: 'rosalind-mendez',
     name: 'Dr. Rosalind Mendez',
-    department: 'CureX Medical Affairs',
+    department: 'Janssen Medical Affairs',
     phone: '(292) 555-5951',
-    email: 'rosalind_mendez@curex.com'
+    email: 'rosalind_mendez@janssen.com'
   },
   {
     id: 'aiden-rao',
     name: 'Dr. Aiden Rao',
-    department: 'CureX Clinical Operations',
+    department: 'Janssen Clinical Operations',
     phone: '(292) 555-1077',
-    email: 'aiden_rao@curex.com'
+    email: 'aiden_rao@janssen.com'
   },
   {
     id: 'priya-shah',
     name: 'Priya Shah',
-    department: 'CureX Regulatory',
+    department: 'Janssen Regulatory',
     phone: '(292) 555-4019',
-    email: 'priya_shah@curex.com'
+    email: 'priya_shah@janssen.com'
   }
 ]
 
