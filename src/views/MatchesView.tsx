@@ -80,12 +80,13 @@ export default function MatchesView() {
   }, [offer.sponsor, activeSponsor, setSponsor])
 
   // Selection is allowed only once the offer is approved/Active. Until then,
-  // checkboxes are hidden across all roles. Sponsor and Agency both see an
-  // info banner explaining when selection unlocks.
+  // checkboxes are hidden for everyone. Sponsors never select (they don't
+  // contact patients) so they never see checkboxes or the unlock banner.
   const currentStatus = getOfferStatus(offer.id) ?? offer.status
   const selectionUnlocked = currentStatus === 'active'
-  const showCheckboxes = canSelect && selectionUnlocked
-  const showLockedInfo = !selectionUnlocked && (persona === 'sponsor' || persona === 'agency')
+  const showCheckboxes = canSelect && selectionUnlocked && persona !== 'sponsor'
+  const showLockedInfo  = !selectionUnlocked && persona === 'agency'
+  const showEmailKpis   = persona !== 'sponsor'
 
   const [selected, setSelected] = useState<Set<string>>(new Set())
 
@@ -140,8 +141,12 @@ export default function MatchesView() {
             <KpiCard label="Total Matches"   value={offer.matchesToDate.toLocaleString()} caption="Last 30 days" />
             <KpiCard label="Full Matches"    value={218} caption="63.7%" accent="green" />
             <KpiCard label="Partial Matches" value={124} caption="36.3%" accent="gold" />
-            <KpiCard label="Emails Sent"     value={89}  caption="26% of matches" accent="blue" />
-            <KpiCard label="Email Opens"     value={67}  caption="75.3% open rate" accent="blue" />
+            {showEmailKpis && (
+              <>
+                <KpiCard label="Emails Sent"     value={89}  caption="26% of matches" accent="blue" />
+                <KpiCard label="Email Opens"     value={67}  caption="75.3% open rate" accent="blue" />
+              </>
+            )}
           </div>
 
           {showLockedInfo && (

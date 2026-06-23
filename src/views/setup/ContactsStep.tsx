@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { CONTAINER } from '@/components/container'
 import type { CareOffer } from '@/data/mockCareOffers'
 import { CONTACTS, DEFAULT_SITES, type SetupSite } from '@/data/mockSetupContacts'
+import { setOfferStatus } from '@/data/offerStatusOverrides'
 
 export function ContactsStep({ offer }: { offer: CareOffer }) {
   const router = useRouter()
@@ -31,7 +32,11 @@ export function ContactsStep({ offer }: { offer: CareOffer }) {
     ])
 
   const goPrev = () => router.push(`/setup?offer=${offer.id}&step=criteria`)
-  const completeSetup = () => router.push(`/matches?offer=${offer.id}`)
+  const completeSetup = () => {
+    // "Complete Setup and Activate" — flips the offer to Active and lands on Matches.
+    setOfferStatus(offer.id, 'active')
+    router.push(`/matches?offer=${offer.id}`)
+  }
 
   return (
     <>
@@ -184,7 +189,7 @@ export function ContactsStep({ offer }: { offer: CareOffer }) {
           onClick={completeSetup}
           className="px-5 py-2 rounded-md bg-green-12 hover:bg-green-13 text-charcoal-white text-[13px] font-medium"
         >
-          Complete Setup
+          Complete Setup and Activate
         </button>
       </div>
     </>

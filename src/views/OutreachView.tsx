@@ -57,8 +57,6 @@ export default function OutreachView() {
 
 
   const viewParam = params.get('view')
-  const active: Artifact =
-    viewParam === 'card' || viewParam === 'details' ? viewParam : 'email'
 
   const [drafts, setDrafts] = useState<OutreachDrafts>(() => seedDrafts(offer))
   const [dirty, setDirty] = useState(false)
@@ -88,6 +86,14 @@ export default function OutreachView() {
   // Sponsor-led clinical trials skip MLR review — they activate directly from outreach.
   const isClinicalTrial = offer.offerKind === 'clinical_trial'
   const sponsorClinicalTrial = persona === 'sponsor' && isClinicalTrial
+
+  // Sponsors never contact patients directly — drop the Email artifact for them.
+  const allowedArtifacts: Artifact[] =
+    persona === 'sponsor' ? ['card', 'details'] : ['email', 'card', 'details']
+  const active: Artifact =
+    allowedArtifacts.includes(viewParam as Artifact)
+      ? (viewParam as Artifact)
+      : allowedArtifacts[0]
 
   // Edit-mode rule (KD spec):
   //  - Draft offers are editable on entry. Submit button always shown.
@@ -257,7 +263,7 @@ export default function OutreachView() {
 
           {/* Switcher + autosave indicator */}
           <div className="flex items-center justify-between mb-2">
-            <Segmented active={active} onChange={setView} disabled={false} />
+            <Segmented active={active} onChange={setView} disabled={false} options={allowedArtifacts} />
             <span className="text-[12px] text-charcoal-11">
               {readOnly ? 'Read-only · view permission only' : savedLabel}
             </span>

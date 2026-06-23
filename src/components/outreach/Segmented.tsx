@@ -11,15 +11,19 @@ const OPTS: { id: Artifact; label: string }[] = [
 export function Segmented({
   active,
   onChange,
-  disabled
+  disabled,
+  options
 }: {
   active: Artifact
   onChange: (a: Artifact) => void
   disabled?: boolean
+  /** Restrict which artifacts render in the switcher. Default: all three. */
+  options?: Artifact[]
 }) {
+  const items = options ? OPTS.filter(o => options.includes(o.id)) : OPTS
   return (
     <div className="inline-flex bg-charcoal-white border border-charcoal-5 rounded-md p-1 gap-1">
-      {OPTS.map(o => {
+      {items.map(o => {
         const isActive = o.id === active
         return (
           <button
