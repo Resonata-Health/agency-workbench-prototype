@@ -28,7 +28,7 @@ export interface CareOffer {
   enrollmentComplete?: boolean
 }
 
-export const sponsors = ['CureX Pharmaceuticals', 'Nuveero Therapeutics', 'NMD Pharma'] as const
+export const sponsors = ['CureX Pharmaceuticals', 'Nuveero Therapeutics', 'NMD Pharma', 'Janssen'] as const
 export type SponsorName = (typeof sponsors)[number]
 
 export interface SponsorMeta {
@@ -38,7 +38,8 @@ export interface SponsorMeta {
 export const sponsorMeta: Record<SponsorName, SponsorMeta> = {
   'CureX Pharmaceuticals': { outreachSentLast7d: 18420 },
   'Nuveero Therapeutics':  { outreachSentLast7d: 7840 },
-  'NMD Pharma':            { outreachSentLast7d: 0 }
+  'NMD Pharma':            { outreachSentLast7d: 0 },
+  'Janssen':               { outreachSentLast7d: 0 }
 }
 
 /* ------------------------------------------------------------------ */
@@ -125,7 +126,26 @@ export const careOffersBySponsor: Record<SponsorName, CareOffer[]> = {
       offerKind: 'approved_treatment'
     }
   ],
-  'NMD Pharma': []
+  'NMD Pharma': [],
+  'Janssen': [
+    {
+      id: 'imaavy',
+      title: 'Nipocalimab (Imaavy) for patients ≥12 years who are AChR or MuSK positive',
+      internalId: 'Imaavy',
+      sponsor: 'Janssen',
+      sponsorShort: 'Janssen',
+      description:
+        'Nipocalimab (Imaavy) is a high-affinity humanized monoclonal antibody FcRn blocker administered intravenously. FDA approved for generalized myasthenia gravis in adults and pediatric patients 12 years and older who are AChR or MuSK antibody positive.',
+      subgroups: 1,
+      matchesToDate: 0,
+      status: 'active',
+      updatedLabel: 'Last updated: Jun 18, 2026',
+      offerKind: 'approved_treatment',
+      officialTitle:
+        'Nipocalimab (Imaavy) is a high-affinity humanized monoclonal antibody FcRn blocker administered intravenously. It reduces circulating IgG levels including pathogenic autoantibodies by blocking the neonatal Fc receptor. FDA approved for generalized myasthenia gravis in adults and pediatric patients 12 years and older who are AChR or MuSK antibody positive, offering treatment across a broader age range than some other approved therapies.',
+      displayTitle: 'Generalized Myasthenia Gravis (AChR or MuSK Antibody Positive, age ≥12)'
+    }
+  ]
 }
 
 /* ------------------------------------------------------------------ */
@@ -209,6 +229,7 @@ export const sponsorPortfolioBySponsor: Record<SponsorName, CareOffer[]> = {
     }
   ],
   'Nuveero Therapeutics': careOffersBySponsor['Nuveero Therapeutics'],
+  'Janssen': careOffersBySponsor['Janssen'],
   'NMD Pharma': [
     {
       id: 'nmd670-mg',
@@ -234,6 +255,7 @@ export const sponsorPortfolioBySponsor: Record<SponsorName, CareOffer[]> = {
 export const allOffers: CareOffer[] = [
   ...careOffersBySponsor['CureX Pharmaceuticals'],
   ...careOffersBySponsor['Nuveero Therapeutics'],
+  ...careOffersBySponsor['Janssen'],
   ...sponsorPortfolioBySponsor['CureX Pharmaceuticals'].filter(
     o => !careOffersBySponsor['CureX Pharmaceuticals'].some(a => a.id === o.id)
   ),

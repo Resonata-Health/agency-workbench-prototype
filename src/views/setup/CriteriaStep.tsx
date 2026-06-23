@@ -4,6 +4,7 @@ import type { CareOffer } from '@/data/mockCareOffers'
 import { EmCriteriaStep } from './EmCriteriaStep'
 import { NCT06414954_EM } from '@/data/em/nct06414954'
 import { TOZIRET_001_EM } from '@/data/em/toziret-001'
+import { IMAAVY_EM } from '@/data/em/imaavy'
 import { STARTER_EM } from '@/data/em/starter'
 import type { EmData } from '@/data/em/types'
 
@@ -11,7 +12,8 @@ import type { EmData } from '@/data/em/types'
 // gets the starter EM (one Main cohort, zero concepts — user builds from there).
 const EM_BY_OFFER_ID: Record<string, EmData> = {
   'nmd670-mg': NCT06414954_EM,
-  'toziret':   TOZIRET_001_EM
+  'toziret':   TOZIRET_001_EM,
+  'imaavy':    IMAAVY_EM
 }
 
 export function CriteriaStep({ offer }: { offer: CareOffer }) {
