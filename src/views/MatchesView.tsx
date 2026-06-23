@@ -69,15 +69,9 @@ export default function MatchesView() {
   const params = useSearchParams()
   const offer = useMemo(() => findOffer(params.get('offer')), [params])
   const fields = useMemo(() => setupFieldsFor(offer), [offer])
-  const { can, persona, sponsor: activeSponsor, setSponsor } = usePermissions()
+  const { can, persona } = usePermissions()
   const canSelect       = can('select_matches')
   const canViewOutreach = can('view_outreach')
-
-  useEffect(() => {
-    if (offer.sponsor && offer.sponsor !== activeSponsor) {
-      setSponsor(offer.sponsor as SponsorName)
-    }
-  }, [offer.sponsor, activeSponsor, setSponsor])
 
   // Selection is allowed only once the offer is approved/Active. Until then,
   // checkboxes are hidden for everyone. Sponsors never select (they don't

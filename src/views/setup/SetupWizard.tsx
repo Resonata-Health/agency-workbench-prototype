@@ -1,13 +1,12 @@
 'use client'
 
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { TopNav } from '@/components/TopNav'
 import { WorkbenchTabs } from '@/components/WorkbenchTabs'
 import { CONTAINER } from '@/components/container'
 import { SetupStepper, type SetupStep } from '@/components/setup/SetupStepper'
-import { findOffer, type SponsorName } from '@/data/mockCareOffers'
-import { usePermissions } from '@/app/providers'
+import { findOffer } from '@/data/mockCareOffers'
 import { OverviewStep } from './OverviewStep'
 import { CriteriaStep } from './CriteriaStep'
 import { ContactsStep } from './ContactsStep'
@@ -20,14 +19,6 @@ export default function SetupWizard() {
   const stepParam = params.get('step')
   const step: SetupStep =
     STEP_VALUES.find(s => s === stepParam) ?? 'overview'
-
-  // Keep the global sponsor selector in sync with the offer's sponsor.
-  const { sponsor, setSponsor } = usePermissions()
-  useEffect(() => {
-    if (offer.sponsor && offer.sponsor !== sponsor) {
-      setSponsor(offer.sponsor as SponsorName)
-    }
-  }, [offer.sponsor, sponsor, setSponsor])
 
   return (
     <div className="min-h-screen bg-charcoal-1 flex flex-col">

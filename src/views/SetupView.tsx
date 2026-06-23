@@ -30,7 +30,7 @@ function SetupReadOnly() {
   const params = useSearchParams()
   const offer = useMemo(() => findOffer(params.get('offer')), [params])
   const fields = useMemo(() => setupFieldsFor(offer), [offer])
-  const { can, sponsor: activeSponsor, setSponsor } = usePermissions()
+  const { can } = usePermissions()
 
   const canEditDisplayTitle = can('edit_setup_display_title')
   const canEditEndDate      = can('edit_setup_end_date')
@@ -40,13 +40,6 @@ function SetupReadOnly() {
 
   // Hidden for now per spec — kept in code so we can re-surface easily.
   const SHOW_DISPLAY_TITLE = false
-
-  // Sync the global sponsor selector with the offer the user is on.
-  useEffect(() => {
-    if (offer.sponsor && offer.sponsor !== activeSponsor) {
-      setSponsor(offer.sponsor as SponsorName)
-    }
-  }, [offer.sponsor, activeSponsor, setSponsor])
 
   const [displayTitle, setDisplayTitle] = useState(fields.displayTitle)
   const [endDate, setEndDate] = useState('')

@@ -65,12 +65,7 @@ export default function OutreachView() {
   const [dialog, setDialog] = useState<DialogKind>(null)
   const [busy, setBusy] = useState(false)
 
-  const { can, persona, sponsor: activeSponsor, setSponsor } = usePermissions()
-  useEffect(() => {
-    if (offer.sponsor && offer.sponsor !== activeSponsor) {
-      setSponsor(offer.sponsor as SponsorName)
-    }
-  }, [offer.sponsor, activeSponsor, setSponsor])
+  const { can, persona } = usePermissions()
   const canEdit    = can('edit_outreach')
   const canSubmit  = can('submit_outreach')
   const canApprove = can('approve_outreach')

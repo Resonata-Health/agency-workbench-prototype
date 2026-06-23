@@ -21,6 +21,9 @@ export function TopNav() {
   const router = useRouter()
   const pathname = usePathname() ?? ''
   const onAdmin = pathname.startsWith('/admin')
+  // Strip trailing slash so /sponsor/ and /sponsor both match.
+  const normalizedPath = pathname.replace(/\/+$/, '') || '/'
+  const onLanding = normalizedPath === '/' || normalizedPath === '/sponsor' || normalizedPath === '/mlr'
   const [sponsorOpen, setSponsorOpen] = useState(false)
   const [personaOpen, setPersonaOpen] = useState(false)
   const { persona, setPersona, sponsor, setSponsor, can } = usePermissions()
@@ -42,6 +45,11 @@ export function TopNav() {
     setPersona(p)
     setPersonaOpen(false)
     router.push(PERSONA_HOME[p])
+  }
+
+  const handleSponsorPick = (s: typeof sponsors[number]) => {
+    setSponsor(s)
+    setSponsorOpen(false)
   }
 
   return (
@@ -70,9 +78,11 @@ export function TopNav() {
           )}
         </div>
 
-        {/* Right: persona switcher + (sponsor switcher) + avatar */}
+        {/* Right: (switchers, landing pages only) + (gear) + avatar */}
         <div className="flex items-center gap-3">
-          {/* Persona switcher */}
+          {/* Persona + sponsor switchers — landing pages only. Inside a
+              workflow they're hidden so they don't change context mid-step. */}
+          {onLanding && (<>
           <div className="relative">
             <button
               onClick={() => setPersonaOpen(o => !o)}
@@ -118,10 +128,7 @@ export function TopNav() {
                   {sponsors.map(s => (
                     <button
                       key={s}
-                      onClick={() => {
-                        setSponsor(s)
-                        setSponsorOpen(false)
-                      }}
+                      onClick={() => handleSponsorPick(s)}
                       className={`w-full text-left px-3 py-2 text-[13px] hover:bg-charcoal-1 ${
                         s === sponsor ? 'text-blue-10 font-medium' : 'text-charcoal-15'
                       }`}
@@ -134,6 +141,7 @@ export function TopNav() {
               )}
             </div>
           )}
+          </>)}
 
           {sponsorLogo && (
             <img
