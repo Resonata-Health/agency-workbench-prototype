@@ -104,7 +104,7 @@ const OFFERS: CareOffer[] = [
       'Nipocalimab (Imaavy) is a high-affinity humanized monoclonal antibody FcRn blocker administered intravenously. FDA approved for generalized myasthenia gravis in adults and pediatric patients 12 years and older who are AChR or MuSK antibody positive.',
     subgroups: 1,
     matchesToDate: 0,
-    status: 'active',
+    status: 'inDesign',
     updatedLabel: 'Last updated: Jun 18, 2026',
     offerKind: 'approved_treatment',
     officialTitle:

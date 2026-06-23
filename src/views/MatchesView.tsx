@@ -33,26 +33,26 @@ interface MatchGroup {
 
 const matchGroups: MatchGroup[] = [
   {
-    site: 'Memorial Sloan Kettering Cancer Center - New York, NY',
+    site: 'Mass General Hospital — Neurology, Boston, MA',
     patients: [
-      { id: 'PT-2025-08-A1B2C3', matchDate: 'Aug 20, 2025', arm: 'Arm A', matchType: 'Full Match', engagement: 'Email sent Aug 20', engagementTone: 'blue', state: 'NY', city: 'New York' },
-      { id: 'PT-2025-08-D4E5F6', matchDate: 'Aug 20, 2025', arm: 'Arm A', matchType: 'Partial Match', missing: 'QTc Interval (ms)', engagement: 'Submitted interest', engagementTone: 'default', state: 'NY', city: 'Brooklyn' },
-      { id: 'PT-2025-08-G7H8I9', matchDate: 'Aug 19, 2025', arm: 'Arm B', matchType: 'Full Match', engagement: 'Opened Aug 20', engagementTone: 'green', state: 'NY', city: 'New York' }
+      { id: 'PT-2026-06-A1B2C3', matchDate: 'Jun 14, 2026', arm: 'Arm A', matchType: 'Full Match', engagement: 'Email sent Jun 14', engagementTone: 'blue',  state: 'MA', city: 'Boston' },
+      { id: 'PT-2026-06-D4E5F6', matchDate: 'Jun 13, 2026', arm: 'Arm A', matchType: 'Partial Match', missing: 'MuSK antibody result', engagement: 'Submitted interest', engagementTone: 'default', state: 'MA', city: 'Cambridge' },
+      { id: 'PT-2026-06-G7H8I9', matchDate: 'Jun 12, 2026', arm: 'Arm B', matchType: 'Full Match', engagement: 'Opened Jun 13', engagementTone: 'green', state: 'MA', city: 'Quincy' }
     ]
   },
   {
-    site: 'MD Anderson Cancer Center - Houston, TX',
+    site: 'Johns Hopkins Neurology, Baltimore, MD',
     patients: [
-      { id: 'PT-2025-08-J1K2L3', matchDate: 'Aug 19, 2025', arm: 'Arm A', matchType: 'Full Match', engagement: 'Enrolled', engagementTone: 'default', state: 'TX', city: 'Houston' },
-      { id: 'PT-2025-08-M4N5O6', matchDate: 'Aug 18, 2025', arm: 'Arm B', matchType: 'Partial Match', adjacent: 'Current ECOG Score', engagement: 'Submitted interest', engagementTone: 'default', state: 'TX', city: 'Houston' },
-      { id: 'PT-2025-08-P7Q8R9', matchDate: 'Aug 18, 2025', arm: 'Arm A', matchType: 'Full Match', engagement: 'Clicked Aug 19', engagementTone: 'violet', state: 'TX', city: 'Austin' }
+      { id: 'PT-2026-06-J1K2L3', matchDate: 'Jun 12, 2026', arm: 'Arm A', matchType: 'Full Match', engagement: 'Enrolled', engagementTone: 'default', state: 'MD', city: 'Baltimore' },
+      { id: 'PT-2026-06-M4N5O6', matchDate: 'Jun 11, 2026', arm: 'Arm B', matchType: 'Partial Match', adjacent: 'MGFA Class not on file', engagement: 'Submitted interest', engagementTone: 'default', state: 'MD', city: 'Columbia' },
+      { id: 'PT-2026-06-P7Q8R9', matchDate: 'Jun 11, 2026', arm: 'Arm A', matchType: 'Full Match', engagement: 'Clicked Jun 12', engagementTone: 'violet', state: 'VA', city: 'Arlington' }
     ]
   },
   {
-    site: 'Dana-Farber Cancer Institute - Boston, MA',
+    site: 'Mayo Clinic — Neurology, Rochester, MN',
     patients: [
-      { id: 'PT-2025-08-S1T2U3', matchDate: 'Aug 17, 2025', arm: 'Arm A', matchType: 'Full Match', engagement: '-', engagementTone: 'default', state: 'MA', city: 'Boston' },
-      { id: 'PT-2025-08-V4W5X6', matchDate: 'Aug 17, 2025', arm: 'Arm B', matchType: 'Partial Match', missing: 'QTc 475 ms', engagement: 'Email sent Aug 18', engagementTone: 'blue', state: 'MA', city: 'Cambridge' }
+      { id: 'PT-2026-06-S1T2U3', matchDate: 'Jun 10, 2026', arm: 'Arm A', matchType: 'Full Match', engagement: '-', engagementTone: 'default', state: 'MN', city: 'Rochester' },
+      { id: 'PT-2026-06-V4W5X6', matchDate: 'Jun 10, 2026', arm: 'Arm B', matchType: 'Partial Match', missing: 'AChR antibody titer', engagement: 'Email sent Jun 11', engagementTone: 'blue', state: 'MN', city: 'St. Paul' }
     ]
   }
 ]
