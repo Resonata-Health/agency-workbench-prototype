@@ -89,7 +89,7 @@ function SetupReadOnly() {
 
           {canEditClinical && (
             <div className="bg-blue-1 border border-blue-3 text-blue-14 text-[12px] rounded-md px-3 py-2 mb-4">
-              You have <span className="font-mono text-[11px]">edit_setup_clinical</span> — the edit UI for clinical fields (Official Title, Brief Summary, Offer Type, Geographic Availability, Activation Date) is being designed and will appear here.
+              You have <span className="font-mono text-[11px]">edit_setup_clinical</span> — the edit UI for clinical fields (Official Title, Brief Summary, Offer Type, Activation Date) is being designed and will appear here.
             </div>
           )}
 
@@ -136,16 +136,6 @@ function SetupReadOnly() {
 
               <FieldRow label="Offer Type" labelWidth={200} inputWidth={352}>
                 <ReadonlyBox value={fields.offerType} />
-              </FieldRow>
-
-              <FieldRow label="Geographic Availability">
-                <div className="flex flex-wrap gap-1">
-                  {fields.geographies.map(g => (
-                    <span key={g} className="bg-blue-10 text-charcoal-white text-[12px] rounded-full px-2 py-0.5">
-                      {g}
-                    </span>
-                  ))}
-                </div>
               </FieldRow>
             </section>
 

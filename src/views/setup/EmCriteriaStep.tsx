@@ -144,13 +144,13 @@ export function EmCriteriaStep({ offer, seed }: Props) {
 
   const cycleVerdict = (conceptId: string, subgroupId: string) => {
     const current = effectiveVerdict(conceptId, subgroupId)
-    // Full cycle: empty → IN → IN★ → EX → EX★ → empty
+    // Cycle stays within IN / IN★ / EX / EX★ — never empties. Empty cells default to IN on first click.
     let next: Verdict
-    if (current === null)       next = 'I'
-    else if (current === 'I')   next = 'I!'
+    if (current === 'I')        next = 'I!'
     else if (current === 'I!')  next = 'E'
     else if (current === 'E')   next = 'E!'
-    else /* 'E!' */             next = null
+    else if (current === 'E!')  next = 'I'
+    else /* null */             next = 'I'
     setVerdictOverrides(prev => ({ ...prev, [`${conceptId}::${subgroupId}`]: next }))
   }
 

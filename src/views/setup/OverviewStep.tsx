@@ -30,8 +30,6 @@ const DEFAULT_INTERVENTIONS_BY_OFFER: Record<string, Intervention[]> = {
   ]
 }
 
-const ALL_GEOGRAPHIES = ['US', 'Australia', 'Canada', 'France', 'Japan', 'Korea', 'UK', 'Germany']
-
 const DOMAIN_OPTIONS = ['Neurology', 'Cardiology', 'Immunology', 'Oncology', 'Rare Disease', 'Endocrinology']
 const CATEGORY_OPTIONS = ['Neuromuscular', 'Autoimmune', 'Cardiovascular', 'Metabolic', 'Hematology', 'Other']
 
@@ -52,9 +50,6 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
   const [domain, setDomain]                 = useState('')
   const [category, setCategory]             = useState('')
   const [phase, setPhase]                   = useState(offer.phase ?? '')
-  const [geographies, setGeographies]       = useState<string[]>(
-    isClinicalTrial ? ['US', 'Australia', 'Canada', 'France', 'Japan', 'Korea'] : fields.geographies
-  )
   const [interventions, setInterventions]   = useState<Intervention[]>(
     DEFAULT_INTERVENTIONS_BY_OFFER[offer.id] ?? [
       { id: 'i1', name: offer.title.split(/[—-]/)[0].trim(), type: '—', category: '—' }
@@ -101,9 +96,6 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
     ])
   const updateIntervention = (id: string, patch: Partial<Intervention>) =>
     setInterventions(prev => prev.map(i => (i.id === id ? { ...i, ...patch } : i)))
-
-  const toggleGeography = (g: string) =>
-    setGeographies(prev => (prev.includes(g) ? prev.filter(x => x !== g) : [...prev, g]))
 
   const goNext = () =>
     router.push(`/setup?offer=${offer.id}&step=criteria`)
@@ -192,28 +184,6 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
               )}
             </div>
           </div>
-
-          <Field label="Geographic Availability" required>
-            <div className="flex flex-wrap gap-1">
-              {ALL_GEOGRAPHIES.map(g => {
-                const on = geographies.includes(g)
-                return (
-                  <button
-                    key={g}
-                    type="button"
-                    onClick={() => toggleGeography(g)}
-                    className={`text-[12px] rounded-full px-3 py-0.5 ${
-                      on
-                        ? 'bg-blue-10 text-charcoal-white'
-                        : 'bg-charcoal-white border border-charcoal-5 text-charcoal-14'
-                    }`}
-                  >
-                    {g}
-                  </button>
-                )
-              })}
-            </div>
-          </Field>
         </section>
 
         {/* For patient-facing communications */}
