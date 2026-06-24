@@ -346,7 +346,7 @@ function AddSiteDialog({
         {/* Step 1 — site search */}
         <label className="block text-[11px] font-medium uppercase tracking-wide text-charcoal-12 mt-4 mb-1.5">Site</label>
         {!site ? (
-          <div className="relative">
+          <div>
             <input
               type="text"
               value={query}
@@ -356,7 +356,7 @@ function AddSiteDialog({
               className={fieldCls}
             />
             {matches.length > 0 && (
-              <div className="absolute z-10 mt-1 w-full bg-charcoal-white border border-charcoal-4 rounded-md shadow-pop overflow-hidden">
+              <div className="mt-1 w-full bg-charcoal-white border border-charcoal-4 rounded-md overflow-y-auto max-h-[220px]">
                 {matches.map(s => (
                   <button
                     key={s.id}
