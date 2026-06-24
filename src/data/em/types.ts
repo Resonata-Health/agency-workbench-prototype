@@ -17,6 +17,18 @@ export interface Slot {
   type: SlotType
   /** subgroupId -> value (string) or null when not set */
   values: Record<string, string | null>
+  /** Tooltip text. Used by antisignal slots to explain the inverse semantics. */
+  helpText?: string
+}
+
+export interface TandemSlot extends Slot {
+  /** Gate condition that must be true for the slot to apply, e.g. "Physiological state: AF". */
+  tandemIf: string
+}
+
+export interface CompoundComponent {
+  id?: string
+  name: string
 }
 
 export interface Concept {
@@ -25,11 +37,23 @@ export interface Concept {
   name: string
   /** Section/category ID, e.g. 'diagnosis'. */
   section: string
-  /** True if the concept is the index condition for this CO. Adds star on I!/E! badge. */
+  /** True if the concept is the inclusion index for this CO. */
   isIndex?: boolean
+  /** True if the concept is the exclusion index for this CO. */
+  isExIndex?: boolean
   /** subgroupId -> verdict */
   verdicts: Record<string, Verdict>
   slots?: Slot[]
+  /** Inverse-semantics slots. Render after regular slots with an [A] prefix. */
+  antisignalSlots?: Slot[]
+  /** Conditional slots gated by `tandemIf`. Render after antisignal slots with an IF pill. */
+  tandemSlots?: TandemSlot[]
+
+  // Compound rule support — concept stands in for a boolean group of sub-criteria.
+  isCompound?: boolean
+  compoundOp?: 'OR' | 'AND' | 'EXCEPT' | 'IF'
+  compoundExpr?: string
+  components?: CompoundComponent[]
 }
 
 export interface Section {
@@ -80,4 +104,6 @@ export const DURATION_UNITS      = ['months', 'years']
 export interface EmData {
   subgroups: Subgroup[]
   concepts: Concept[]
+  /** Per-section fold overrides. e.g. { diagnosis: 'AND' } renders the INDEX: AND banner under the Diagnosis header. */
+  sectionFoldOverrides?: Record<string, 'AND' | 'OR'>
 }

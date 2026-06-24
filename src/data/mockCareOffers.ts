@@ -21,6 +21,7 @@
 import type { EmData } from './em/types'
 import { NCT06414954_EM } from './em/nct06414954'
 import { IMAAVY_EM } from './em/imaavy'
+import { BREVANTA_EM } from './em/brevanta'
 
 export type OfferStatus = 'active' | 'inMlrReview' | 'inDesign' | 'inactive' | 'deactivated' | 'rejectedByMlr'
 
@@ -57,7 +58,7 @@ export interface CareOffer {
   agencyAssigned?: boolean
 }
 
-export const sponsors = ['NMD Pharma', 'Janssen'] as const
+export const sponsors = ['NMD Pharma', 'Janssen', 'Nuveero Therapeutics'] as const
 export type SponsorName = (typeof sponsors)[number]
 
 export interface SponsorMeta {
@@ -65,8 +66,9 @@ export interface SponsorMeta {
 }
 
 export const sponsorMeta: Record<SponsorName, SponsorMeta> = {
-  'NMD Pharma': { outreachSentLast7d: 0 },
-  'Janssen':    { outreachSentLast7d: 0 }
+  'NMD Pharma':            { outreachSentLast7d: 0 },
+  'Janssen':               { outreachSentLast7d: 0 },
+  'Nuveero Therapeutics':  { outreachSentLast7d: 0 }
 }
 
 /* ------------------------------------------------------------------ */
@@ -111,6 +113,23 @@ const OFFERS: CareOffer[] = [
       'Nipocalimab (Imaavy) is a high-affinity humanized monoclonal antibody FcRn blocker administered intravenously. It reduces circulating IgG levels including pathogenic autoantibodies by blocking the neonatal Fc receptor. FDA approved for generalized myasthenia gravis in adults and pediatric patients 12 years and older who are AChR or MuSK antibody positive, offering treatment across a broader age range than some other approved therapies.',
     displayTitle: 'Generalized Myasthenia Gravis (AChR or MuSK Antibody Positive, age ≥12)',
     em: IMAAVY_EM,
+    agencyAssigned: true
+  },
+  {
+    id: 'brevanta',
+    title: 'BREVANTA (sulecizumab) — Chronic Heart Failure',
+    internalId: 'BREV-003',
+    sponsor: 'Nuveero Therapeutics',
+    sponsorShort: 'Nuveero',
+    description:
+      'Injectable biologic for adults with symptomatic chronic heart failure across HFrEF, HFmrEF, and HFpEF populations. Direct-to-patient outreach.',
+    subgroups: 3,
+    matchesToDate: 0,
+    status: 'active',
+    updatedLabel: 'Last updated: Jun 18, 2026',
+    offerKind: 'approved_treatment',
+    displayTitle: 'Chronic Heart Failure (HFrEF / HFmrEF / HFpEF)',
+    em: BREVANTA_EM,
     agencyAssigned: true
   }
 ]

@@ -14,6 +14,7 @@ import {
   type EmData,
   type Slot,
   type Subgroup,
+  type TandemSlot,
   type Verdict
 } from '@/data/em/types'
 
@@ -68,7 +69,7 @@ export function EmCriteriaStep({ offer, seed }: Props) {
   }, [concepts])
 
   const allExpanded = expandedConcepts.size > 0 &&
-    concepts.filter(c => c.slots && c.slots.length > 0).every(c => expandedConcepts.has(c.id))
+    concepts.filter(hasExpandableChildren).every(c => expandedConcepts.has(c.id))
 
   /* ---------- effective value lookups ---------- */
 
@@ -78,11 +79,16 @@ export function EmCriteriaStep({ offer, seed }: Props) {
     return concepts.find(c => c.id === conceptId)?.verdicts[subgroupId] ?? null
   }
 
-  const effectiveSlotValue = (conceptId: string, slotIdx: number, subgroupId: string): string | null => {
-    const key = `${conceptId}::${slotIdx}::${subgroupId}`
+  type SlotKind = 'reg' | 'anti' | 'tandem'
+  const effectiveSlotValue = (conceptId: string, kind: SlotKind, slotIdx: number, subgroupId: string): string | null => {
+    const key = `${conceptId}::${kind}::${slotIdx}::${subgroupId}`
     if (key in slotOverrides) return slotOverrides[key]
-    const slot = concepts.find(c => c.id === conceptId)?.slots?.[slotIdx]
-    return slot?.values[subgroupId] ?? null
+    const concept = concepts.find(c => c.id === conceptId)
+    const list =
+      kind === 'reg'    ? concept?.slots :
+      kind === 'anti'   ? concept?.antisignalSlots :
+      /* tandem */        concept?.tandemSlots
+    return list?.[slotIdx]?.values[subgroupId] ?? null
   }
 
   /* ---------- handlers ---------- */
@@ -116,8 +122,8 @@ export function EmCriteriaStep({ offer, seed }: Props) {
     })
   }
 
-  const setSlotValue = (conceptId: string, slotIdx: number, subgroupId: string, value: string) => {
-    setSlotOverrides(prev => ({ ...prev, [`${conceptId}::${slotIdx}::${subgroupId}`]: value || null }))
+  const setSlotValue = (conceptId: string, kind: SlotKind, slotIdx: number, subgroupId: string, value: string) => {
+    setSlotOverrides(prev => ({ ...prev, [`${conceptId}::${kind}::${slotIdx}::${subgroupId}`]: value || null }))
   }
 
   const toggleSection = (sectionId: string) =>
@@ -138,13 +144,13 @@ export function EmCriteriaStep({ offer, seed }: Props) {
     if (allExpanded) {
       setExpandedConcepts(new Set())
     } else {
-      const all = new Set(concepts.filter(c => c.slots && c.slots.length > 0).map(c => c.id))
+      const all = new Set(concepts.filter(hasExpandableChildren).map(c => c.id))
       setExpandedConcepts(all)
     }
   }
 
   const toggleSectionSlots = (sectionId: string) => {
-    const inSection = (conceptsBySection.get(sectionId) ?? []).filter(c => c.slots && c.slots.length > 0)
+    const inSection = (conceptsBySection.get(sectionId) ?? []).filter(hasExpandableChildren)
     const allOpen = inSection.length > 0 && inSection.every(c => expandedConcepts.has(c.id))
     setExpandedConcepts(prev => {
       const next = new Set(prev)
@@ -238,7 +244,7 @@ export function EmCriteriaStep({ offer, seed }: Props) {
               {sectionsToShow.map(section => {
                 const sectionConcepts = conceptsBySection.get(section.id) ?? []
                 const collapsed = collapsedSections.has(section.id)
-                const expandableInSection = sectionConcepts.filter(c => c.slots && c.slots.length > 0)
+                const expandableInSection = sectionConcepts.filter(hasExpandableChildren)
                 const allInSectionOpen =
                   expandableInSection.length > 0 &&
                   expandableInSection.every(c => expandedConcepts.has(c.id))
@@ -257,6 +263,16 @@ export function EmCriteriaStep({ offer, seed }: Props) {
                     onToggleSlots={() => toggleSectionSlots(section.id)}
                     onRemoveSection={() => removeSection(section.id)}
                   >
+                    {!collapsed && seed.sectionFoldOverrides?.[section.id] === 'AND' && (
+                      <tr>
+                        <td colSpan={subgroups.length + 2} className="p-0 border-b border-charcoal-4 bg-blue-1">
+                          <div className="flex items-center gap-2 px-5 py-2 text-[11.5px] text-charcoal-14">
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wide bg-gold-10 text-charcoal-18">INDEX: AND</span>
+                            <span>All Index conditions in this section must be satisfied (AND logic). Custom override applied by the pipeline.</span>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
                     {!collapsed && sectionConcepts.map(concept => (
                       <ConceptRows
                         key={concept.id}
@@ -430,6 +446,8 @@ function TrashIcon() {
   )
 }
 
+type SlotKind = 'reg' | 'anti' | 'tandem'
+
 function ConceptRows({
   concept,
   subgroups,
@@ -444,37 +462,51 @@ function ConceptRows({
   subgroups: Subgroup[]
   expanded: boolean
   effectiveVerdict: (cid: string, sid: string) => Verdict
-  effectiveSlotValue: (cid: string, sIdx: number, sid: string) => string | null
+  effectiveSlotValue: (cid: string, kind: SlotKind, sIdx: number, sid: string) => string | null
   onCycleVerdict: (cid: string, sid: string) => void
-  onSetSlot: (cid: string, sIdx: number, sid: string, value: string) => void
+  onSetSlot: (cid: string, kind: SlotKind, sIdx: number, sid: string, value: string) => void
   onToggleConcept: () => void
 }) {
-  const hasSlots = !!concept.slots && concept.slots.length > 0
+  const regSlots   = concept.slots ?? []
+  const antiSlots  = concept.antisignalSlots ?? []
+  const tandSlots  = concept.tandemSlots ?? []
+  const isCompound = !!concept.isCompound
+  const components = concept.components ?? []
+  const hasChildren = regSlots.length + antiSlots.length + tandSlots.length + (isCompound ? components.length : 0) > 0
+
   return (
     <>
       <tr className="hover:bg-charcoal-1">
         <td className="p-0 border-b border-charcoal-3 align-middle">
-          <div className="flex items-center gap-2 pl-10 pr-3 py-2.5 min-h-[44px]">
-            {hasSlots ? (
+          <div className="flex items-start gap-2 pl-10 pr-3 py-2.5 min-h-[44px]">
+            {hasChildren ? (
               <button
                 type="button"
                 onClick={onToggleConcept}
-                className={`text-[12px] text-charcoal-11 w-4 text-center transition-transform ${expanded ? 'rotate-90' : ''}`}
-                aria-label={expanded ? 'Collapse slots' : 'Expand slots'}
+                className={`text-[12px] text-charcoal-11 w-4 mt-0.5 text-center transition-transform ${expanded ? 'rotate-90' : ''}`}
+                aria-label={expanded ? 'Collapse' : 'Expand'}
               >
                 ▶
               </button>
             ) : (
               <span className="w-4" />
             )}
-            <span className="text-[13px] text-charcoal-15">{concept.name}</span>
+            <div className="flex flex-col gap-0.5 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[13px] text-charcoal-15">{concept.name}</span>
+                {isCompound && <CompoundPill op={concept.compoundOp} />}
+              </div>
+              {isCompound && concept.compoundExpr && (
+                <span className="text-[11.5px] italic text-charcoal-12">{concept.compoundExpr}</span>
+              )}
+            </div>
           </div>
         </td>
         {subgroups.map(s => (
           <td key={s.id} className="p-0 border-b border-charcoal-3 align-middle">
             <VerdictBadge
               verdict={effectiveVerdict(concept.id, s.id)}
-              indexConcept={!!concept.isIndex}
+              indexConcept={!!concept.isIndex || !!concept.isExIndex}
               onClick={() => onCycleVerdict(concept.id, s.id)}
             />
           </td>
@@ -482,29 +514,118 @@ function ConceptRows({
         <td className="border-b border-charcoal-3" />
       </tr>
 
-      {hasSlots && expanded && concept.slots!.map((slot, sIdx) => (
-        <tr key={`${concept.id}-slot-${sIdx}`} className="bg-charcoal-1">
+      {expanded && regSlots.map((slot, sIdx) => (
+        <SlotRow
+          key={`${concept.id}-reg-${sIdx}`}
+          concept={concept} kind="reg" sIdx={sIdx} slot={slot}
+          subgroups={subgroups}
+          effectiveSlotValue={effectiveSlotValue}
+          onSetSlot={onSetSlot}
+        />
+      ))}
+
+      {expanded && antiSlots.map((slot, sIdx) => (
+        <SlotRow
+          key={`${concept.id}-anti-${sIdx}`}
+          concept={concept} kind="anti" sIdx={sIdx} slot={slot}
+          subgroups={subgroups}
+          effectiveSlotValue={effectiveSlotValue}
+          onSetSlot={onSetSlot}
+        />
+      ))}
+
+      {expanded && tandSlots.map((slot, sIdx) => (
+        <SlotRow
+          key={`${concept.id}-tandem-${sIdx}`}
+          concept={concept} kind="tandem" sIdx={sIdx} slot={slot}
+          subgroups={subgroups}
+          effectiveSlotValue={effectiveSlotValue}
+          onSetSlot={onSetSlot}
+        />
+      ))}
+
+      {expanded && isCompound && components.map((comp, cIdx) => (
+        <tr key={`${concept.id}-comp-${cIdx}`} className="bg-violet-1">
           <td className="p-0 border-b border-charcoal-3">
-            <div className="flex items-center gap-1.5 pl-[60px] pr-3 py-2 text-[12.5px] text-charcoal-12">
+            <div className="flex items-center gap-1.5 pl-[60px] pr-3 py-2 text-[12.5px] text-charcoal-14">
               <span className="text-charcoal-10 text-[11px]">↳</span>
-              <span>{slot.label}</span>
+              <span>{comp.name}</span>
             </div>
           </td>
-          {subgroups.map(s => (
-            <td key={s.id} className="p-0 border-b border-charcoal-3">
-              <div className="flex justify-center py-1.5">
-                <SlotInput
-                  slot={slot}
-                  value={effectiveSlotValue(concept.id, sIdx, s.id)}
-                  onChange={(v) => onSetSlot(concept.id, sIdx, s.id, v)}
-                />
-              </div>
-            </td>
-          ))}
+          {subgroups.map(s => <td key={s.id} className="border-b border-charcoal-3" />)}
           <td className="border-b border-charcoal-3" />
         </tr>
       ))}
     </>
+  )
+}
+
+function SlotRow({
+  concept,
+  kind,
+  sIdx,
+  slot,
+  subgroups,
+  effectiveSlotValue,
+  onSetSlot
+}: {
+  concept: Concept
+  kind: SlotKind
+  sIdx: number
+  slot: Slot
+  subgroups: Subgroup[]
+  effectiveSlotValue: (cid: string, kind: SlotKind, sIdx: number, sid: string) => string | null
+  onSetSlot: (cid: string, kind: SlotKind, sIdx: number, sid: string, value: string) => void
+}) {
+  const isAnti   = kind === 'anti'
+  const isTandem = kind === 'tandem'
+  const tandemIf = isTandem ? (slot as TandemSlot).tandemIf : null
+  return (
+    <tr className="bg-charcoal-1">
+      <td className="p-0 border-b border-charcoal-3">
+        <div className="flex items-center gap-1.5 pl-[60px] pr-3 py-2 text-[12.5px]">
+          <span className="text-charcoal-10 text-[11px]">↳</span>
+          {isAnti ? (
+            <span className="text-red-13 font-semibold" title={slot.helpText}>{slot.label}</span>
+          ) : (
+            <span className="text-charcoal-12">{slot.label}</span>
+          )}
+          {tandemIf && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10.5px] bg-blue-1 text-blue-13 border border-blue-3">
+              <span className="font-bold">IF</span>
+              <span>{tandemIf}</span>
+            </span>
+          )}
+        </div>
+      </td>
+      {subgroups.map(s => (
+        <td key={s.id} className="p-0 border-b border-charcoal-3">
+          <div className="flex justify-center py-1.5">
+            <SlotInput
+              slot={slot}
+              value={effectiveSlotValue(concept.id, kind, sIdx, s.id)}
+              onChange={(v) => onSetSlot(concept.id, kind, sIdx, s.id, v)}
+            />
+          </div>
+        </td>
+      ))}
+      <td className="border-b border-charcoal-3" />
+    </tr>
+  )
+}
+
+function hasExpandableChildren(c: Concept): boolean {
+  return (c.slots?.length ?? 0) > 0
+    || (c.antisignalSlots?.length ?? 0) > 0
+    || (c.tandemSlots?.length ?? 0) > 0
+    || (!!c.isCompound && (c.components?.length ?? 0) > 0)
+}
+
+function CompoundPill({ op }: { op?: string }) {
+  return (
+    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wide bg-violet-2 text-violet-14 border border-violet-5">
+      COMPOUND{op ? ` · ${op}` : ''}
+    </span>
   )
 }
 
