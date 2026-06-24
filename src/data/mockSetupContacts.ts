@@ -61,6 +61,7 @@ export interface SiteContact {
 
 export const SITES: SiteRecord[] = [
   { id: '170040', name: 'University of Kansas Medical Center', state: 'KS', city: 'Kansas City', zip: '66101', domain: 'kumc.com' },
+  { id: '260138', name: "St Luke's Hospital Of Kansas City",   state: 'MO', city: 'Kansas City', zip: '64101', domain: 'saintlukeskc.com' },
   { id: '220071', name: 'Massachusetts General Hospital',      state: 'MA', city: 'Boston',      zip: '02114', synonyms: 'MGH', domain: 'massgeneral.com' },
   { id: '210009', name: 'Johns Hopkins Hospital',              state: 'MD', city: 'Baltimore',   zip: '21287', synonyms: 'JHH', domain: 'hopkins.com' },
   { id: '240010', name: 'Mayo Clinic - Rochester',             state: 'MN', city: 'Rochester',   zip: '55905', domain: 'mayo.com' },
@@ -75,6 +76,10 @@ export const SITE_CONTACTS: SiteContact[] = [
   { id: 'kumc-4', firstName: 'David',  lastName: 'Nguyen',  org: 'University of Kansas Medical Center', email: 'david.nguyen@kumc.com',  phone: '913-945-9926', status: 'Approved' },
   { id: 'kumc-5', firstName: 'Rachel', lastName: 'Foster',  org: 'University of Kansas Medical Center', email: 'rachel.foster@kumc.com', phone: '913-588-2271', status: 'Approved' },
   { id: 'kumc-6', firstName: 'Brian',  lastName: 'Walsh',   org: 'University of Kansas Medical Center', email: 'brian.walsh@kumc.com',   phone: '913-945-9937', status: 'Approved' },
+  // St Luke's Hospital Of Kansas City
+  { id: 'slhkc-1', firstName: 'Laura',   lastName: 'Bishop',   org: "St Luke's Hospital Of Kansas City", email: 'laura.bishop@saintlukeskc.com',   phone: '816-932-2000', status: 'Approved' },
+  { id: 'slhkc-2', firstName: 'Anthony', lastName: 'Russo',    org: "St Luke's Hospital Of Kansas City", email: 'anthony.russo@saintlukeskc.com',  phone: '816-932-2104', status: 'Approved' },
+  { id: 'slhkc-3', firstName: 'Nina',    lastName: 'Patel',    org: "St Luke's Hospital Of Kansas City", email: 'nina.patel@saintlukeskc.com',     phone: '816-932-2187', status: 'Approved' },
   // Massachusetts General Hospital
   { id: 'mgh-1', firstName: 'Olivia', lastName: 'Bennett', org: 'Massachusetts General Hospital', email: 'olivia.bennett@massgeneral.com', phone: '617-555-0142', status: 'Approved' },
   { id: 'mgh-2', firstName: 'Daniel', lastName: 'Cho',     org: 'Massachusetts General Hospital', email: 'daniel.cho@massgeneral.com',     phone: '617-555-0198', status: 'Approved' },
