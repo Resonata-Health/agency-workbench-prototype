@@ -725,16 +725,11 @@ function VerdictBadge({
   onClick: () => void
 }) {
   if (verdict === null) {
+    // Not applicable to this subgroup. A verdict cell never sits empty/editable —
+    // it either holds an IN/EX value or reads N/A here.
     return (
       <div className="flex justify-center py-2">
-        <button
-          type="button"
-          onClick={onClick}
-          className="min-w-[42px] px-2.5 py-1 rounded border border-dashed border-charcoal-5 text-charcoal-11 hover:border-green-10 hover:text-green-13 hover:bg-green-1 transition-colors"
-          aria-label="Set verdict"
-        >
-          +
-        </button>
+        <span className="text-charcoal-9 text-[12px]" title="Not applicable to this subgroup">—</span>
       </div>
     )
   }
