@@ -32,6 +32,9 @@ const DEFAULT_INTERVENTIONS_BY_OFFER: Record<string, Intervention[]> = {
 
 const ALL_GEOGRAPHIES = ['US', 'Australia', 'Canada', 'France', 'Japan', 'Korea', 'UK', 'Germany']
 
+const DOMAIN_OPTIONS = ['Neurology', 'Cardiology', 'Immunology', 'Oncology', 'Rare Disease', 'Endocrinology']
+const CATEGORY_OPTIONS = ['Neuromuscular', 'Autoimmune', 'Cardiovascular', 'Metabolic', 'Hematology', 'Other']
+
 export function OverviewStep({ offer }: { offer: CareOffer }) {
   const router = useRouter()
   const fields = useMemoFields(offer)
@@ -46,6 +49,8 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
   const [displayTitle, setDisplayTitle]     = useState(fields.displayTitle)
   const [briefSummary, setBriefSummary]     = useState(fields.briefSummary)
   const [offerType, setOfferType]           = useState(fields.offerType)
+  const [domain, setDomain]                 = useState('')
+  const [category, setCategory]             = useState('')
   const [phase, setPhase]                   = useState(offer.phase ?? '')
   const [geographies, setGeographies]       = useState<string[]>(
     isClinicalTrial ? ['US', 'Australia', 'Canada', 'France', 'Japan', 'Korea'] : fields.geographies
@@ -127,6 +132,20 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
             <input value={sponsor} onChange={e => setSponsor(e.target.value)} className={inputClass} />
           </Field>
 
+          <Field label="Domain" required>
+            <select value={domain} onChange={e => setDomain(e.target.value)} className={inputClass}>
+              <option value="" disabled>Select a domain</option>
+              {DOMAIN_OPTIONS.map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
+          </Field>
+
+          <Field label="Category" required>
+            <select value={category} onChange={e => setCategory(e.target.value)} className={inputClass}>
+              <option value="" disabled>Select a category</option>
+              {CATEGORY_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </Field>
+
           <Field label="Official Title" required>
             <input value={officialTitle} onChange={e => setOfficialTitle(e.target.value)} className={inputClass} />
           </Field>
@@ -159,7 +178,7 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
                 <option>Clinical Trial</option>
                 <option>Approved Treatment</option>
               </select>
-              {isClinicalTrial && (
+              {offerType === 'Clinical Trial' && (
                 <div className="flex items-center gap-3">
                   <label className="text-[12px] text-charcoal-12 shrink-0">
                     Phase <span className="text-[11px] text-charcoal-10">(clinical trials only)</span>
@@ -348,15 +367,14 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
         <section className="flex flex-col gap-4">
           <h2 className="text-[14px] font-semibold text-charcoal-15">Offer Timeline on Resonata</h2>
           <div className="flex gap-4">
-            <TimelineField title="Created" sub="by filling, upload" value="July 2, 2021" />
-            <TimelineField title="Last Updated" sub="by Manual Import" value={fields.lastUpdatedLabel} />
+            <TimelineField title="Created" value="July 2, 2021" />
+            <TimelineField title="Last Updated" value={fields.lastUpdatedLabel} />
           </div>
           <div className="flex gap-4">
             <TimelineField title="Activation Date" value="July 19, 2021" />
             <div className="flex gap-4 flex-1">
               <div className="w-[200px] pt-[1px]">
                 <div className="text-[12px] text-charcoal-12">End Date</div>
-                <div className="text-[11px] text-charcoal-10">Set on Activation page</div>
               </div>
               <div className="flex-1">
                 <input

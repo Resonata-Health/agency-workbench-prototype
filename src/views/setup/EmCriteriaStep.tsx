@@ -1,8 +1,10 @@
 'use client'
 
-import { useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { CONTAINER } from '@/components/container'
+import { ConfirmDialog } from '@/components/outreach/ConfirmDialog'
+import { setEmDirty } from '@/data/emDirty'
 import type { CareOffer } from '@/data/mockCareOffers'
 import {
   CANONICAL_SECTIONS,
@@ -42,6 +44,7 @@ export function EmCriteriaStep({ offer, seed }: Props) {
   // Modal / popover toggles.
   const [showAddSubgroup, setShowAddSubgroup] = useState(false)
   const [showAddCategory, setShowAddCategory] = useState(false)
+  const [showRevertConfirm, setShowRevertConfirm] = useState(false)
 
   /* ---------- derived state ---------- */
 
@@ -89,6 +92,52 @@ export function EmCriteriaStep({ offer, seed }: Props) {
       kind === 'anti'   ? concept?.antisignalSlots :
       /* tandem */        concept?.tandemSlots
     return list?.[slotIdx]?.values[subgroupId] ?? null
+  }
+
+  /* ---------- original (seed) lookups + change detection ---------- */
+
+  const originalVerdict = (conceptId: string, subgroupId: string): Verdict =>
+    seed.concepts.find(c => c.id === conceptId)?.verdicts[subgroupId] ?? null
+
+  const originalSlotValue = (conceptId: string, kind: SlotKind, slotIdx: number, subgroupId: string): string | null => {
+    const concept = seed.concepts.find(c => c.id === conceptId)
+    const list =
+      kind === 'reg'  ? concept?.slots :
+      kind === 'anti' ? concept?.antisignalSlots :
+      /* tandem */      concept?.tandemSlots
+    return list?.[slotIdx]?.values[subgroupId] ?? null
+  }
+
+  const verdictChanged = (conceptId: string, subgroupId: string): boolean =>
+    effectiveVerdict(conceptId, subgroupId) !== originalVerdict(conceptId, subgroupId)
+
+  const slotChanged = (conceptId: string, kind: SlotKind, slotIdx: number, subgroupId: string): boolean =>
+    effectiveSlotValue(conceptId, kind, slotIdx, subgroupId) !== originalSlotValue(conceptId, kind, slotIdx, subgroupId)
+
+  const isDirty =
+    extraSectionIds.length > 0 ||
+    subgroups.length !== seed.subgroups.length ||
+    concepts.length !== seed.concepts.length ||
+    Object.entries(verdictOverrides).some(([k, v]) => {
+      const [cid, sid] = k.split('::')
+      return v !== originalVerdict(cid, sid)
+    }) ||
+    Object.entries(slotOverrides).some(([k, v]) => {
+      const [cid, kind, idx, sid] = k.split('::')
+      return v !== originalSlotValue(cid, kind as SlotKind, Number(idx), sid)
+    })
+
+  useEffect(() => { setEmDirty(offer.id, isDirty) }, [isDirty, offer.id])
+
+  const revertToOriginal = () => {
+    setSubgroups(seed.subgroups)
+    setConcepts(seed.concepts)
+    setExtraSectionIds([])
+    setVerdictOverrides({})
+    setSlotOverrides({})
+    setCollapsedSections(new Set())
+    setExpandedConcepts(new Set())
+    setShowRevertConfirm(false)
   }
 
   /* ---------- handlers ---------- */
@@ -199,6 +248,15 @@ export function EmCriteriaStep({ offer, seed }: Props) {
           {offer.internalId} — Eligibility Criteria
         </h2>
         <div className="flex items-center gap-2">
+          {isDirty && (
+            <button
+              type="button"
+              onClick={() => setShowRevertConfirm(true)}
+              className="inline-flex items-center gap-1.5 border border-charcoal-4 hover:border-red-10 hover:bg-red-1 hover:text-red-13 text-[12px] text-charcoal-12 rounded-md px-3 py-1.5"
+            >
+              Revert to Original
+            </button>
+          )}
           <button
             type="button"
             onClick={toggleAllSlots}
@@ -281,6 +339,8 @@ export function EmCriteriaStep({ offer, seed }: Props) {
                         expanded={expandedConcepts.has(concept.id)}
                         effectiveVerdict={effectiveVerdict}
                         effectiveSlotValue={effectiveSlotValue}
+                        verdictChanged={verdictChanged}
+                        slotChanged={slotChanged}
                         onCycleVerdict={cycleVerdict}
                         onSetSlot={setSlotValue}
                         onToggleConcept={() => toggleConcept(concept.id)}
@@ -347,12 +407,23 @@ export function EmCriteriaStep({ offer, seed }: Props) {
           onClick={goNext}
           className="px-5 py-2 rounded-md bg-green-12 hover:bg-green-13 text-charcoal-white text-[13px] font-medium"
         >
-          Next: Contacts →
+          Next: Locations →
         </button>
       </div>
 
       {showAddSubgroup && (
         <AddSubgroupModal onCancel={() => setShowAddSubgroup(false)} onConfirm={addSubgroup} />
+      )}
+
+      {showRevertConfirm && (
+        <ConfirmDialog
+          title="Revert to the original matrix?"
+          body="By reverting to original matrix, you will loose all changes. Do you want to proceed?"
+          confirmLabel="Yes, revert"
+          destructive
+          onConfirm={revertToOriginal}
+          onCancel={() => setShowRevertConfirm(false)}
+        />
       )}
     </>
   )
@@ -454,6 +525,8 @@ function ConceptRows({
   expanded,
   effectiveVerdict,
   effectiveSlotValue,
+  verdictChanged,
+  slotChanged,
   onCycleVerdict,
   onSetSlot,
   onToggleConcept
@@ -463,6 +536,8 @@ function ConceptRows({
   expanded: boolean
   effectiveVerdict: (cid: string, sid: string) => Verdict
   effectiveSlotValue: (cid: string, kind: SlotKind, sIdx: number, sid: string) => string | null
+  verdictChanged: (cid: string, sid: string) => boolean
+  slotChanged: (cid: string, kind: SlotKind, sIdx: number, sid: string) => boolean
   onCycleVerdict: (cid: string, sid: string) => void
   onSetSlot: (cid: string, kind: SlotKind, sIdx: number, sid: string, value: string) => void
   onToggleConcept: () => void
@@ -503,7 +578,10 @@ function ConceptRows({
           </div>
         </td>
         {subgroups.map(s => (
-          <td key={s.id} className="p-0 border-b border-charcoal-3 align-middle">
+          <td
+            key={s.id}
+            className={`p-0 border-b border-charcoal-3 align-middle ${verdictChanged(concept.id, s.id) ? 'bg-gold-1' : ''}`}
+          >
             <VerdictBadge
               verdict={effectiveVerdict(concept.id, s.id)}
               indexConcept={!!concept.isIndex || !!concept.isExIndex}
@@ -520,6 +598,7 @@ function ConceptRows({
           concept={concept} kind="reg" sIdx={sIdx} slot={slot}
           subgroups={subgroups}
           effectiveSlotValue={effectiveSlotValue}
+          slotChanged={slotChanged}
           onSetSlot={onSetSlot}
         />
       ))}
@@ -530,6 +609,7 @@ function ConceptRows({
           concept={concept} kind="anti" sIdx={sIdx} slot={slot}
           subgroups={subgroups}
           effectiveSlotValue={effectiveSlotValue}
+          slotChanged={slotChanged}
           onSetSlot={onSetSlot}
         />
       ))}
@@ -540,6 +620,7 @@ function ConceptRows({
           concept={concept} kind="tandem" sIdx={sIdx} slot={slot}
           subgroups={subgroups}
           effectiveSlotValue={effectiveSlotValue}
+          slotChanged={slotChanged}
           onSetSlot={onSetSlot}
         />
       ))}
@@ -567,6 +648,7 @@ function SlotRow({
   slot,
   subgroups,
   effectiveSlotValue,
+  slotChanged,
   onSetSlot
 }: {
   concept: Concept
@@ -575,6 +657,7 @@ function SlotRow({
   slot: Slot
   subgroups: Subgroup[]
   effectiveSlotValue: (cid: string, kind: SlotKind, sIdx: number, sid: string) => string | null
+  slotChanged: (cid: string, kind: SlotKind, sIdx: number, sid: string) => boolean
   onSetSlot: (cid: string, kind: SlotKind, sIdx: number, sid: string, value: string) => void
 }) {
   const isAnti   = kind === 'anti'
@@ -599,7 +682,10 @@ function SlotRow({
         </div>
       </td>
       {subgroups.map(s => (
-        <td key={s.id} className="p-0 border-b border-charcoal-3">
+        <td
+          key={s.id}
+          className={`p-0 border-b border-charcoal-3 ${slotChanged(concept.id, kind, sIdx, s.id) ? 'bg-gold-1' : ''}`}
+        >
           <div className="flex justify-center py-1.5">
             <SlotInput
               slot={slot}

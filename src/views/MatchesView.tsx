@@ -214,18 +214,6 @@ export default function MatchesView() {
                 <SummaryRow label="Total matches" total={summary.total} bold rowClass="bg-charcoal-1" />
               </tbody>
             </table>
-
-            {canViewOutreach && (
-              <div className="bg-blue-1 rounded-md p-3 text-center text-[13px] text-blue-14">
-                To contact patients, go to the{' '}
-                <button
-                  onClick={() => router.push(outreachHref)}
-                  className="font-semibold text-blue-12 hover:underline"
-                >
-                  Outreach tab
-                </button>
-              </div>
-            )}
           </div>
 
           {/* Footer CTA */}

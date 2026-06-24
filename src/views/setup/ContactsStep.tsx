@@ -6,11 +6,17 @@ import { CONTAINER } from '@/components/container'
 import type { CareOffer } from '@/data/mockCareOffers'
 import { CONTACTS, DEFAULT_SITES, type SetupSite } from '@/data/mockSetupContacts'
 import { setOfferStatus } from '@/data/offerStatusOverrides'
+import { getEmDirty, setEmDirty } from '@/data/emDirty'
+import { ConfirmDialog } from '@/components/outreach/ConfirmDialog'
+
+// Offer Contact section hidden for now (validations off with it). Kept in JSX behind this flag.
+const SHOW_OFFER_CONTACT = false
 
 export function ContactsStep({ offer }: { offer: CareOffer }) {
   const router = useRouter()
   const [contactId, setContactId] = useState(CONTACTS[0].id)
   const [sites, setSites] = useState<SetupSite[]>(DEFAULT_SITES)
+  const [showOverwrite, setShowOverwrite] = useState(false)
 
   const contact = CONTACTS.find(c => c.id === contactId) ?? CONTACTS[0]
 
@@ -32,10 +38,16 @@ export function ContactsStep({ offer }: { offer: CareOffer }) {
     ])
 
   const goPrev = () => router.push(`/setup?offer=${offer.id}&step=criteria`)
-  const completeSetup = () => {
+  const doComplete = () => {
     // "Complete Setup and Activate" — flips the offer to Active and lands on Matches.
+    setEmDirty(offer.id, false)
     setOfferStatus(offer.id, 'active')
     router.push(`/matches?offer=${offer.id}`)
+  }
+  const completeSetup = () => {
+    // Warn before activating if the eligibility matrix was edited this session.
+    if (getEmDirty(offer.id)) { setShowOverwrite(true); return }
+    doComplete()
   }
 
   return (
@@ -50,11 +62,12 @@ export function ContactsStep({ offer }: { offer: CareOffer }) {
         </button>
 
         <div className="flex items-baseline justify-between">
-          <h2 className="text-[20px] font-semibold text-charcoal-18">Manage Contacts</h2>
+          <h2 className="text-[20px] font-semibold text-charcoal-18">Enrollment Sites</h2>
           <span className="text-[12px] text-charcoal-11">{offer.updatedLabel}</span>
         </div>
 
         {/* Offer Contact */}
+        {SHOW_OFFER_CONTACT && (
         <section className="mt-6">
           <div className="flex items-center gap-2">
             <h3 className="text-[14px] font-semibold text-charcoal-15">Offer Contact</h3>
@@ -87,15 +100,10 @@ export function ContactsStep({ offer }: { offer: CareOffer }) {
             </div>
           </div>
         </section>
+        )}
 
         {/* Enrollment Sites */}
-        <section className="mt-8">
-          <div className="flex items-center gap-2">
-            <h3 className="text-[14px] font-semibold text-charcoal-15">Enrollment Sites</h3>
-            <span className="bg-charcoal-2 text-charcoal-14 text-[10px] uppercase font-semibold px-2 py-0.5 rounded">
-              Optional
-            </span>
-          </div>
+        <section className="mt-6">
           <p className="text-[12px] text-charcoal-12 mt-1">
             Sites are only required for location-based clinical trials. For centralized enrollment, leave this section blank.
           </p>
@@ -192,6 +200,17 @@ export function ContactsStep({ offer }: { offer: CareOffer }) {
           Complete Setup and Activate
         </button>
       </div>
+
+      {showOverwrite && (
+        <ConfirmDialog
+          title="Overwrite the existing eligibility matrix?"
+          body="You have made changes to the eligibility matrix for this care option. This will overwrite the previous matrix. Do you want to proceed?"
+          confirmLabel="Yes, proceed"
+          destructive
+          onConfirm={doComplete}
+          onCancel={() => setShowOverwrite(false)}
+        />
+      )}
     </>
   )
 }

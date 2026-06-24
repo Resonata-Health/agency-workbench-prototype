@@ -5,7 +5,7 @@ export type SetupStep = 'overview' | 'criteria' | 'contacts'
 const STEPS: { id: SetupStep; label: string; n: number }[] = [
   { id: 'overview', label: 'Overview', n: 1 },
   { id: 'criteria', label: 'Criteria', n: 2 },
-  { id: 'contacts', label: 'Contacts', n: 3 }
+  { id: 'contacts', label: 'Locations', n: 3 }
 ]
 
 export function SetupStepper({ current }: { current: SetupStep }) {

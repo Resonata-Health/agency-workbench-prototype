@@ -101,6 +101,8 @@ function SetupReadOnly() {
 
               <ReadonlyRow label="Offer ID" value={fields.offerId} />
               <ReadonlyRow label="Sponsor" value={fields.sponsor} />
+              <ReadonlyRow label="Domain" value="—" />
+              <ReadonlyRow label="Category" value="—" />
               <ReadonlyRow label="Official Title" value={fields.officialTitle} />
 
               {/* Display Title — hidden per spec; kept here (gated by SHOW_DISPLAY_TITLE) so it can be re-surfaced later. */}
@@ -258,8 +260,8 @@ function SetupReadOnly() {
               <h2 className="text-[14px] font-semibold text-charcoal-15">Offer Timeline on Resonata</h2>
 
               <div className="flex gap-4">
-                <TimelineField title="Created" sub="by filling, upload" value={fields.createdLabel} />
-                <TimelineField title="Last Updated" sub="by Manual Import" value={fields.lastUpdatedLabel} />
+                <TimelineField title="Created" value={fields.createdLabel} />
+                <TimelineField title="Last Updated" value={fields.lastUpdatedLabel} />
               </div>
 
               <div className="flex gap-4">
