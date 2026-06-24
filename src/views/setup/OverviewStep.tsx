@@ -124,20 +124,6 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
             <input value={sponsor} onChange={e => setSponsor(e.target.value)} className={inputClass} />
           </Field>
 
-          <Field label="Domain" required>
-            <select value={domain} onChange={e => setDomain(e.target.value)} className={inputClass}>
-              <option value="" disabled>Select a domain</option>
-              {DOMAIN_OPTIONS.map(d => <option key={d} value={d}>{d}</option>)}
-            </select>
-          </Field>
-
-          <Field label="Category" required>
-            <select value={category} onChange={e => setCategory(e.target.value)} className={inputClass}>
-              <option value="" disabled>Select a category</option>
-              {CATEGORY_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </Field>
-
           <Field label="Official Title" required>
             <input value={officialTitle} onChange={e => setOfficialTitle(e.target.value)} className={inputClass} />
           </Field>
@@ -182,6 +168,27 @@ export function OverviewStep({ offer }: { offer: CareOffer }) {
                   />
                 </div>
               )}
+            </div>
+          </div>
+
+          <div className="flex gap-4 items-start w-full">
+            <div className="pt-[8px] text-[12px] text-charcoal-12 shrink-0 w-[200px]">
+              Domain <span className="text-red-13">*</span>
+            </div>
+            <div className="flex-1 grid grid-cols-2 gap-4">
+              <select value={domain} onChange={e => setDomain(e.target.value)} className={inputClass}>
+                <option value="" disabled>Select a domain</option>
+                {DOMAIN_OPTIONS.map(d => <option key={d} value={d}>{d}</option>)}
+              </select>
+              <div className="flex items-center gap-3">
+                <label className="text-[12px] text-charcoal-12 shrink-0">
+                  Category <span className="text-red-13">*</span>
+                </label>
+                <select value={category} onChange={e => setCategory(e.target.value)} className={inputClass}>
+                  <option value="" disabled>Select a category</option>
+                  {CATEGORY_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
             </div>
           </div>
         </section>

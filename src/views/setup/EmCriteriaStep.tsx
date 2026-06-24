@@ -45,6 +45,7 @@ export function EmCriteriaStep({ offer, seed }: Props) {
   const [showAddSubgroup, setShowAddSubgroup] = useState(false)
   const [showAddCategory, setShowAddCategory] = useState(false)
   const [showRevertConfirm, setShowRevertConfirm] = useState(false)
+  const [pendingDeleteSection, setPendingDeleteSection] = useState<string | null>(null)
 
   /* ---------- derived state ---------- */
 
@@ -154,14 +155,9 @@ export function EmCriteriaStep({ offer, seed }: Props) {
     setVerdictOverrides(prev => ({ ...prev, [`${conceptId}::${subgroupId}`]: next }))
   }
 
-  const removeSection = (sectionId: string) => {
-    const section = sectionsToShow.find(s => s.id === sectionId)
-    const sectionName = section?.name ?? 'this section'
-    const inSection = concepts.filter(c => c.section === sectionId)
-    const note = inSection.length > 0
-      ? `Remove ${sectionName} and all ${inSection.length} criteria? You can re-add the category later from the “+ Add Category” menu.`
-      : `Remove ${sectionName}? You can re-add it later from the “+ Add Category” menu.`
-    if (typeof window !== 'undefined' && !window.confirm(note)) return
+  const confirmRemoveSection = () => {
+    const sectionId = pendingDeleteSection
+    if (!sectionId) return
     setConcepts(prev => prev.filter(c => c.section !== sectionId))
     setExtraSectionIds(prev => prev.filter(id => id !== sectionId))
     setCollapsedSections(prev => {
@@ -169,6 +165,7 @@ export function EmCriteriaStep({ offer, seed }: Props) {
       next.delete(sectionId)
       return next
     })
+    setPendingDeleteSection(null)
   }
 
   const setSlotValue = (conceptId: string, kind: SlotKind, slotIdx: number, subgroupId: string, value: string) => {
@@ -319,7 +316,7 @@ export function EmCriteriaStep({ offer, seed }: Props) {
                     slotToggleLabel={allInSectionOpen ? 'Collapse slots' : 'Expand slots'}
                     onToggleSection={() => toggleSection(section.id)}
                     onToggleSlots={() => toggleSectionSlots(section.id)}
-                    onRemoveSection={() => removeSection(section.id)}
+                    onRemoveSection={() => setPendingDeleteSection(section.id)}
                   >
                     {!collapsed && seed.sectionFoldOverrides?.[section.id] === 'AND' && (
                       <tr>
@@ -423,6 +420,17 @@ export function EmCriteriaStep({ offer, seed }: Props) {
           destructive
           onConfirm={revertToOriginal}
           onCancel={() => setShowRevertConfirm(false)}
+        />
+      )}
+
+      {pendingDeleteSection && (
+        <ConfirmDialog
+          title="Are you sure you want to delete this entire criteria?"
+          body={`This removes “${sectionsToShow.find(s => s.id === pendingDeleteSection)?.name ?? 'this category'}” and all its criteria. You can re-add the category later from the “+ Add Category” menu.`}
+          confirmLabel="Yes, delete"
+          destructive
+          onConfirm={confirmRemoveSection}
+          onCancel={() => setPendingDeleteSection(null)}
         />
       )}
     </>
