@@ -81,6 +81,8 @@ export default function MatchesView() {
   const showCheckboxes = canSelect && selectionUnlocked && persona !== 'sponsor'
   const showLockedInfo  = !selectionUnlocked && persona === 'agency'
   const showEmailKpis   = persona !== 'sponsor'
+  // Agency doesn't see criterion-level gaps (Missing / Adjacent).
+  const showCriteriaCols = persona !== 'agency'
 
   const [selected, setSelected] = useState<Set<string>>(new Set())
 
@@ -177,8 +179,8 @@ export default function MatchesView() {
                   <Th>Patient ID</Th>
                   <Th>Match Date</Th>
                   <Th>Match Type</Th>
-                  <Th>Missing</Th>
-                  <Th>Adjacent</Th>
+                  {showCriteriaCols && <Th>Missing</Th>}
+                  {showCriteriaCols && <Th>Adjacent</Th>}
                   <Th>Pt Engagement</Th>
                   <Th>State</Th>
                   <Th>City</Th>
@@ -192,6 +194,7 @@ export default function MatchesView() {
                     selected={selected}
                     onToggle={toggle}
                     showCheckboxes={showCheckboxes}
+                    showCriteriaCols={showCriteriaCols}
                   />
                 ))}
               </tbody>
@@ -245,14 +248,16 @@ function GroupRows({
   group,
   selected,
   onToggle,
-  showCheckboxes
+  showCheckboxes,
+  showCriteriaCols
 }: {
   group: MatchGroup
   selected: Set<string>
   onToggle: (id: string) => void
   showCheckboxes: boolean
+  showCriteriaCols: boolean
 }) {
-  const colSpan = showCheckboxes ? 9 : 8
+  const colSpan = 6 + (showCriteriaCols ? 2 : 0) + (showCheckboxes ? 1 : 0)
   return (
     <>
       <tr>
@@ -277,8 +282,8 @@ function GroupRows({
             <td className="px-3 py-3 text-[12px] text-charcoal-15">{p.id}</td>
             <td className="px-3 py-3 text-[13px] text-charcoal-15">{p.matchDate}</td>
             <td className="px-3 py-3 text-[13px] text-charcoal-15">{p.matchType}</td>
-            <td className="px-3 py-3">{p.missing ? <CriterionBadge label={p.missing} /> : <Dash />}</td>
-            <td className="px-3 py-3">{p.adjacent ? <CriterionBadge label={p.adjacent} /> : <Dash />}</td>
+            {showCriteriaCols && <td className="px-3 py-3">{p.missing ? <CriterionBadge label={p.missing} /> : <Dash />}</td>}
+            {showCriteriaCols && <td className="px-3 py-3">{p.adjacent ? <CriterionBadge label={p.adjacent} /> : <Dash />}</td>}
             <td className={`px-3 py-3 text-[12px] font-medium ${toneClass[p.engagementTone]}`}>{p.engagement}</td>
             <td className="px-3 py-3 text-[13px] text-charcoal-15">{p.state}</td>
             <td className="px-3 py-3 text-[13px] text-charcoal-15">{p.city}</td>
