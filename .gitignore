@@ -13,3 +13,6 @@
 # env files
 .env*
 1alias
+
+# typescript incremental build cache
+*.tsbuildinfo
